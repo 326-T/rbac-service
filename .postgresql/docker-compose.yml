@@ -1,0 +1,20 @@
+version: "3.7"
+
+services:
+  postgres:
+    image: postgres:14.2
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      - TZ="Asia/Tokyo"
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5

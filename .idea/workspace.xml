@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/2/a/2a31ecb9e5c288dcbe6d198b5983ee848c7b03e3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/3/c/3c5b8cbbfb9c0340d616d2fe4c15e63a02662b9f" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/4/3/432c3153ec200f97fd958aff4556b23f82d391f7" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/4/4/442292b8a7efeabbe4cc176709b833b1792140ec" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/4/6/46980b402e182bee5f17e72072efeaa54accc9ef" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/4/8/48d6e50dd1eb22330eb6fd1a009407ea8ad1efe6" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/5/0/500cd95d5cb76229450638f331de01ddb9df8a63" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/5/0/50315776281ffaaa3fdb23bbb450dba524a328ad" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/5/7/57c3f11cd46a14de619324f9d1f741990d98139f" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/5/c/5c0bc94b68d92854b743b21ce7c7b4f34bc26f37" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/6/4/642261ae70d228484a4b2f6ea943f88d881a80b9" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/6/5/65afcb4ee2f0fc11cc651fe62a85deb14acc5096" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/6/9/69e89b4da51dcb259ce876e386e414121b9c1b71" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/6/b/6bafbac4b5d2a9c338e62cc78ed19b1ac98fd7b4" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/7/2/72d65f57e5dfcc3ff6c146be2f7deef50400d133" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/8/3/8304636e2539885d5e0a8d03a1d0d9ca1e5ac673" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/8/7/87276ba50c9e31dd492f6355f869f648eec13424" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/8/d/8ddea11f6a6f3dbecc009e796c14411005936111" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/a/7/a7cb3dcde567cb70e8b2d107a12fafeb798a7d09" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/c/5/c52f2f7c74f4e09f2ee4b7dba16c5ac395bab158" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/c/d/cd8cdfa223bfa4522bf87042be1c2a71650f4316" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/d/3/d386f7cb0f57b71a5523e6b59b42d9cd8c710726" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/d/6/d62c7fedaf4787987de3084aa56b70302bfab6f3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/e/7/e7aeb4a8214a4d40c7bfb6b6cbe1182768aa3589" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/e/a/eaf7efd3fb9461fca61daadd9c364875b9d56173" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/f/2/f211d6132c0a4b9e9980c201a31a7acb3bd69b79" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/2/a/2a31ecb9e5c288dcbe6d198b5983ee848c7b03e3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/3/c/3c5b8cbbfb9c0340d616d2fe4c15e63a02662b9f" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/4/3/432c3153ec200f97fd958aff4556b23f82d391f7" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/4/4/442292b8a7efeabbe4cc176709b833b1792140ec" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/4/6/46980b402e182bee5f17e72072efeaa54accc9ef" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/4/8/48d6e50dd1eb22330eb6fd1a009407ea8ad1efe6" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/5/0/500cd95d5cb76229450638f331de01ddb9df8a63" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/5/0/50315776281ffaaa3fdb23bbb450dba524a328ad" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/5/7/57c3f11cd46a14de619324f9d1f741990d98139f" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/5/c/5c0bc94b68d92854b743b21ce7c7b4f34bc26f37" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/6/4/642261ae70d228484a4b2f6ea943f88d881a80b9" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/6/5/65afcb4ee2f0fc11cc651fe62a85deb14acc5096" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/6/9/69e89b4da51dcb259ce876e386e414121b9c1b71" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/6/b/6bafbac4b5d2a9c338e62cc78ed19b1ac98fd7b4" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/7/2/72d65f57e5dfcc3ff6c146be2f7deef50400d133" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/8/3/8304636e2539885d5e0a8d03a1d0d9ca1e5ac673" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/8/7/87276ba50c9e31dd492f6355f869f648eec13424" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/8/d/8ddea11f6a6f3dbecc009e796c14411005936111" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/a/7/a7cb3dcde567cb70e8b2d107a12fafeb798a7d09" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/c/5/c52f2f7c74f4e09f2ee4b7dba16c5ac395bab158" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/c/d/cd8cdfa223bfa4522bf87042be1c2a71650f4316" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/d/3/d386f7cb0f57b71a5523e6b59b42d9cd8c710726" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/d/6/d62c7fedaf4787987de3084aa56b70302bfab6f3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/e/7/e7aeb4a8214a4d40c7bfb6b6cbe1182768aa3589" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/e/a/eaf7efd3fb9461fca61daadd9c364875b9d56173" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/f/2/f211d6132c0a4b9e9980c201a31a7acb3bd69b79" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/index.pb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.postgresql/docker-compose.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Application.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/entity/Cluster.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/entity/Endpoint.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/entity/Group.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/entity/GroupRoleAssignment.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/entity/Path.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/entity/Role.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/entity/RoleEndpointPermission.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/entity/Service.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/entity/Target.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/entity/TargetClusterBelonging.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/entity/User.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/entity/UserGroupBelonging.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/ClusterRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/EndpointRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/GroupRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/GroupRoleAssignmentRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/PathRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/RoleEndpointPermissionRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/RoleRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/ServiceRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/TargetClusterBelongingRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/TargetRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/UserGroupBelongingRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/UserRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/PathService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V1.0.10__target_cluster_belongings_schema.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V1.0.11__endpoints_schema.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V1.0.12__role_endpoint_permissions_schema.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V1.0.1__users_schema.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V1.0.2__groups_schema.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V1.0.3__user_group_belongings.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V1.0.4__roles_schema.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V1.0.5__group_role_assignments_schema.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V1.0.6__services_schema.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V1.0.7__paths_schema.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V1.0.8__targets_schema.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V1.0.9__clusters_schema.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/listener/FlywayTestExecutionListener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/ClusterRepositoryTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/EndpointRepositoryTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/GroupRepositoryTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/GroupRoleAssignmentRepositoryTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/PathRepositoryTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/RoleEndpointPermissionRepositoryTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/RoleRepositoryTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/ServiceRepositoryTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/TargetBelongsGroupsRepositoryTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/TargetRepositoryTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/UserGroupBelongingRepositoryTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/UserRepositoryTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.101__users_data.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.102__groups_data.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.103__user_group_belongings_data.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.104__roles_data.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.105__group_role_assignments_data.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.106__services_data.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.107__paths_data.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.108__targets_data.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.109__clusters_data.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.110__target_clust_belongings_data.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.111__endpoints_data.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.112__role_endpoint_permissions_data.sql" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="JUnit5 Test Class" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="FormatOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="OptimizeOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="2YRePanH7obNZKiAsKsfRatro5n" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "last_opened_file_path": "/Users/mitsuru/dev/rbac-service/rbac-service/src/test/resources/db/migration",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "configurable.group.tools"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/test/resources/db/migration" />
+      <recent name="$PROJECT_DIR$/src/main/resources/db/migration" />
+    </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/test/resources/db/migration" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="org.example.persistence.repository" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="org.example.persistence.repository" />
+      <recent name="org.example.it.persistence.repository" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="org.example.persistence.repository" />
+      <recent name="org.example.persistence.entity" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JUnit.EndpointRepositoryTest">
+    <configuration name="ClusterRepositoryTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rbac-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.persistence.repository.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.persistence.repository" />
+      <option name="MAIN_CLASS_NAME" value="org.example.persistence.repository.ClusterRepositoryTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="EndpointRepositoryTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rbac-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.persistence.repository.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.persistence.repository" />
+      <option name="MAIN_CLASS_NAME" value="org.example.persistence.repository.EndpointRepositoryTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TargetBelongsGroupsRepositoryTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rbac-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.persistence.repository.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.persistence.repository" />
+      <option name="MAIN_CLASS_NAME" value="org.example.persistence.repository.TargetBelongsGroupsRepositoryTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TargetRepositoryTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rbac-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.persistence.repository.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.persistence.repository" />
+      <option name="MAIN_CLASS_NAME" value="org.example.persistence.repository.TargetRepositoryTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="repository in rbac-service" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rbac-service" />
+      <option name="TEST_OBJECT" value="directory" />
+      <dir value="$PROJECT_DIR$/src/test/java/org/example/persistence/repository" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.EndpointRepositoryTest" />
+        <item itemvalue="JUnit.repository in rbac-service" />
+        <item itemvalue="JUnit.TargetBelongsGroupsRepositoryTest" />
+        <item itemvalue="JUnit.ClusterRepositoryTest" />
+        <item itemvalue="JUnit.TargetRepositoryTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="" />
+      <created>1700492798301</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1700492798301</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

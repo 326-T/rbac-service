@@ -34,7 +34,7 @@ class ClusterRepositoryTest {
     class regular {
 
       @Test
-      @DisplayName("ターゲットグループの件数を取得できる")
+      @DisplayName("クラスタの件数を取得できる")
       void countTheIndexes() {
         // when
         Mono<Long> count = clusterRepository.count();
@@ -53,7 +53,7 @@ class ClusterRepositoryTest {
     class regular {
 
       @Test
-      @DisplayName("ターゲットグループを全件取得できる")
+      @DisplayName("クラスタを全件取得できる")
       void findAllTheIndexes() {
         // when
         Flux<Cluster> targetGroupFlux = clusterRepository.findAll();
@@ -85,7 +85,7 @@ class ClusterRepositoryTest {
     class regular {
 
       @Test
-      @DisplayName("ターゲットグループをIDで取得できる")
+      @DisplayName("クラスタをIDで取得できる")
       void findUserById() {
         // when
         Mono<Cluster> targetGroupMono = clusterRepository.findById(1L);
@@ -110,7 +110,7 @@ class ClusterRepositoryTest {
     class regular {
 
       @Test
-      @DisplayName("ターゲットグループを更新できる")
+      @DisplayName("クラスタを更新できる")
       void updateTargetGroup() {
         // given
         Cluster cluster = Cluster.builder()
@@ -138,7 +138,7 @@ class ClusterRepositoryTest {
       }
 
       @Test
-      @DisplayName("ターゲットグループを新規登録できる")
+      @DisplayName("クラスタを新規登録できる")
       void insertTargetGroup() {
         // given
         Cluster cluster = Cluster.builder()
@@ -175,7 +175,7 @@ class ClusterRepositoryTest {
     class regular {
 
       @Test
-      @DisplayName("ターゲットグループをIDで削除できる")
+      @DisplayName("クラスタをIDで削除できる")
       void deleteTargetGroupById() {
         // when
         Mono<Void> voidMono = clusterRepository.deleteById(3L);

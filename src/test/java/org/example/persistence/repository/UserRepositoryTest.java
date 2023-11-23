@@ -64,25 +64,19 @@ public class UserRepositoryTest {
                     .extracting(
                         User::getId, User::getName, User::getEmail,
                         User::getPasswordDigest, User::getToken)
-                    .containsExactly(
-                        1L, "user1", "xxx@example.org",
-                        "password_digest1", "token1"))
+                    .containsExactly(1L, "user1", "xxx@example.org", "password_digest1", "token1"))
             .assertNext(
                 user -> assertThat(user)
                     .extracting(
                         User::getId, User::getName, User::getEmail,
                         User::getPasswordDigest, User::getToken)
-                    .containsExactly(
-                        2L, "user2", "yyy@example.org",
-                        "password_digest2", "token2"))
+                    .containsExactly(2L, "user2", "yyy@example.org", "password_digest2", "token2"))
             .assertNext(
                 user -> assertThat(user)
                     .extracting(
                         User::getId, User::getName, User::getEmail,
                         User::getPasswordDigest, User::getToken)
-                    .containsExactly(
-                        3L, "user3", "zzz@example.org",
-                        "password_digest3", "token3"))
+                    .containsExactly(3L, "user3", "zzz@example.org", "password_digest3", "token3"))
             .verifyComplete();
       }
     }
@@ -107,9 +101,7 @@ public class UserRepositoryTest {
                 user -> assertThat(user)
                     .extracting(User::getId, User::getName, User::getEmail,
                         User::getPasswordDigest, User::getToken)
-                    .containsExactly(
-                        1L, "user1", "xxx@example.org",
-                        "password_digest1", "token1"))
+                    .containsExactly(1L, "user1", "xxx@example.org", "password_digest1", "token1"))
             .verifyComplete();
       }
     }
@@ -142,18 +134,14 @@ public class UserRepositoryTest {
                 user1 -> assertThat(user1)
                     .extracting(User::getId, User::getName, User::getEmail,
                         User::getPasswordDigest, User::getToken)
-                    .containsExactly(
-                        2L, "USER2", "bbb@example.org",
-                        "PASSWORD_DIGEST2", "TOKEN2"))
+                    .containsExactly(2L, "USER2", "bbb@example.org", "PASSWORD_DIGEST2", "TOKEN2"))
             .verifyComplete();
         userRepository.findById(2L).as(StepVerifier::create)
             .assertNext(
                 user1 -> assertThat(user1)
                     .extracting(User::getId, User::getName, User::getEmail,
                         User::getPasswordDigest, User::getToken)
-                    .containsExactly(
-                        2L, "USER2", "bbb@example.org",
-                        "PASSWORD_DIGEST2", "TOKEN2"))
+                    .containsExactly(2L, "USER2", "bbb@example.org", "PASSWORD_DIGEST2", "TOKEN2"))
             .verifyComplete();
       }
 
@@ -170,22 +158,16 @@ public class UserRepositoryTest {
         StepVerifier.create(userMono)
             .assertNext(
                 user1 -> assertThat(user1)
-                    .extracting(
-                        User::getId, User::getName, User::getEmail,
+                    .extracting(User::getId, User::getName, User::getEmail,
                         User::getPasswordDigest, User::getToken)
-                    .containsExactly(
-                        4L, "user4", "aaa@example.org",
-                        "password_digest4", "token4"))
+                    .containsExactly(4L, "user4", "aaa@example.org", "password_digest4", "token4"))
             .verifyComplete();
         userRepository.findById(4L).as(StepVerifier::create)
             .assertNext(
                 user1 -> assertThat(user1)
-                    .extracting(
-                        User::getId, User::getName, User::getEmail,
+                    .extracting(User::getId, User::getName, User::getEmail,
                         User::getPasswordDigest, User::getToken)
-                    .containsExactly(
-                        4L, "user4", "aaa@example.org",
-                        "password_digest4", "token4"))
+                    .containsExactly(4L, "user4", "aaa@example.org", "password_digest4", "token4"))
             .verifyComplete();
 
       }

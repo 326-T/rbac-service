@@ -7,14 +7,31 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./data:/var/lib/postgresql/data
+      - volume-postgres:/var/lib/postgresql/data
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-      - TZ="Asia/Tokyo"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+      TZ: "Asia/Tokyo"
     healthcheck:
       test: [ "CMD", "pg_isready", "-U", "postgres" ]
       interval: 5s
       timeout: 5s
       retries: 5
+  pgadmin:
+    image: dpage/pgadmin4:6.11
+    container_name: pgadmin
+    ports:
+      - "9080:80"
+    volumes:
+      - volume-pgadmin:/var/lib/pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: example@example.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    depends_on:
+      - postgres
+volumes:
+  volume-postgres:
+    name: data
+  volume-pgadmin:
+    name: pgadmin

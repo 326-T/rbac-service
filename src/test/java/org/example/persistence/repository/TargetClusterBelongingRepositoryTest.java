@@ -20,7 +20,7 @@ import reactor.test.StepVerifier;
 
 @SpringBootTest
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-class TargetBelongsGroupsRepositoryTest {
+class TargetClusterBelongingRepositoryTest {
 
   @Autowired
   private TargetClusterBelongingRepository targetClusterBelongingRepository;

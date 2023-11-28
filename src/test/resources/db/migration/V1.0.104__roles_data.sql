@@ -1,4 +1,4 @@
-INSERT INTO roles (name, created_by)
+INSERT INTO rbac_roles (name, created_by)
 VALUES
     ('developers', 1),
     ('operations', 2),

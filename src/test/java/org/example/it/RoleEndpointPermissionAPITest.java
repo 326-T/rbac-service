@@ -40,7 +40,7 @@ public class RoleEndpointPermissionAPITest {
       void countTheIndexes() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/roleEndpointPermissions/count")
+            .uri("/rbac-service/v1/role-endpoint-permissions/count")
             .exchange()
             .expectStatus().isOk()
             .expectBody(Long.class).isEqualTo(3L);
@@ -61,7 +61,7 @@ public class RoleEndpointPermissionAPITest {
       void findAllTheIndexes() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/roleEndpointPermissions")
+            .uri("/rbac-service/v1/role-endpoint-permissions")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(RoleEndpointPermission.class)
@@ -92,7 +92,7 @@ public class RoleEndpointPermissionAPITest {
       void findUserById() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/roleEndpointPermissions/1")
+            .uri("/rbac-service/v1/role-endpoint-permissions/1")
             .exchange()
             .expectStatus().isOk()
             .expectBody(RoleEndpointPermission.class)
@@ -109,7 +109,7 @@ public class RoleEndpointPermissionAPITest {
   @Order(2)
   @Nested
   @TestExecutionListeners(listeners = {
-      FlywayTestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+      FlywayTestExecutionListener.class }, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
   class Update {
 
     @Nested
@@ -120,7 +120,7 @@ public class RoleEndpointPermissionAPITest {
       void insertTargetRoleEndpointPermission() {
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/roleEndpointPermissions")
+            .uri("/rbac-service/v1/role-endpoint-permissions")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
@@ -128,28 +128,23 @@ public class RoleEndpointPermissionAPITest {
                   "endpointId": 1,
                   "createdBy": 1
                 }
-                """
-            )
+                """)
             .exchange()
             .expectStatus().isOk()
             .expectBody(RoleEndpointPermission.class)
-            .consumeWith(response ->
-                assertThat(response.getResponseBody())
-                    .extracting(RoleEndpointPermission::getId, RoleEndpointPermission::getRoleId,
-                        RoleEndpointPermission::getEndpointId, RoleEndpointPermission::getCreatedBy)
-                    .containsExactly(4L, 3L, 1L, 1L)
-            );
+            .consumeWith(response -> assertThat(response.getResponseBody())
+                .extracting(RoleEndpointPermission::getId, RoleEndpointPermission::getRoleId,
+                    RoleEndpointPermission::getEndpointId, RoleEndpointPermission::getCreatedBy)
+                .containsExactly(4L, 3L, 1L, 1L));
         webTestClient.get()
-            .uri("/rbac-service/v1/roleEndpointPermissions/4")
+            .uri("/rbac-service/v1/role-endpoint-permissions/4")
             .exchange()
             .expectStatus().isOk()
             .expectBody(RoleEndpointPermission.class)
-            .consumeWith(response ->
-                assertThat(response.getResponseBody())
-                    .extracting(RoleEndpointPermission::getId, RoleEndpointPermission::getRoleId,
-                        RoleEndpointPermission::getEndpointId, RoleEndpointPermission::getCreatedBy)
-                    .containsExactly(4L, 3L, 1L, 1L)
-            );
+            .consumeWith(response -> assertThat(response.getResponseBody())
+                .extracting(RoleEndpointPermission::getId, RoleEndpointPermission::getRoleId,
+                    RoleEndpointPermission::getEndpointId, RoleEndpointPermission::getCreatedBy)
+                .containsExactly(4L, 3L, 1L, 1L));
       }
     }
   }
@@ -157,7 +152,7 @@ public class RoleEndpointPermissionAPITest {
   @Order(3)
   @Nested
   @TestExecutionListeners(listeners = {
-      FlywayTestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+      FlywayTestExecutionListener.class }, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
   class DeleteById {
 
     @Nested
@@ -169,12 +164,12 @@ public class RoleEndpointPermissionAPITest {
       void deleteTargetRoleEndpointPermissionById() {
         // when, then
         webTestClient.delete()
-            .uri("/rbac-service/v1/roleEndpointPermissions/3")
+            .uri("/rbac-service/v1/role-endpoint-permissions/3")
             .exchange()
             .expectStatus().isNoContent()
             .expectBody(Void.class);
         webTestClient.get()
-            .uri("/rbac-service/v1/roleEndpointPermissions/3")
+            .uri("/rbac-service/v1/role-endpoint-permissions/3")
             .exchange()
             .expectStatus().isOk()
             .expectBody(Void.class);

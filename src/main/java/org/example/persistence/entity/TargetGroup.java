@@ -12,8 +12,8 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Data
 @Builder
-@Table("clusters")
-public class Cluster {
+@Table("rbac_target_groups")
+public class TargetGroup {
 
   @Id
   private Long id;

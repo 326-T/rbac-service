@@ -1,4 +1,4 @@
-INSERT INTO user_group_belongings (user_id, group_id, created_by)
+INSERT INTO rbac_user_group_belongings (user_id, user_group_id, created_by)
 VALUES
     (1, 1, 1),
     (2, 2, 2),

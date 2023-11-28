@@ -1,7 +1,7 @@
 package org.example.web.controller;
 
-import org.example.persistence.entity.Group;
-import org.example.service.GroupService;
+import org.example.persistence.entity.TargetGroup;
+import org.example.service.TargetGroupService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,44 +16,44 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/rbac-service/v1/groups")
-public class GroupRestController {
+@RequestMapping("/rbac-service/v1/target-groups")
+public class TargetGroupRestController {
 
-  private final GroupService groupService;
+  private final TargetGroupService targetGroupService;
 
-  public GroupRestController(GroupService groupService) {
-    this.groupService = groupService;
+  public TargetGroupRestController(TargetGroupService targetGroupService) {
+    this.targetGroupService = targetGroupService;
   }
 
   @GetMapping
-  public Flux<Group> index() {
-    return groupService.findAll();
+  public Flux<TargetGroup> index() {
+    return targetGroupService.findAll();
   }
 
   @GetMapping("/count")
   public Mono<Long> count() {
-    return groupService.count();
+    return targetGroupService.count();
   }
 
   @GetMapping("/{id}")
-  public Mono<Group> findById(@PathVariable Long id) {
-    return groupService.findById(id);
+  public Mono<TargetGroup> findById(@PathVariable Long id) {
+    return targetGroupService.findById(id);
   }
 
   @PostMapping
-  public Mono<Group> save(@RequestBody Group group) {
-    return groupService.insert(group);
+  public Mono<TargetGroup> save(@RequestBody TargetGroup targetGroup) {
+    return targetGroupService.insert(targetGroup);
   }
 
   @PutMapping("/{id}")
-  public Mono<Group> update(@PathVariable Long id, @RequestBody Group group) {
-    group.setId(id);
-    return groupService.update(group);
+  public Mono<TargetGroup> update(@PathVariable Long id, @RequestBody TargetGroup targetGroup) {
+    targetGroup.setId(id);
+    return targetGroupService.update(targetGroup);
   }
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public Mono<Void> deleteById(@PathVariable Long id) {
-    return groupService.deleteById(id);
+    return targetGroupService.deleteById(id);
   }
 }

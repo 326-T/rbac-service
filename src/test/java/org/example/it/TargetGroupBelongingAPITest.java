@@ -5,7 +5,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 
 import org.example.Application;
 import org.example.listener.FlywayTestExecutionListener;
-import org.example.persistence.entity.TargetClusterBelonging;
+import org.example.persistence.entity.TargetGroupBelonging;
 import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,7 +22,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @AutoConfigureWebClient
-public class TargetClusterBelongingAPITest {
+public class TargetGroupBelongingAPITest {
 
   @Autowired
   private WebTestClient webTestClient;
@@ -40,7 +40,7 @@ public class TargetClusterBelongingAPITest {
       void countTheIndexes() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/targetClusterBelongings/count")
+            .uri("/rbac-service/v1/target-group-belongings/count")
             .exchange()
             .expectStatus().isOk()
             .expectBody(Long.class).isEqualTo(3L);
@@ -61,15 +61,15 @@ public class TargetClusterBelongingAPITest {
       void findAllTheIndexes() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/targetClusterBelongings")
+            .uri("/rbac-service/v1/target-group-belongings")
             .exchange()
             .expectStatus().isOk()
-            .expectBodyList(TargetClusterBelonging.class)
+            .expectBodyList(TargetGroupBelonging.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody()).hasSize(3);
               assertThat(response.getResponseBody())
-                  .extracting(TargetClusterBelonging::getId, TargetClusterBelonging::getTargetId,
-                      TargetClusterBelonging::getClusterId, TargetClusterBelonging::getCreatedBy)
+                  .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getTargetId,
+                      TargetGroupBelonging::getTargetGroupId, TargetGroupBelonging::getCreatedBy)
                   .containsExactly(
                       tuple(1L, 1L, 1L, 1L),
                       tuple(2L, 2L, 2L, 2L),
@@ -92,14 +92,14 @@ public class TargetClusterBelongingAPITest {
       void findUserById() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/targetClusterBelongings/1")
+            .uri("/rbac-service/v1/target-group-belongings/1")
             .exchange()
             .expectStatus().isOk()
-            .expectBody(TargetClusterBelonging.class)
+            .expectBody(TargetGroupBelonging.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(TargetClusterBelonging::getId, TargetClusterBelonging::getTargetId,
-                      TargetClusterBelonging::getClusterId, TargetClusterBelonging::getCreatedBy)
+                  .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getTargetId,
+                      TargetGroupBelonging::getTargetGroupId, TargetGroupBelonging::getCreatedBy)
                   .containsExactly(1L, 1L, 1L, 1L);
             });
       }
@@ -120,36 +120,31 @@ public class TargetClusterBelongingAPITest {
       void insertTargetTargetClusterBelonging() {
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/targetClusterBelongings")
+            .uri("/rbac-service/v1/target-group-belongings")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
                   "targetId": 3,
-                  "clusterId": 1,
+                  "targetGroupId": 1,
                   "createdBy": 1
                 }
-                """
-            )
+                """)
             .exchange()
             .expectStatus().isOk()
-            .expectBody(TargetClusterBelonging.class)
-            .consumeWith(response ->
-                assertThat(response.getResponseBody())
-                    .extracting(TargetClusterBelonging::getId, TargetClusterBelonging::getTargetId,
-                        TargetClusterBelonging::getClusterId, TargetClusterBelonging::getCreatedBy)
-                    .containsExactly(4L, 3L, 1L, 1L)
-            );
+            .expectBody(TargetGroupBelonging.class)
+            .consumeWith(response -> assertThat(response.getResponseBody())
+                .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getTargetId,
+                    TargetGroupBelonging::getTargetGroupId, TargetGroupBelonging::getCreatedBy)
+                .containsExactly(4L, 3L, 1L, 1L));
         webTestClient.get()
-            .uri("/rbac-service/v1/targetClusterBelongings/4")
+            .uri("/rbac-service/v1/target-group-belongings/4")
             .exchange()
             .expectStatus().isOk()
-            .expectBody(TargetClusterBelonging.class)
-            .consumeWith(response ->
-                assertThat(response.getResponseBody())
-                    .extracting(TargetClusterBelonging::getId, TargetClusterBelonging::getTargetId,
-                        TargetClusterBelonging::getClusterId, TargetClusterBelonging::getCreatedBy)
-                    .containsExactly(4L, 3L, 1L, 1L)
-            );
+            .expectBody(TargetGroupBelonging.class)
+            .consumeWith(response -> assertThat(response.getResponseBody())
+                .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getTargetId,
+                    TargetGroupBelonging::getTargetGroupId, TargetGroupBelonging::getCreatedBy)
+                .containsExactly(4L, 3L, 1L, 1L));
       }
     }
   }
@@ -169,12 +164,12 @@ public class TargetClusterBelongingAPITest {
       void deleteTargetTargetClusterBelongingById() {
         // when, then
         webTestClient.delete()
-            .uri("/rbac-service/v1/targetClusterBelongings/3")
+            .uri("/rbac-service/v1/target-group-belongings/3")
             .exchange()
             .expectStatus().isNoContent()
             .expectBody(Void.class);
         webTestClient.get()
-            .uri("/rbac-service/v1/targetClusterBelongings/3")
+            .uri("/rbac-service/v1/target-group-belongings/3")
             .exchange()
             .expectStatus().isOk()
             .expectBody(Void.class);

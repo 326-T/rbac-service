@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import org.example.listener.FlywayTestExecutionListener;
-import org.example.persistence.entity.Cluster;
+import org.example.persistence.entity.TargetGroup;
 import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -20,10 +20,10 @@ import reactor.test.StepVerifier;
 
 @SpringBootTest
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-class ClusterRepositoryTest {
+class TargetGroupRepositoryTest {
 
   @Autowired
-  private ClusterRepository clusterRepository;
+  private TargetGroupRepository targetGroupRepository;
 
   @Order(1)
   @Nested
@@ -37,7 +37,7 @@ class ClusterRepositoryTest {
       @DisplayName("クラスタの件数を取得できる")
       void countTheIndexes() {
         // when
-        Mono<Long> count = clusterRepository.count();
+        Mono<Long> count = targetGroupRepository.count();
         // then
         StepVerifier.create(count).expectNext(3L).verifyComplete();
       }
@@ -56,20 +56,20 @@ class ClusterRepositoryTest {
       @DisplayName("クラスタを全件取得できる")
       void findAllTheIndexes() {
         // when
-        Flux<Cluster> targetGroupFlux = clusterRepository.findAll();
+        Flux<TargetGroup> targetGroupFlux = targetGroupRepository.findAll();
         // then
         StepVerifier.create(targetGroupFlux)
             .assertNext(
                 cluster -> assertThat(cluster)
-                    .extracting(Cluster::getId, Cluster::getName, Cluster::getCreatedBy)
+                    .extracting(TargetGroup::getId, TargetGroup::getName, TargetGroup::getCreatedBy)
                     .containsExactly(1L, "target-group-1", 1L))
             .assertNext(
                 cluster -> assertThat(cluster)
-                    .extracting(Cluster::getId, Cluster::getName, Cluster::getCreatedBy)
+                    .extracting(TargetGroup::getId, TargetGroup::getName, TargetGroup::getCreatedBy)
                     .containsExactly(2L, "target-group-2", 2L))
             .assertNext(
                 cluster -> assertThat(cluster)
-                    .extracting(Cluster::getId, Cluster::getName, Cluster::getCreatedBy)
+                    .extracting(TargetGroup::getId, TargetGroup::getName, TargetGroup::getCreatedBy)
                     .containsExactly(3L, "target-group-3", 3L))
             .verifyComplete();
       }
@@ -88,12 +88,12 @@ class ClusterRepositoryTest {
       @DisplayName("クラスタをIDで取得できる")
       void findUserById() {
         // when
-        Mono<Cluster> targetGroupMono = clusterRepository.findById(1L);
+        Mono<TargetGroup> targetGroupMono = targetGroupRepository.findById(1L);
         // then
         StepVerifier.create(targetGroupMono)
             .assertNext(
                 cluster -> assertThat(cluster)
-                    .extracting(Cluster::getId, Cluster::getName, Cluster::getCreatedBy)
+                    .extracting(TargetGroup::getId, TargetGroup::getName, TargetGroup::getCreatedBy)
                     .containsExactly(1L, "target-group-1", 1L))
             .verifyComplete();
       }
@@ -113,7 +113,7 @@ class ClusterRepositoryTest {
       @DisplayName("クラスタを更新できる")
       void updateTargetGroup() {
         // given
-        Cluster cluster = Cluster.builder()
+        TargetGroup targetGroup = TargetGroup.builder()
             .id(2L)
             .name("TARGET-GROUP-2")
             .createdBy(1L)
@@ -121,18 +121,18 @@ class ClusterRepositoryTest {
             .updatedAt(LocalDateTime.now())
             .build();
         // when
-        Mono<Cluster> targetGroupMono = clusterRepository.save(cluster);
+        Mono<TargetGroup> targetGroupMono = targetGroupRepository.save(targetGroup);
         // then
         StepVerifier.create(targetGroupMono)
             .assertNext(
                 cluster1 -> assertThat(cluster1)
-                    .extracting(Cluster::getId, Cluster::getName, Cluster::getCreatedBy)
+                    .extracting(TargetGroup::getId, TargetGroup::getName, TargetGroup::getCreatedBy)
                     .containsExactly(2L, "TARGET-GROUP-2", 1L))
             .verifyComplete();
-        clusterRepository.findById(2L).as(StepVerifier::create)
+        targetGroupRepository.findById(2L).as(StepVerifier::create)
             .assertNext(
                 cluster1 -> assertThat(cluster1)
-                    .extracting(Cluster::getId, Cluster::getName, Cluster::getCreatedBy)
+                    .extracting(TargetGroup::getId, TargetGroup::getName, TargetGroup::getCreatedBy)
                     .containsExactly(2L, "TARGET-GROUP-2", 1L))
             .verifyComplete();
       }
@@ -141,23 +141,23 @@ class ClusterRepositoryTest {
       @DisplayName("クラスタを新規登録できる")
       void insertTargetGroup() {
         // given
-        Cluster cluster = Cluster.builder()
+        TargetGroup targetGroup = TargetGroup.builder()
             .name("target-group-4")
             .createdBy(1L)
             .build();
         // when
-        Mono<Cluster> targetGroupMono = clusterRepository.save(cluster);
+        Mono<TargetGroup> targetGroupMono = targetGroupRepository.save(targetGroup);
         // then
         StepVerifier.create(targetGroupMono)
             .assertNext(
                 cluster1 -> assertThat(cluster1)
-                    .extracting(Cluster::getId, Cluster::getName, Cluster::getCreatedBy)
+                    .extracting(TargetGroup::getId, TargetGroup::getName, TargetGroup::getCreatedBy)
                     .containsExactly(4L, "target-group-4", 1L))
             .verifyComplete();
-        clusterRepository.findById(4L).as(StepVerifier::create)
+        targetGroupRepository.findById(4L).as(StepVerifier::create)
             .assertNext(
                 cluster1 -> assertThat(cluster1)
-                    .extracting(Cluster::getId, Cluster::getName, Cluster::getCreatedBy)
+                    .extracting(TargetGroup::getId, TargetGroup::getName, TargetGroup::getCreatedBy)
                     .containsExactly(4L, "target-group-4", 1L))
             .verifyComplete();
       }
@@ -178,10 +178,10 @@ class ClusterRepositoryTest {
       @DisplayName("クラスタをIDで削除できる")
       void deleteTargetGroupById() {
         // when
-        Mono<Void> voidMono = clusterRepository.deleteById(3L);
+        Mono<Void> voidMono = targetGroupRepository.deleteById(3L);
         // then
         StepVerifier.create(voidMono).verifyComplete();
-        clusterRepository.findById(3L).as(StepVerifier::create).verifyComplete();
+        targetGroupRepository.findById(3L).as(StepVerifier::create).verifyComplete();
       }
     }
   }

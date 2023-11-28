@@ -12,7 +12,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Data
 @Builder
-@Table("paths")
+@Table("rbac_paths")
 public class Path {
 
   @Id

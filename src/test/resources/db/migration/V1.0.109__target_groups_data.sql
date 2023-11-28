@@ -1,4 +1,4 @@
-INSERT INTO clusters (name, created_by)
+INSERT INTO rbac_target_groups (name, created_by)
 VALUES
     ('target-group-1', 1),
     ('target-group-2', 2),

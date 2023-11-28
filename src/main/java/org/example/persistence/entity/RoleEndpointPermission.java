@@ -12,7 +12,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Data
 @Builder
-@Table("role_endpoint_permissions")
+@Table("rbac_role_endpoint_permissions")
 public class RoleEndpointPermission {
 
   @Id

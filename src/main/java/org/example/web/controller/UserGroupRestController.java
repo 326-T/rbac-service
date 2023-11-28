@@ -1,7 +1,7 @@
 package org.example.web.controller;
 
-import org.example.persistence.entity.Cluster;
-import org.example.service.ClusterService;
+import org.example.persistence.entity.UserGroup;
+import org.example.service.UserGroupService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,44 +16,44 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/rbac-service/v1/clusters")
-public class ClusterRestController {
+@RequestMapping("/rbac-service/v1/user-groups")
+public class UserGroupRestController {
 
-  private final ClusterService clusterService;
+  private final UserGroupService userGroupService;
 
-  public ClusterRestController(ClusterService clusterService) {
-    this.clusterService = clusterService;
+  public UserGroupRestController(UserGroupService userGroupService) {
+    this.userGroupService = userGroupService;
   }
 
   @GetMapping
-  public Flux<Cluster> index() {
-    return clusterService.findAll();
+  public Flux<UserGroup> index() {
+    return userGroupService.findAll();
   }
 
   @GetMapping("/count")
   public Mono<Long> count() {
-    return clusterService.count();
+    return userGroupService.count();
   }
 
   @GetMapping("/{id}")
-  public Mono<Cluster> findById(@PathVariable Long id) {
-    return clusterService.findById(id);
+  public Mono<UserGroup> findById(@PathVariable Long id) {
+    return userGroupService.findById(id);
   }
 
   @PostMapping
-  public Mono<Cluster> save(@RequestBody Cluster cluster) {
-    return clusterService.insert(cluster);
+  public Mono<UserGroup> save(@RequestBody UserGroup userGroup) {
+    return userGroupService.insert(userGroup);
   }
 
   @PutMapping("/{id}")
-  public Mono<Cluster> update(@PathVariable Long id, @RequestBody Cluster cluster) {
-    cluster.setId(id);
-    return clusterService.update(cluster);
+  public Mono<UserGroup> update(@PathVariable Long id, @RequestBody UserGroup userGroup) {
+    userGroup.setId(id);
+    return userGroupService.update(userGroup);
   }
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public Mono<Void> deleteById(@PathVariable Long id) {
-    return clusterService.deleteById(id);
+    return userGroupService.deleteById(id);
   }
 }

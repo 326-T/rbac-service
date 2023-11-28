@@ -62,17 +62,17 @@ class EndpointRepositoryTest {
             .assertNext(
                 endpoint -> assertThat(endpoint)
                     .extracting(Endpoint::getId, Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getClusterId, Endpoint::getCreatedBy)
+                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
                     .containsExactly(1L, 1L, "GET", 1L, 1L))
             .assertNext(
                 endpoint -> assertThat(endpoint)
                     .extracting(Endpoint::getId, Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getClusterId, Endpoint::getCreatedBy)
+                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
                     .containsExactly(2L, 2L, "POST", 2L, 2L))
             .assertNext(
                 endpoint -> assertThat(endpoint)
                     .extracting(Endpoint::getId, Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getClusterId, Endpoint::getCreatedBy)
+                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
                     .containsExactly(3L, 3L, "PUT", 3L, 3L))
             .verifyComplete();
       }
@@ -98,7 +98,7 @@ class EndpointRepositoryTest {
             .assertNext(
                 endpoint -> assertThat(endpoint)
                     .extracting(Endpoint::getId, Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getClusterId, Endpoint::getCreatedBy)
+                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
                     .containsExactly(1L, 1L, "GET", 1L, 1L))
             .verifyComplete();
       }
@@ -122,7 +122,7 @@ class EndpointRepositoryTest {
             .id(2L)
             .pathId(3L)
             .method("GET")
-            .clusterId(2L)
+            .targetGroupId(2L)
             .createdBy(1L)
             .createdAt(LocalDateTime.now())
             .updatedAt(LocalDateTime.now())
@@ -135,14 +135,14 @@ class EndpointRepositoryTest {
             .assertNext(
                 endpoint1 -> assertThat(endpoint1)
                     .extracting(Endpoint::getId, Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getClusterId, Endpoint::getCreatedBy)
+                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
                     .containsExactly(2L, 3L, "GET", 2L, 1L))
             .verifyComplete();
         endpointRepository.findById(2L).as(StepVerifier::create)
             .assertNext(
                 endpoint1 -> assertThat(endpoint1)
                     .extracting(Endpoint::getId, Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getClusterId, Endpoint::getCreatedBy)
+                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
                     .containsExactly(2L, 3L, "GET", 2L, 1L))
             .verifyComplete();
       }
@@ -154,7 +154,7 @@ class EndpointRepositoryTest {
         Endpoint endpoint = Endpoint.builder()
             .pathId(1L)
             .method("DELETE")
-            .clusterId(2L)
+            .targetGroupId(2L)
             .createdBy(3L)
             .build();
         // when
@@ -165,14 +165,14 @@ class EndpointRepositoryTest {
             .assertNext(
                 endpoint1 -> assertThat(endpoint1)
                     .extracting(Endpoint::getId, Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getClusterId, Endpoint::getCreatedBy)
+                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
                     .containsExactly(4L, 1L, "DELETE", 2L, 3L))
             .verifyComplete();
         endpointRepository.findById(4L).as(StepVerifier::create)
             .assertNext(
                 endpoint1 -> assertThat(endpoint1)
                     .extracting(Endpoint::getId, Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getClusterId, Endpoint::getCreatedBy)
+                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
                     .containsExactly(4L, 1L, "DELETE", 2L, 3L))
             .verifyComplete();
       }

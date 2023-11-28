@@ -62,17 +62,17 @@ class UserGroupBelongingRepositoryTest {
             .assertNext(
                 userGroupBelonging -> assertThat(userGroupBelonging)
                     .extracting(UserGroupBelonging::getId, UserGroupBelonging::getUserId,
-                        UserGroupBelonging::getGroupId, UserGroupBelonging::getCreatedBy)
+                        UserGroupBelonging::getUserGroupId, UserGroupBelonging::getCreatedBy)
                     .containsExactly(1L, 1L, 1L, 1L))
             .assertNext(
                 userGroupBelonging -> assertThat(userGroupBelonging)
                     .extracting(UserGroupBelonging::getId, UserGroupBelonging::getUserId,
-                        UserGroupBelonging::getGroupId, UserGroupBelonging::getCreatedBy)
+                        UserGroupBelonging::getUserGroupId, UserGroupBelonging::getCreatedBy)
                     .containsExactly(2L, 2L, 2L, 2L))
             .assertNext(
                 userGroupBelonging -> assertThat(userGroupBelonging)
                     .extracting(UserGroupBelonging::getId, UserGroupBelonging::getUserId,
-                        UserGroupBelonging::getGroupId, UserGroupBelonging::getCreatedBy)
+                        UserGroupBelonging::getUserGroupId, UserGroupBelonging::getCreatedBy)
                     .containsExactly(3L, 3L, 3L, 3L))
             .verifyComplete();
       }
@@ -97,7 +97,7 @@ class UserGroupBelongingRepositoryTest {
             .assertNext(
                 userGroupBelonging -> assertThat(userGroupBelonging)
                     .extracting(UserGroupBelonging::getId, UserGroupBelonging::getUserId,
-                        UserGroupBelonging::getGroupId, UserGroupBelonging::getCreatedBy)
+                        UserGroupBelonging::getUserGroupId, UserGroupBelonging::getCreatedBy)
                     .containsExactly(1L, 1L, 1L, 1L))
             .verifyComplete();
       }
@@ -120,7 +120,7 @@ class UserGroupBelongingRepositoryTest {
         UserGroupBelonging userGroupBelonging = UserGroupBelonging.builder()
             .id(2L)
             .userId(1L)
-            .groupId(2L)
+            .userGroupId(2L)
             .createdBy(3L)
             .createdAt(LocalDateTime.now())
             .updatedAt(LocalDateTime.now())
@@ -133,14 +133,14 @@ class UserGroupBelongingRepositoryTest {
             .assertNext(
                 userGroupBelonging1 -> assertThat(userGroupBelonging1)
                     .extracting(UserGroupBelonging::getId, UserGroupBelonging::getUserId,
-                        UserGroupBelonging::getGroupId, UserGroupBelonging::getCreatedBy)
+                        UserGroupBelonging::getUserGroupId, UserGroupBelonging::getCreatedBy)
                     .containsExactly(2L, 1L, 2L, 3L))
             .verifyComplete();
         userGroupBelongingRepository.findById(2L).as(StepVerifier::create)
             .assertNext(
                 userGroupBelonging1 -> assertThat(userGroupBelonging1)
                     .extracting(UserGroupBelonging::getId, UserGroupBelonging::getUserId,
-                        UserGroupBelonging::getGroupId, UserGroupBelonging::getCreatedBy)
+                        UserGroupBelonging::getUserGroupId, UserGroupBelonging::getCreatedBy)
                     .containsExactly(2L, 1L, 2L, 3L))
             .verifyComplete();
       }
@@ -151,7 +151,7 @@ class UserGroupBelongingRepositoryTest {
         // given
         UserGroupBelonging userGroupBelonging = UserGroupBelonging.builder()
             .userId(3L)
-            .groupId(1L)
+            .userGroupId(1L)
             .createdBy(1L)
             .build();
         // when
@@ -162,14 +162,14 @@ class UserGroupBelongingRepositoryTest {
             .assertNext(
                 userGroupBelonging1 -> assertThat(userGroupBelonging1)
                     .extracting(UserGroupBelonging::getId, UserGroupBelonging::getUserId,
-                        UserGroupBelonging::getGroupId, UserGroupBelonging::getCreatedBy)
+                        UserGroupBelonging::getUserGroupId, UserGroupBelonging::getCreatedBy)
                     .containsExactly(4L, 3L, 1L, 1L))
             .verifyComplete();
         userGroupBelongingRepository.findById(4L).as(StepVerifier::create)
             .assertNext(
                 userGroupBelonging1 -> assertThat(userGroupBelonging1)
                     .extracting(UserGroupBelonging::getId, UserGroupBelonging::getUserId,
-                        UserGroupBelonging::getGroupId, UserGroupBelonging::getCreatedBy)
+                        UserGroupBelonging::getUserGroupId, UserGroupBelonging::getCreatedBy)
                     .containsExactly(4L, 3L, 1L, 1L))
             .verifyComplete();
       }

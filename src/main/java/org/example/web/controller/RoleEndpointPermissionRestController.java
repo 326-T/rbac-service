@@ -15,7 +15,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/rbac-service/v1/roleEndpointPermissions")
+@RequestMapping("/rbac-service/v1/role-endpoint-permissions")
 public class RoleEndpointPermissionRestController {
 
   private final RoleEndpointPermissionService roleEndpointPermissionService;

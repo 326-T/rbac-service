@@ -12,7 +12,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Data
 @Builder
-@Table("targets")
+@Table("rbac_targets")
 public class Target {
 
   @Id

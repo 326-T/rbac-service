@@ -15,7 +15,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/rbac-service/v1/groupRoleAssignments")
+@RequestMapping("/rbac-service/v1/group-role-assignments")
 public class GroupRoleAssignmentRestController {
 
   private final GroupRoleAssignmentService groupRoleAssignmentService;

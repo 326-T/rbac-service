@@ -15,7 +15,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/rbac-service/v1/userGroupBelongings")
+@RequestMapping("/rbac-service/v1/user-group-belongings")
 public class UserGroupBelongingRestController {
 
   private final UserGroupBelongingService userGroupBelongingService;

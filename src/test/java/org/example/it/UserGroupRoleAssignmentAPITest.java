@@ -5,7 +5,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 
 import org.example.Application;
 import org.example.listener.FlywayTestExecutionListener;
-import org.example.persistence.entity.Group;
+import org.example.persistence.entity.GroupRoleAssignment;
 import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,7 +22,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @AutoConfigureWebClient
-public class GroupAPITest {
+public class UserGroupRoleAssignmentAPITest {
 
   @Autowired
   private WebTestClient webTestClient;
@@ -36,11 +36,11 @@ public class GroupAPITest {
     class regular {
 
       @Test
-      @DisplayName("グループの件数を取得できる")
+      @DisplayName("グループとロールの関係情報の件数を取得できる")
       void countTheIndexes() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/groups/count")
+            .uri("/rbac-service/v1/group-role-assignments/count")
             .exchange()
             .expectStatus().isOk()
             .expectBody(Long.class).isEqualTo(3L);
@@ -57,22 +57,23 @@ public class GroupAPITest {
     class regular {
 
       @Test
-      @DisplayName("グループを全件取得できる")
+      @DisplayName("グループとロールの関係情報を全件取得できる")
       void findAllTheIndexes() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/groups")
+            .uri("/rbac-service/v1/group-role-assignments")
             .exchange()
             .expectStatus().isOk()
-            .expectBodyList(Group.class)
+            .expectBodyList(GroupRoleAssignment.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody()).hasSize(3);
               assertThat(response.getResponseBody())
-                  .extracting(Group::getId, Group::getName, Group::getCreatedBy)
+                  .extracting(GroupRoleAssignment::getId, GroupRoleAssignment::getUserGroupId,
+                      GroupRoleAssignment::getRoleId, GroupRoleAssignment::getCreatedBy)
                   .containsExactly(
-                      tuple(1L, "group1", 1L),
-                      tuple(2L, "group2", 2L),
-                      tuple(3L, "group3", 3L));
+                      tuple(1L, 1L, 1L, 1L),
+                      tuple(2L, 2L, 2L, 2L),
+                      tuple(3L, 3L, 3L, 3L));
             });
       }
     }
@@ -87,18 +88,19 @@ public class GroupAPITest {
     class regular {
 
       @Test
-      @DisplayName("グループをIDで取得できる")
+      @DisplayName("グループとロールの関係情報をIDで取得できる")
       void findUserById() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/groups/1")
+            .uri("/rbac-service/v1/group-role-assignments/1")
             .exchange()
             .expectStatus().isOk()
-            .expectBody(Group.class)
+            .expectBody(GroupRoleAssignment.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(Group::getId, Group::getName, Group::getCreatedBy)
-                  .containsExactly(1L, "group1", 1L);
+                  .extracting(GroupRoleAssignment::getId, GroupRoleAssignment::getUserGroupId,
+                      GroupRoleAssignment::getRoleId, GroupRoleAssignment::getCreatedBy)
+                  .containsExactly(1L, 1L, 1L, 1L);
             });
       }
     }
@@ -114,78 +116,35 @@ public class GroupAPITest {
     class regular {
 
       @Test
-      @DisplayName("グループを更新できる")
-      void updateTargetGroup() {
-        // when, then
-        webTestClient.put()
-            .uri("/rbac-service/v1/groups/2")
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue("""
-                {
-                  "name": "TARGET-GROUP-2",
-                  "createdBy": 1
-                }
-                """
-            )
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Group.class)
-            .consumeWith(response -> {
-              assertThat(response.getResponseBody())
-                  .extracting(Group::getId, Group::getName, Group::getCreatedBy)
-                  .containsExactly(2L, "TARGET-GROUP-2", 1L);
-            });
-        webTestClient.get()
-            .uri("/rbac-service/v1/groups/2")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Group.class)
-            .consumeWith(response -> {
-              assertThat(response.getResponseBody())
-                  .extracting(Group::getId, Group::getName, Group::getCreatedBy)
-                  .containsExactly(2L, "TARGET-GROUP-2", 1L);
-            });
-      }
-    }
-
-    @Order(2)
-    @Nested
-    @TestExecutionListeners(listeners = {
-        FlywayTestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-    class Save {
-
-      @Test
-      @DisplayName("グループを新規登録できる")
-      void insertTargetGroup() {
+      @DisplayName("グループとロールの関係情報を新規登録できる")
+      void insertGroupGroupRoleAssignment() {
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/groups")
+            .uri("/rbac-service/v1/group-role-assignments")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "name": "target-group-4",
+                  "userGroupId": 3,
+                  "roleId": 1,
                   "createdBy": 1
                 }
-                """
-            )
+                """)
             .exchange()
             .expectStatus().isOk()
-            .expectBody(Group.class)
-            .consumeWith(response -> {
-              assertThat(response.getResponseBody())
-                  .extracting(Group::getId, Group::getName, Group::getCreatedBy)
-                  .containsExactly(4L, "target-group-4", 1L);
-            });
+            .expectBody(GroupRoleAssignment.class)
+            .consumeWith(response -> assertThat(response.getResponseBody())
+                .extracting(GroupRoleAssignment::getId, GroupRoleAssignment::getUserGroupId,
+                    GroupRoleAssignment::getRoleId, GroupRoleAssignment::getCreatedBy)
+                .containsExactly(4L, 3L, 1L, 1L));
         webTestClient.get()
-            .uri("/rbac-service/v1/groups/4")
+            .uri("/rbac-service/v1/group-role-assignments/4")
             .exchange()
             .expectStatus().isOk()
-            .expectBody(Group.class)
-            .consumeWith(response -> {
-              assertThat(response.getResponseBody())
-                  .extracting(Group::getId, Group::getName, Group::getCreatedBy)
-                  .containsExactly(4L, "target-group-4", 1L);
-            });
+            .expectBody(GroupRoleAssignment.class)
+            .consumeWith(response -> assertThat(response.getResponseBody())
+                .extracting(GroupRoleAssignment::getId, GroupRoleAssignment::getUserGroupId,
+                    GroupRoleAssignment::getRoleId, GroupRoleAssignment::getCreatedBy)
+                .containsExactly(4L, 3L, 1L, 1L));
       }
     }
   }
@@ -201,16 +160,16 @@ public class GroupAPITest {
     class regular {
 
       @Test
-      @DisplayName("グループをIDで削除できる")
-      void deleteTargetGroupById() {
+      @DisplayName("グループとロールの関係情報をIDで削除できる")
+      void deleteGroupGroupRoleAssignmentById() {
         // when, then
         webTestClient.delete()
-            .uri("/rbac-service/v1/groups/3")
+            .uri("/rbac-service/v1/group-role-assignments/3")
             .exchange()
             .expectStatus().isNoContent()
             .expectBody(Void.class);
         webTestClient.get()
-            .uri("/rbac-service/v1/groups/3")
+            .uri("/rbac-service/v1/group-role-assignments/3")
             .exchange()
             .expectStatus().isOk()
             .expectBody(Void.class);

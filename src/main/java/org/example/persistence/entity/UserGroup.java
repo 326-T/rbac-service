@@ -12,8 +12,8 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Data
 @Builder
-@Table("groups")
-public class Group {
+@Table("rbac_user_groups")
+public class UserGroup {
 
   @Id
   private Long id;

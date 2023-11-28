@@ -12,7 +12,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Data
 @Builder
-@Table("services")
+@Table("rbac_services")
 public class Service {
 
   @Id

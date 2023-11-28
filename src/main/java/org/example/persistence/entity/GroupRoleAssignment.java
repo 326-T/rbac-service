@@ -12,12 +12,12 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Data
 @Builder
-@Table("group_role_assignments")
+@Table("rbac_group_role_assignments")
 public class GroupRoleAssignment {
 
   @Id
   private Long id;
-  private Long groupId;
+  private Long userGroupId;
   private Long roleId;
   private Long createdBy;
   private LocalDateTime createdAt;

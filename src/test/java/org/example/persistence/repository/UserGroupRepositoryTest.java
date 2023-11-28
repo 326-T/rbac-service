@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import org.example.listener.FlywayTestExecutionListener;
-import org.example.persistence.entity.Group;
+import org.example.persistence.entity.UserGroup;
 import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -20,10 +20,10 @@ import reactor.test.StepVerifier;
 
 @SpringBootTest
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-class GroupRepositoryTest {
+class UserGroupRepositoryTest {
 
   @Autowired
-  private GroupRepository groupRepository;
+  private UserGroupRepository groupRepository;
 
   @Order(1)
   @Nested
@@ -56,20 +56,20 @@ class GroupRepositoryTest {
       @DisplayName("ユーザグループを全件取得できる")
       void findAllTheIndexes() {
         // when
-        Flux<Group> userGroupFlux = groupRepository.findAll();
+        Flux<UserGroup> userGroupFlux = groupRepository.findAll();
         // then
         StepVerifier.create(userGroupFlux)
             .assertNext(
                 group -> assertThat(group)
-                    .extracting(Group::getId, Group::getName, Group::getCreatedBy)
+                    .extracting(UserGroup::getId, UserGroup::getName, UserGroup::getCreatedBy)
                     .containsExactly(1L, "group1", 1L))
             .assertNext(
                 group -> assertThat(group)
-                    .extracting(Group::getId, Group::getName, Group::getCreatedBy)
+                    .extracting(UserGroup::getId, UserGroup::getName, UserGroup::getCreatedBy)
                     .containsExactly(2L, "group2", 2L))
             .assertNext(
                 group -> assertThat(group)
-                    .extracting(Group::getId, Group::getName, Group::getCreatedBy)
+                    .extracting(UserGroup::getId, UserGroup::getName, UserGroup::getCreatedBy)
                     .containsExactly(3L, "group3", 3L))
             .verifyComplete();
       }
@@ -88,12 +88,12 @@ class GroupRepositoryTest {
       @DisplayName("ユーザグループをIDで取得できる")
       void findUserById() {
         // when
-        Mono<Group> userGroupMono = groupRepository.findById(1L);
+        Mono<UserGroup> userGroupMono = groupRepository.findById(1L);
         // then
         StepVerifier.create(userGroupMono)
             .assertNext(
                 group -> assertThat(group)
-                    .extracting(Group::getId, Group::getName, Group::getCreatedBy)
+                    .extracting(UserGroup::getId, UserGroup::getName, UserGroup::getCreatedBy)
                     .containsExactly(1L, "group1", 1L))
             .verifyComplete();
       }
@@ -113,7 +113,7 @@ class GroupRepositoryTest {
       @DisplayName("ユーザグループを更新できる")
       void updateUserGroup() {
         // given
-        Group group = Group.builder()
+        UserGroup userGroup = UserGroup.builder()
             .id(2L)
             .name("group4")
             .createdBy(1L)
@@ -121,18 +121,18 @@ class GroupRepositoryTest {
             .updatedAt(LocalDateTime.now())
             .build();
         // when
-        Mono<Group> userGroupMono = groupRepository.save(group);
+        Mono<UserGroup> userGroupMono = groupRepository.save(userGroup);
         // then
         StepVerifier.create(userGroupMono)
             .assertNext(
                 group1 -> assertThat(group1)
-                    .extracting(Group::getId, Group::getName, Group::getCreatedBy)
+                    .extracting(UserGroup::getId, UserGroup::getName, UserGroup::getCreatedBy)
                     .containsExactly(2L, "group4", 1L))
             .verifyComplete();
         groupRepository.findById(2L).as(StepVerifier::create)
             .assertNext(
                 group1 -> assertThat(group1)
-                    .extracting(Group::getId, Group::getName, Group::getCreatedBy)
+                    .extracting(UserGroup::getId, UserGroup::getName, UserGroup::getCreatedBy)
                     .containsExactly(2L, "group4", 1L))
             .verifyComplete();
       }
@@ -141,23 +141,23 @@ class GroupRepositoryTest {
       @DisplayName("ユーザグループを新規登録できる")
       void insertUserGroup() {
         // given
-        Group group = Group.builder()
+        UserGroup userGroup = UserGroup.builder()
             .name("guest")
             .createdBy(1L)
             .build();
         // when
-        Mono<Group> userGroupMono = groupRepository.save(group);
+        Mono<UserGroup> userGroupMono = groupRepository.save(userGroup);
         // then
         StepVerifier.create(userGroupMono)
             .assertNext(
                 group1 -> assertThat(group1)
-                    .extracting(Group::getId, Group::getName, Group::getCreatedBy)
+                    .extracting(UserGroup::getId, UserGroup::getName, UserGroup::getCreatedBy)
                     .containsExactly(4L, "guest", 1L))
             .verifyComplete();
         groupRepository.findById(4L).as(StepVerifier::create)
             .assertNext(
                 group1 -> assertThat(group1)
-                    .extracting(Group::getId, Group::getName, Group::getCreatedBy)
+                    .extracting(UserGroup::getId, UserGroup::getName, UserGroup::getCreatedBy)
                     .containsExactly(4L, "guest", 1L))
             .verifyComplete();
       }

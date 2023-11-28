@@ -1,4 +1,4 @@
-CREATE TABLE services
+CREATE TABLE rbac_services
 (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -6,5 +6,5 @@ CREATE TABLE services
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT services_name_unique UNIQUE (name),
-    CONSTRAINT services_created_by_foreign FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE CASCADE
+    CONSTRAINT services_created_by_foreign FOREIGN KEY (created_by) REFERENCES rbac_users (id) ON DELETE CASCADE
 );

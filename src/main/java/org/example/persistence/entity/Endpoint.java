@@ -12,13 +12,13 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Data
 @Builder
-@Table("endpoints")
+@Table("rbac_endpoints")
 public class Endpoint {
 
   @Id
   private Long id;
   private Long pathId;
-  private Long clusterId;
+  private Long targetGroupId;
   private String method;
   private Long createdBy;
   private LocalDateTime createdAt;

@@ -12,13 +12,13 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Data
 @Builder
-@Table("target_cluster_belongings")
-public class TargetClusterBelonging {
+@Table("rbac_target_group_belongings")
+public class TargetGroupBelonging {
 
   @Id
   private Long id;
   private Long targetId;
-  private Long clusterId;
+  private Long targetGroupId;
   private Long createdBy;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;

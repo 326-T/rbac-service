@@ -12,8 +12,8 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Data
 @Builder
-@Table("rbac_services")
-public class Service {
+@Table("rbac_namespaces")
+public class Namespace {
 
   @Id
   private Long id;

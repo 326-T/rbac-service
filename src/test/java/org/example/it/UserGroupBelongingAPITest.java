@@ -68,12 +68,13 @@ public class UserGroupBelongingAPITest {
             .consumeWith(response -> {
               assertThat(response.getResponseBody()).hasSize(3);
               assertThat(response.getResponseBody())
-                  .extracting(UserGroupBelonging::getId, UserGroupBelonging::getUserGroupId,
-                      UserGroupBelonging::getUserId, UserGroupBelonging::getCreatedBy)
+                  .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
+                      UserGroupBelonging::getUserGroupId, UserGroupBelonging::getUserId,
+                      UserGroupBelonging::getCreatedBy)
                   .containsExactly(
-                      tuple(1L, 1L, 1L, 1L),
-                      tuple(2L, 2L, 2L, 2L),
-                      tuple(3L, 3L, 3L, 3L));
+                      tuple(1L, 1L, 1L, 1L, 1L),
+                      tuple(2L, 2L, 2L, 2L, 2L),
+                      tuple(3L, 3L, 3L, 3L, 3L));
             });
       }
     }
@@ -96,12 +97,13 @@ public class UserGroupBelongingAPITest {
             .exchange()
             .expectStatus().isOk()
             .expectBody(UserGroupBelonging.class)
-            .consumeWith(response -> {
-              assertThat(response.getResponseBody())
-                  .extracting(UserGroupBelonging::getId, UserGroupBelonging::getUserGroupId,
-                      UserGroupBelonging::getUserId, UserGroupBelonging::getCreatedBy)
-                  .containsExactly(1L, 1L, 1L, 1L);
-            });
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
+                        UserGroupBelonging::getUserGroupId, UserGroupBelonging::getUserId,
+                        UserGroupBelonging::getCreatedBy)
+                    .containsExactly(1L, 1L, 1L, 1L, 1L)
+            );
       }
     }
   }
@@ -124,6 +126,7 @@ public class UserGroupBelongingAPITest {
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
+                  "namespaceId": 1,
                   "userGroupId": 3,
                   "userId": 1,
                   "createdBy": 1
@@ -133,18 +136,20 @@ public class UserGroupBelongingAPITest {
             .expectStatus().isOk()
             .expectBody(UserGroupBelonging.class)
             .consumeWith(response -> assertThat(response.getResponseBody())
-                .extracting(UserGroupBelonging::getId, UserGroupBelonging::getUserGroupId,
-                    UserGroupBelonging::getUserId, UserGroupBelonging::getCreatedBy)
-                .containsExactly(4L, 3L, 1L, 1L));
+                .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
+                    UserGroupBelonging::getUserGroupId, UserGroupBelonging::getUserId,
+                    UserGroupBelonging::getCreatedBy)
+                .containsExactly(4L, 1L, 3L, 1L, 1L));
         webTestClient.get()
             .uri("/rbac-service/v1/user-group-belongings/4")
             .exchange()
             .expectStatus().isOk()
             .expectBody(UserGroupBelonging.class)
             .consumeWith(response -> assertThat(response.getResponseBody())
-                .extracting(UserGroupBelonging::getId, UserGroupBelonging::getUserGroupId,
-                    UserGroupBelonging::getUserId, UserGroupBelonging::getCreatedBy)
-                .containsExactly(4L, 3L, 1L, 1L));
+                .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
+                    UserGroupBelonging::getUserGroupId, UserGroupBelonging::getUserId,
+                    UserGroupBelonging::getCreatedBy)
+                .containsExactly(4L, 1L, 3L, 1L, 1L));
       }
     }
   }

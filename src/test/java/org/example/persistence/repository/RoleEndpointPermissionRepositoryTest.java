@@ -61,25 +61,31 @@ class RoleEndpointPermissionRepositoryTest {
         StepVerifier.create(groupHasRoleFlux)
             .assertNext(
                 roleEndpointPermission -> assertThat(roleEndpointPermission)
-                    .extracting(RoleEndpointPermission::getId,
+                    .extracting(
+                        RoleEndpointPermission::getId,
+                        RoleEndpointPermission::getNamespaceId,
                         RoleEndpointPermission::getRoleId,
                         RoleEndpointPermission::getEndpointId,
                         RoleEndpointPermission::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, 1L))
+                    .containsExactly(1L, 1L, 1L, 1L, 1L))
             .assertNext(
                 roleEndpointPermission -> assertThat(roleEndpointPermission)
-                    .extracting(RoleEndpointPermission::getId,
+                    .extracting(
+                        RoleEndpointPermission::getId,
+                        RoleEndpointPermission::getNamespaceId,
                         RoleEndpointPermission::getRoleId,
                         RoleEndpointPermission::getEndpointId,
                         RoleEndpointPermission::getCreatedBy)
-                    .containsExactly(2L, 2L, 2L, 2L))
+                    .containsExactly(2L, 2L, 2L, 2L, 2L))
             .assertNext(
                 roleEndpointPermission -> assertThat(roleEndpointPermission)
-                    .extracting(RoleEndpointPermission::getId,
+                    .extracting(
+                        RoleEndpointPermission::getId,
+                        RoleEndpointPermission::getNamespaceId,
                         RoleEndpointPermission::getRoleId,
                         RoleEndpointPermission::getEndpointId,
                         RoleEndpointPermission::getCreatedBy)
-                    .containsExactly(3L, 3L, 3L, 3L))
+                    .containsExactly(3L, 3L, 3L, 3L, 3L))
             .verifyComplete();
       }
     }
@@ -103,11 +109,13 @@ class RoleEndpointPermissionRepositoryTest {
         StepVerifier.create(groupHasRoleMono)
             .assertNext(
                 roleEndpointPermission -> assertThat(roleEndpointPermission)
-                    .extracting(RoleEndpointPermission::getId,
+                    .extracting(
+                        RoleEndpointPermission::getId,
+                        RoleEndpointPermission::getNamespaceId,
                         RoleEndpointPermission::getRoleId,
                         RoleEndpointPermission::getEndpointId,
                         RoleEndpointPermission::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, 1L))
+                    .containsExactly(1L, 1L, 1L, 1L, 1L))
             .verifyComplete();
       }
     }
@@ -128,6 +136,7 @@ class RoleEndpointPermissionRepositoryTest {
         // given
         RoleEndpointPermission roleEndpointPermission = RoleEndpointPermission.builder()
             .id(2L)
+            .namespaceId(3L)
             .roleId(1L)
             .endpointId(2L)
             .createdBy(3L)
@@ -141,20 +150,24 @@ class RoleEndpointPermissionRepositoryTest {
         StepVerifier.create(groupHasRoleMono)
             .assertNext(
                 roleEndpointPermission1 -> assertThat(roleEndpointPermission1)
-                    .extracting(RoleEndpointPermission::getId,
+                    .extracting(
+                        RoleEndpointPermission::getId,
+                        RoleEndpointPermission::getNamespaceId,
                         RoleEndpointPermission::getRoleId,
                         RoleEndpointPermission::getEndpointId,
                         RoleEndpointPermission::getCreatedBy)
-                    .containsExactly(2L, 1L, 2L, 3L))
+                    .containsExactly(2L, 3L, 1L, 2L, 3L))
             .verifyComplete();
         roleEndpointPermissionRepository.findById(2L).as(StepVerifier::create)
             .assertNext(
                 roleEndpointPermission1 -> assertThat(roleEndpointPermission1)
-                    .extracting(RoleEndpointPermission::getId,
+                    .extracting(
+                        RoleEndpointPermission::getId,
+                        RoleEndpointPermission::getNamespaceId,
                         RoleEndpointPermission::getRoleId,
                         RoleEndpointPermission::getEndpointId,
                         RoleEndpointPermission::getCreatedBy)
-                    .containsExactly(2L, 1L, 2L, 3L))
+                    .containsExactly(2L, 3L, 1L, 2L, 3L))
             .verifyComplete();
       }
 
@@ -163,6 +176,7 @@ class RoleEndpointPermissionRepositoryTest {
       void insertGroupHasRole() {
         // given
         RoleEndpointPermission roleEndpointPermission = RoleEndpointPermission.builder()
+            .namespaceId(1L)
             .roleId(3L)
             .endpointId(1L)
             .createdBy(1L)
@@ -174,20 +188,23 @@ class RoleEndpointPermissionRepositoryTest {
         StepVerifier.create(groupHasRoleMono)
             .assertNext(
                 roleEndpointPermission1 -> assertThat(roleEndpointPermission1)
-                    .extracting(RoleEndpointPermission::getId,
+                    .extracting(
+                        RoleEndpointPermission::getId,
+                        RoleEndpointPermission::getNamespaceId,
                         RoleEndpointPermission::getRoleId,
                         RoleEndpointPermission::getEndpointId,
                         RoleEndpointPermission::getCreatedBy)
-                    .containsExactly(4L, 3L, 1L, 1L))
+                    .containsExactly(4L, 1L, 3L, 1L, 1L))
             .verifyComplete();
         roleEndpointPermissionRepository.findById(4L).as(StepVerifier::create)
             .assertNext(
                 roleEndpointPermission1 -> assertThat(roleEndpointPermission1)
                     .extracting(RoleEndpointPermission::getId,
+                        RoleEndpointPermission::getNamespaceId,
                         RoleEndpointPermission::getRoleId,
                         RoleEndpointPermission::getEndpointId,
                         RoleEndpointPermission::getCreatedBy)
-                    .containsExactly(4L, 3L, 1L, 1L))
+                    .containsExactly(4L, 1L, 3L, 1L, 1L))
             .verifyComplete();
       }
     }

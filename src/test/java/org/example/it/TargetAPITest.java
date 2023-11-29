@@ -68,7 +68,7 @@ public class TargetAPITest {
             .consumeWith(response -> {
               assertThat(response.getResponseBody()).hasSize(3);
               assertThat(response.getResponseBody())
-                  .extracting(Target::getId, Target::getServiceId, Target::getObjectIdRegex,
+                  .extracting(Target::getId, Target::getNamespaceId, Target::getObjectIdRegex,
                       Target::getCreatedBy)
                   .containsExactly(
 
@@ -99,7 +99,7 @@ public class TargetAPITest {
             .expectBody(Target.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(Target::getId, Target::getServiceId, Target::getObjectIdRegex,
+                  .extracting(Target::getId, Target::getNamespaceId, Target::getObjectIdRegex,
                       Target::getCreatedBy)
                   .containsExactly(1L, 1L, "object-id-1", 1L);
             });
@@ -125,7 +125,7 @@ public class TargetAPITest {
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "serviceId": 1,
+                  "namespaceId": 1,
                   "objectIdRegex": "OBJECT-ID-2",
                   "createdBy": 1
                 }
@@ -136,7 +136,7 @@ public class TargetAPITest {
             .expectBody(Target.class)
             .consumeWith(response ->
                 assertThat(response.getResponseBody())
-                    .extracting(Target::getId, Target::getServiceId, Target::getObjectIdRegex,
+                    .extracting(Target::getId, Target::getNamespaceId, Target::getObjectIdRegex,
                         Target::getCreatedBy)
                     .containsExactly(2L, 1L, "OBJECT-ID-2", 1L)
             );
@@ -147,7 +147,7 @@ public class TargetAPITest {
             .expectBody(Target.class)
             .consumeWith(response ->
                 assertThat(response.getResponseBody())
-                    .extracting(Target::getId, Target::getServiceId, Target::getObjectIdRegex,
+                    .extracting(Target::getId, Target::getNamespaceId, Target::getObjectIdRegex,
                         Target::getCreatedBy)
                     .containsExactly(2L, 1L, "OBJECT-ID-2", 1L)
             );
@@ -169,7 +169,7 @@ public class TargetAPITest {
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "serviceId": 1,
+                  "namespaceId": 1,
                   "objectIdRegex": "object-id-4",
                   "createdBy": 1
                 }
@@ -180,7 +180,7 @@ public class TargetAPITest {
             .expectBody(Target.class)
             .consumeWith(response ->
                 assertThat(response.getResponseBody())
-                    .extracting(Target::getId, Target::getServiceId, Target::getObjectIdRegex,
+                    .extracting(Target::getId, Target::getNamespaceId, Target::getObjectIdRegex,
                         Target::getCreatedBy)
                     .containsExactly(4L, 1L, "object-id-4", 1L)
             );
@@ -191,7 +191,7 @@ public class TargetAPITest {
             .expectBody(Target.class)
             .consumeWith(response ->
                 assertThat(response.getResponseBody())
-                    .extracting(Target::getId, Target::getServiceId, Target::getObjectIdRegex,
+                    .extracting(Target::getId, Target::getNamespaceId, Target::getObjectIdRegex,
                         Target::getCreatedBy)
                     .containsExactly(4L, 1L, "object-id-4", 1L)
             );

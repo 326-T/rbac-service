@@ -62,24 +62,27 @@ class UserGroupRoleAssignmentRepositoryTest {
             .assertNext(
                 groupRoleAssignment -> assertThat(groupRoleAssignment)
                     .extracting(GroupRoleAssignment::getId,
+                        GroupRoleAssignment::getNamespaceId,
                         GroupRoleAssignment::getRoleId,
                         GroupRoleAssignment::getUserGroupId,
                         GroupRoleAssignment::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, 1L))
+                    .containsExactly(1L, 1L, 1L, 1L, 1L))
             .assertNext(
                 groupRoleAssignment -> assertThat(groupRoleAssignment)
                     .extracting(GroupRoleAssignment::getId,
+                        GroupRoleAssignment::getNamespaceId,
                         GroupRoleAssignment::getRoleId,
                         GroupRoleAssignment::getUserGroupId,
                         GroupRoleAssignment::getCreatedBy)
-                    .containsExactly(2L, 2L, 2L, 2L))
+                    .containsExactly(2L, 2L, 2L, 2L, 2L))
             .assertNext(
                 groupRoleAssignment -> assertThat(groupRoleAssignment)
                     .extracting(GroupRoleAssignment::getId,
+                        GroupRoleAssignment::getNamespaceId,
                         GroupRoleAssignment::getRoleId,
                         GroupRoleAssignment::getUserGroupId,
                         GroupRoleAssignment::getCreatedBy)
-                    .containsExactly(3L, 3L, 3L, 3L))
+                    .containsExactly(3L, 3L, 3L, 3L, 3L))
             .verifyComplete();
       }
     }
@@ -103,10 +106,11 @@ class UserGroupRoleAssignmentRepositoryTest {
             .assertNext(
                 groupRoleAssignment -> assertThat(groupRoleAssignment)
                     .extracting(GroupRoleAssignment::getId,
+                        GroupRoleAssignment::getNamespaceId,
                         GroupRoleAssignment::getRoleId,
                         GroupRoleAssignment::getUserGroupId,
                         GroupRoleAssignment::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, 1L))
+                    .containsExactly(1L, 1L, 1L, 1L, 1L))
             .verifyComplete();
       }
     }
@@ -127,6 +131,7 @@ class UserGroupRoleAssignmentRepositoryTest {
         // given
         GroupRoleAssignment groupRoleAssignment = GroupRoleAssignment.builder()
             .id(2L)
+            .namespaceId(1L)
             .roleId(1L)
             .userGroupId(2L)
             .createdBy(3L)
@@ -141,19 +146,21 @@ class UserGroupRoleAssignmentRepositoryTest {
             .assertNext(
                 groupRoleAssignment1 -> assertThat(groupRoleAssignment1)
                     .extracting(GroupRoleAssignment::getId,
+                        GroupRoleAssignment::getNamespaceId,
                         GroupRoleAssignment::getRoleId,
                         GroupRoleAssignment::getUserGroupId,
                         GroupRoleAssignment::getCreatedBy)
-                    .containsExactly(2L, 1L, 2L, 3L))
+                    .containsExactly(2L, 1L, 1L, 2L, 3L))
             .verifyComplete();
         groupRoleAssignmentRepository.findById(2L).as(StepVerifier::create)
             .assertNext(
                 groupRoleAssignment1 -> assertThat(groupRoleAssignment1)
                     .extracting(GroupRoleAssignment::getId,
+                        GroupRoleAssignment::getNamespaceId,
                         GroupRoleAssignment::getRoleId,
                         GroupRoleAssignment::getUserGroupId,
                         GroupRoleAssignment::getCreatedBy)
-                    .containsExactly(2L, 1L, 2L, 3L))
+                    .containsExactly(2L, 1L, 1L, 2L, 3L))
             .verifyComplete();
       }
 
@@ -162,6 +169,7 @@ class UserGroupRoleAssignmentRepositoryTest {
       void insertGroupHasRole() {
         // given
         GroupRoleAssignment groupRoleAssignment = GroupRoleAssignment.builder()
+            .namespaceId(1L)
             .roleId(3L)
             .userGroupId(1L)
             .createdBy(1L)
@@ -174,19 +182,21 @@ class UserGroupRoleAssignmentRepositoryTest {
             .assertNext(
                 groupRoleAssignment1 -> assertThat(groupRoleAssignment1)
                     .extracting(GroupRoleAssignment::getId,
+                        GroupRoleAssignment::getNamespaceId,
                         GroupRoleAssignment::getRoleId,
                         GroupRoleAssignment::getUserGroupId,
                         GroupRoleAssignment::getCreatedBy)
-                    .containsExactly(4L, 3L, 1L, 1L))
+                    .containsExactly(4L, 1L, 3L, 1L, 1L))
             .verifyComplete();
         groupRoleAssignmentRepository.findById(4L).as(StepVerifier::create)
             .assertNext(
                 groupRoleAssignment1 -> assertThat(groupRoleAssignment1)
                     .extracting(GroupRoleAssignment::getId,
+                        GroupRoleAssignment::getNamespaceId,
                         GroupRoleAssignment::getRoleId,
                         GroupRoleAssignment::getUserGroupId,
                         GroupRoleAssignment::getCreatedBy)
-                    .containsExactly(4L, 3L, 1L, 1L))
+                    .containsExactly(4L, 1L, 3L, 1L, 1L))
             .verifyComplete();
       }
     }

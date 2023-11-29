@@ -17,6 +17,7 @@ public class Role {
 
   @Id
   private Long id;
+  private Long namespaceId;
   private String name;
   private Long createdBy;
   private LocalDateTime createdAt;

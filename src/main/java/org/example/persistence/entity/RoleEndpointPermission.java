@@ -17,6 +17,7 @@ public class RoleEndpointPermission {
 
   @Id
   private Long id;
+  private Long namespaceId;
   private Long roleId;
   private Long endpointId;
   private Long createdBy;

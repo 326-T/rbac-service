@@ -68,12 +68,13 @@ public class RoleEndpointPermissionAPITest {
             .consumeWith(response -> {
               assertThat(response.getResponseBody()).hasSize(3);
               assertThat(response.getResponseBody())
-                  .extracting(RoleEndpointPermission::getId, RoleEndpointPermission::getRoleId,
-                      RoleEndpointPermission::getEndpointId, RoleEndpointPermission::getCreatedBy)
+                  .extracting(RoleEndpointPermission::getId, RoleEndpointPermission::getNamespaceId,
+                      RoleEndpointPermission::getRoleId, RoleEndpointPermission::getEndpointId,
+                      RoleEndpointPermission::getCreatedBy)
                   .containsExactly(
-                      tuple(1L, 1L, 1L, 1L),
-                      tuple(2L, 2L, 2L, 2L),
-                      tuple(3L, 3L, 3L, 3L));
+                      tuple(1L, 1L, 1L, 1L, 1L),
+                      tuple(2L, 2L, 2L, 2L, 2L),
+                      tuple(3L, 3L, 3L, 3L, 3L));
             });
       }
     }
@@ -98,9 +99,10 @@ public class RoleEndpointPermissionAPITest {
             .expectBody(RoleEndpointPermission.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(RoleEndpointPermission::getId, RoleEndpointPermission::getRoleId,
-                      RoleEndpointPermission::getEndpointId, RoleEndpointPermission::getCreatedBy)
-                  .containsExactly(1L, 1L, 1L, 1L);
+                  .extracting(RoleEndpointPermission::getId, RoleEndpointPermission::getNamespaceId,
+                      RoleEndpointPermission::getRoleId, RoleEndpointPermission::getEndpointId,
+                      RoleEndpointPermission::getCreatedBy)
+                  .containsExactly(1L, 1L, 1L, 1L, 1L);
             });
       }
     }
@@ -109,7 +111,7 @@ public class RoleEndpointPermissionAPITest {
   @Order(2)
   @Nested
   @TestExecutionListeners(listeners = {
-      FlywayTestExecutionListener.class }, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+      FlywayTestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
   class Update {
 
     @Nested
@@ -124,6 +126,7 @@ public class RoleEndpointPermissionAPITest {
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
+                  "namespaceId": 1,
                   "roleId": 3,
                   "endpointId": 1,
                   "createdBy": 1
@@ -133,18 +136,20 @@ public class RoleEndpointPermissionAPITest {
             .expectStatus().isOk()
             .expectBody(RoleEndpointPermission.class)
             .consumeWith(response -> assertThat(response.getResponseBody())
-                .extracting(RoleEndpointPermission::getId, RoleEndpointPermission::getRoleId,
-                    RoleEndpointPermission::getEndpointId, RoleEndpointPermission::getCreatedBy)
-                .containsExactly(4L, 3L, 1L, 1L));
+                .extracting(RoleEndpointPermission::getId, RoleEndpointPermission::getNamespaceId,
+                    RoleEndpointPermission::getRoleId, RoleEndpointPermission::getEndpointId,
+                    RoleEndpointPermission::getCreatedBy)
+                .containsExactly(4L, 1L, 3L, 1L, 1L));
         webTestClient.get()
             .uri("/rbac-service/v1/role-endpoint-permissions/4")
             .exchange()
             .expectStatus().isOk()
             .expectBody(RoleEndpointPermission.class)
             .consumeWith(response -> assertThat(response.getResponseBody())
-                .extracting(RoleEndpointPermission::getId, RoleEndpointPermission::getRoleId,
-                    RoleEndpointPermission::getEndpointId, RoleEndpointPermission::getCreatedBy)
-                .containsExactly(4L, 3L, 1L, 1L));
+                .extracting(RoleEndpointPermission::getId, RoleEndpointPermission::getNamespaceId,
+                    RoleEndpointPermission::getRoleId, RoleEndpointPermission::getEndpointId,
+                    RoleEndpointPermission::getCreatedBy)
+                .containsExactly(4L, 1L, 3L, 1L, 1L));
       }
     }
   }
@@ -152,7 +157,7 @@ public class RoleEndpointPermissionAPITest {
   @Order(3)
   @Nested
   @TestExecutionListeners(listeners = {
-      FlywayTestExecutionListener.class }, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+      FlywayTestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
   class DeleteById {
 
     @Nested

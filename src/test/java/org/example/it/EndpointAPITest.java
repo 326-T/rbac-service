@@ -68,12 +68,13 @@ public class EndpointAPITest {
             .consumeWith(response -> {
               assertThat(response.getResponseBody()).hasSize(3);
               assertThat(response.getResponseBody())
-                  .extracting(Endpoint::getId, Endpoint::getPathId, Endpoint::getMethod,
+                  .extracting(Endpoint::getId, Endpoint::getNamespaceId,
+                      Endpoint::getPathId, Endpoint::getMethod,
                       Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
                   .containsExactly(
-                      tuple(1L, 1L, "GET", 1L, 1L),
-                      tuple(2L, 2L, "POST", 2L, 2L),
-                      tuple(3L, 3L, "PUT", 3L, 3L)
+                      tuple(1L, 1L, 1L, "GET", 1L, 1L),
+                      tuple(2L, 2L, 2L, "POST", 2L, 2L),
+                      tuple(3L, 3L, 3L, "PUT", 3L, 3L)
                   );
             });
       }
@@ -99,9 +100,10 @@ public class EndpointAPITest {
             .expectBody(Endpoint.class)
             .consumeWith(response ->
                 assertThat(response.getResponseBody())
-                    .extracting(Endpoint::getId, Endpoint::getPathId, Endpoint::getMethod,
+                    .extracting(Endpoint::getId, Endpoint::getNamespaceId,
+                        Endpoint::getPathId, Endpoint::getMethod,
                         Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                    .containsExactly(1L, 1L, "GET", 1L, 1L)
+                    .containsExactly(1L, 1L, 1L, "GET", 1L, 1L)
             );
       }
     }
@@ -126,6 +128,7 @@ public class EndpointAPITest {
             .bodyValue("""
                 {
                   "id": 2,
+                  "namespaceId": 2,
                   "pathId": 3,
                   "method": "GET",
                   "targetGroupId": 2,
@@ -138,9 +141,10 @@ public class EndpointAPITest {
             .expectBody(Endpoint.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(Endpoint::getId, Endpoint::getPathId, Endpoint::getMethod,
+                  .extracting(Endpoint::getId, Endpoint::getNamespaceId,
+                      Endpoint::getPathId, Endpoint::getMethod,
                       Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                  .containsExactly(2L, 3L, "GET", 2L, 1L);
+                  .containsExactly(2L, 2L, 3L, "GET", 2L, 1L);
             });
         webTestClient.get()
             .uri("/rbac-service/v1/endpoints/2")
@@ -149,9 +153,10 @@ public class EndpointAPITest {
             .expectBody(Endpoint.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(Endpoint::getId, Endpoint::getPathId, Endpoint::getMethod,
+                  .extracting(Endpoint::getId, Endpoint::getNamespaceId,
+                      Endpoint::getPathId, Endpoint::getMethod,
                       Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                  .containsExactly(2L, 3L, "GET", 2L, 1L);
+                  .containsExactly(2L, 2L, 3L, "GET", 2L, 1L);
             });
       }
     }
@@ -171,6 +176,7 @@ public class EndpointAPITest {
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
+                  "namespaceId": 1,
                   "pathId": 1,
                   "method": "DELETE",
                   "targetGroupId": 2,
@@ -183,9 +189,10 @@ public class EndpointAPITest {
             .expectBody(Endpoint.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(Endpoint::getId, Endpoint::getPathId, Endpoint::getMethod,
+                  .extracting(Endpoint::getId, Endpoint::getNamespaceId,
+                      Endpoint::getPathId, Endpoint::getMethod,
                       Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                  .containsExactly(4L, 1L, "DELETE", 2L, 3L);
+                  .containsExactly(4L, 1L, 1L, "DELETE", 2L, 3L);
             });
         webTestClient.get()
             .uri("/rbac-service/v1/endpoints/4")
@@ -194,9 +201,10 @@ public class EndpointAPITest {
             .expectBody(Endpoint.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(Endpoint::getId, Endpoint::getPathId, Endpoint::getMethod,
+                  .extracting(Endpoint::getId, Endpoint::getNamespaceId,
+                      Endpoint::getPathId, Endpoint::getMethod,
                       Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                  .containsExactly(4L, 1L, "DELETE", 2L, 3L);
+                  .containsExactly(4L, 1L, 1L, "DELETE", 2L, 3L);
             });
       }
     }

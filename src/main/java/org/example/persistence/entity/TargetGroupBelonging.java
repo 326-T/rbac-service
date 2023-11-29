@@ -17,6 +17,7 @@ public class TargetGroupBelonging {
 
   @Id
   private Long id;
+  private Long namespaceId;
   private Long targetId;
   private Long targetGroupId;
   private Long createdBy;

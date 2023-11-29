@@ -68,11 +68,12 @@ public class UserGroupAPITest {
             .consumeWith(response -> {
               assertThat(response.getResponseBody()).hasSize(3);
               assertThat(response.getResponseBody())
-                  .extracting(UserGroup::getId, UserGroup::getName, UserGroup::getCreatedBy)
+                  .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                      UserGroup::getName, UserGroup::getCreatedBy)
                   .containsExactly(
-                      tuple(1L, "group1", 1L),
-                      tuple(2L, "group2", 2L),
-                      tuple(3L, "group3", 3L));
+                      tuple(1L, 1L, "group1", 1L),
+                      tuple(2L, 2L, "group2", 2L),
+                      tuple(3L, 3L, "group3", 3L));
             });
       }
     }
@@ -97,8 +98,9 @@ public class UserGroupAPITest {
             .expectBody(UserGroup.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(UserGroup::getId, UserGroup::getName, UserGroup::getCreatedBy)
-                  .containsExactly(1L, "group1", 1L);
+                  .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                      UserGroup::getName, UserGroup::getCreatedBy)
+                  .containsExactly(1L, 1L, "group1", 1L);
             });
       }
     }
@@ -107,7 +109,7 @@ public class UserGroupAPITest {
   @Order(2)
   @Nested
   @TestExecutionListeners(listeners = {
-      FlywayTestExecutionListener.class }, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+      FlywayTestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
   class Update {
 
     @Nested
@@ -122,6 +124,7 @@ public class UserGroupAPITest {
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
+                  "namespaceId": 1,
                   "name": "TARGET-GROUP-2",
                   "createdBy": 1
                 }
@@ -131,8 +134,9 @@ public class UserGroupAPITest {
             .expectBody(UserGroup.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(UserGroup::getId, UserGroup::getName, UserGroup::getCreatedBy)
-                  .containsExactly(2L, "TARGET-GROUP-2", 1L);
+                  .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                      UserGroup::getName, UserGroup::getCreatedBy)
+                  .containsExactly(2L, 1L, "TARGET-GROUP-2", 1L);
             });
         webTestClient.get()
             .uri("/rbac-service/v1/user-groups/2")
@@ -141,8 +145,9 @@ public class UserGroupAPITest {
             .expectBody(UserGroup.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(UserGroup::getId, UserGroup::getName, UserGroup::getCreatedBy)
-                  .containsExactly(2L, "TARGET-GROUP-2", 1L);
+                  .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                      UserGroup::getName, UserGroup::getCreatedBy)
+                  .containsExactly(2L, 1L, "TARGET-GROUP-2", 1L);
             });
       }
     }
@@ -150,7 +155,7 @@ public class UserGroupAPITest {
     @Order(2)
     @Nested
     @TestExecutionListeners(listeners = {
-        FlywayTestExecutionListener.class }, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+        FlywayTestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
     class Save {
 
       @Test
@@ -162,6 +167,7 @@ public class UserGroupAPITest {
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
+                  "namespaceId": 1,
                   "name": "target-userGroup-4",
                   "createdBy": 1
                 }
@@ -171,8 +177,9 @@ public class UserGroupAPITest {
             .expectBody(UserGroup.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(UserGroup::getId, UserGroup::getName, UserGroup::getCreatedBy)
-                  .containsExactly(4L, "target-userGroup-4", 1L);
+                  .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                      UserGroup::getName, UserGroup::getCreatedBy)
+                  .containsExactly(4L, 1L, "target-userGroup-4", 1L);
             });
         webTestClient.get()
             .uri("/rbac-service/v1/user-groups/4")
@@ -181,8 +188,9 @@ public class UserGroupAPITest {
             .expectBody(UserGroup.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(UserGroup::getId, UserGroup::getName, UserGroup::getCreatedBy)
-                  .containsExactly(4L, "target-userGroup-4", 1L);
+                  .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                      UserGroup::getName, UserGroup::getCreatedBy)
+                  .containsExactly(4L, 1L, "target-userGroup-4", 1L);
             });
       }
     }
@@ -191,7 +199,7 @@ public class UserGroupAPITest {
   @Order(3)
   @Nested
   @TestExecutionListeners(listeners = {
-      FlywayTestExecutionListener.class }, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+      FlywayTestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
   class DeleteById {
 
     @Nested

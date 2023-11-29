@@ -68,11 +68,12 @@ public class RoleAPITest {
             .consumeWith(response -> {
               assertThat(response.getResponseBody()).hasSize(3);
               assertThat(response.getResponseBody())
-                  .extracting(Role::getId, Role::getName, Role::getCreatedBy)
+                  .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
                   .containsExactly(
-                      tuple(1L, "developers", 1L),
-                      tuple(2L, "operations", 2L),
-                      tuple(3L, "security", 3L));
+                      tuple(1L, 1L, "developers", 1L),
+                      tuple(2L, 2L, "operations", 2L),
+                      tuple(3L, 3L, "security", 3L)
+                  );
             });
       }
     }
@@ -97,8 +98,9 @@ public class RoleAPITest {
             .expectBody(Role.class)
             .consumeWith(response ->
                 assertThat(response.getResponseBody())
-                    .extracting(Role::getId, Role::getName, Role::getCreatedBy)
-                    .containsExactly(1L, "developers", 1L)
+                    .extracting(Role::getId, Role::getNamespaceId, Role::getName,
+                        Role::getCreatedBy)
+                    .containsExactly(1L, 1L, "developers", 1L)
             );
       }
     }
@@ -122,6 +124,7 @@ public class RoleAPITest {
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
+                  "namespaceId": 1,
                   "name": "OPERATIONS",
                   "createdBy": 1
                 }
@@ -132,8 +135,8 @@ public class RoleAPITest {
             .expectBody(Role.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(Role::getId, Role::getName, Role::getCreatedBy)
-                  .containsExactly(2L, "OPERATIONS", 1L);
+                  .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
+                  .containsExactly(2L, 1L, "OPERATIONS", 1L);
             });
         webTestClient.get()
             .uri("/rbac-service/v1/roles/2")
@@ -142,8 +145,8 @@ public class RoleAPITest {
             .expectBody(Role.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(Role::getId, Role::getName, Role::getCreatedBy)
-                  .containsExactly(2L, "OPERATIONS", 1L);
+                  .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
+                  .containsExactly(2L, 1L, "OPERATIONS", 1L);
             });
       }
     }
@@ -163,6 +166,7 @@ public class RoleAPITest {
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
+                  "namespaceId": 1,
                   "name": "guest",
                   "createdBy": 1
                 }
@@ -173,8 +177,8 @@ public class RoleAPITest {
             .expectBody(Role.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(Role::getId, Role::getName, Role::getCreatedBy)
-                  .containsExactly(4L, "guest", 1L);
+                  .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
+                  .containsExactly(4L, 1L, "guest", 1L);
             });
         webTestClient.get()
             .uri("/rbac-service/v1/roles/4")
@@ -183,8 +187,8 @@ public class RoleAPITest {
             .expectBody(Role.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(Role::getId, Role::getName, Role::getCreatedBy)
-                  .containsExactly(4L, "guest", 1L);
+                  .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
+                  .containsExactly(4L, 1L, "guest", 1L);
             });
       }
     }

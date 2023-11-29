@@ -61,16 +61,19 @@ class RoleRepositoryTest {
         StepVerifier.create(roleFlux)
             .assertNext(
                 role -> assertThat(role)
-                    .extracting(Role::getId, Role::getName, Role::getCreatedBy)
-                    .containsExactly(1L, "developers", 1L))
+                    .extracting(Role::getId, Role::getNamespaceId, Role::getName,
+                        Role::getCreatedBy)
+                    .containsExactly(1L, 1L, "developers", 1L))
             .assertNext(
                 role -> assertThat(role)
-                    .extracting(Role::getId, Role::getName, Role::getCreatedBy)
-                    .containsExactly(2L, "operations", 2L))
+                    .extracting(Role::getId, Role::getNamespaceId, Role::getName,
+                        Role::getCreatedBy)
+                    .containsExactly(2L, 2L, "operations", 2L))
             .assertNext(
                 role -> assertThat(role)
-                    .extracting(Role::getId, Role::getName, Role::getCreatedBy)
-                    .containsExactly(3L, "security", 3L))
+                    .extracting(Role::getId, Role::getNamespaceId, Role::getName,
+                        Role::getCreatedBy)
+                    .containsExactly(3L, 3L, "security", 3L))
             .verifyComplete();
       }
     }
@@ -93,8 +96,9 @@ class RoleRepositoryTest {
         StepVerifier.create(roleMono)
             .assertNext(
                 role -> assertThat(role)
-                    .extracting(Role::getId, Role::getName, Role::getCreatedBy)
-                    .containsExactly(1L, "developers", 1L))
+                    .extracting(Role::getId, Role::getNamespaceId, Role::getName,
+                        Role::getCreatedBy)
+                    .containsExactly(1L, 1L, "developers", 1L))
             .verifyComplete();
       }
     }
@@ -115,6 +119,7 @@ class RoleRepositoryTest {
         // given
         Role role = Role.builder()
             .id(2L)
+            .namespaceId(1L)
             .name("OPERATIONS")
             .createdBy(1L)
             .createdAt(LocalDateTime.now())
@@ -126,14 +131,16 @@ class RoleRepositoryTest {
         StepVerifier.create(roleMono)
             .assertNext(
                 role1 -> assertThat(role1)
-                    .extracting(Role::getId, Role::getName, Role::getCreatedBy)
-                    .containsExactly(2L, "OPERATIONS", 1L))
+                    .extracting(Role::getId, Role::getNamespaceId, Role::getName,
+                        Role::getCreatedBy)
+                    .containsExactly(2L, 1L, "OPERATIONS", 1L))
             .verifyComplete();
         roleRepository.findById(2L).as(StepVerifier::create)
             .assertNext(
                 role1 -> assertThat(role1)
-                    .extracting(Role::getId, Role::getName, Role::getCreatedBy)
-                    .containsExactly(2L, "OPERATIONS", 1L))
+                    .extracting(Role::getId, Role::getNamespaceId, Role::getName,
+                        Role::getCreatedBy)
+                    .containsExactly(2L, 1L, "OPERATIONS", 1L))
             .verifyComplete();
       }
 
@@ -142,6 +149,7 @@ class RoleRepositoryTest {
       void insertRole() {
         // given
         Role role = Role.builder()
+            .namespaceId(1L)
             .name("guest")
             .createdBy(1L)
             .build();
@@ -151,14 +159,16 @@ class RoleRepositoryTest {
         StepVerifier.create(roleMono)
             .assertNext(
                 role1 -> assertThat(role1)
-                    .extracting(Role::getId, Role::getName, Role::getCreatedBy)
-                    .containsExactly(4L, "guest", 1L))
+                    .extracting(Role::getId, Role::getNamespaceId, Role::getName,
+                        Role::getCreatedBy)
+                    .containsExactly(4L, 1L, "guest", 1L))
             .verifyComplete();
         roleRepository.findById(4L).as(StepVerifier::create)
             .assertNext(
                 role1 -> assertThat(role1)
-                    .extracting(Role::getId, Role::getName, Role::getCreatedBy)
-                    .containsExactly(4L, "guest", 1L))
+                    .extracting(Role::getId, Role::getNamespaceId, Role::getName,
+                        Role::getCreatedBy)
+                    .containsExactly(4L, 1L, "guest", 1L))
             .verifyComplete();
       }
     }

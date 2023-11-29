@@ -17,6 +17,7 @@ public class GroupRoleAssignment {
 
   @Id
   private Long id;
+  private Long namespaceId;
   private Long userGroupId;
   private Long roleId;
   private Long createdBy;

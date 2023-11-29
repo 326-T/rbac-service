@@ -17,6 +17,7 @@ public class Endpoint {
 
   @Id
   private Long id;
+  private Long namespaceId;
   private Long pathId;
   private Long targetGroupId;
   private String method;

@@ -68,12 +68,13 @@ public class TargetGroupBelongingAPITest {
             .consumeWith(response -> {
               assertThat(response.getResponseBody()).hasSize(3);
               assertThat(response.getResponseBody())
-                  .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getTargetId,
-                      TargetGroupBelonging::getTargetGroupId, TargetGroupBelonging::getCreatedBy)
+                  .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
+                      TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
+                      TargetGroupBelonging::getCreatedBy)
                   .containsExactly(
-                      tuple(1L, 1L, 1L, 1L),
-                      tuple(2L, 2L, 2L, 2L),
-                      tuple(3L, 3L, 3L, 3L));
+                      tuple(1L, 1L, 1L, 1L, 1L),
+                      tuple(2L, 2L, 2L, 2L, 2L),
+                      tuple(3L, 3L, 3L, 3L, 3L));
             });
       }
     }
@@ -98,9 +99,10 @@ public class TargetGroupBelongingAPITest {
             .expectBody(TargetGroupBelonging.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getTargetId,
-                      TargetGroupBelonging::getTargetGroupId, TargetGroupBelonging::getCreatedBy)
-                  .containsExactly(1L, 1L, 1L, 1L);
+                  .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
+                      TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
+                      TargetGroupBelonging::getCreatedBy)
+                  .containsExactly(1L, 1L, 1L, 1L, 1L);
             });
       }
     }
@@ -124,6 +126,7 @@ public class TargetGroupBelongingAPITest {
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
+                  "namespaceId": 1,
                   "targetId": 3,
                   "targetGroupId": 1,
                   "createdBy": 1
@@ -133,18 +136,20 @@ public class TargetGroupBelongingAPITest {
             .expectStatus().isOk()
             .expectBody(TargetGroupBelonging.class)
             .consumeWith(response -> assertThat(response.getResponseBody())
-                .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getTargetId,
-                    TargetGroupBelonging::getTargetGroupId, TargetGroupBelonging::getCreatedBy)
-                .containsExactly(4L, 3L, 1L, 1L));
+                .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
+                    TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
+                    TargetGroupBelonging::getCreatedBy)
+                .containsExactly(4L, 1L, 3L, 1L, 1L));
         webTestClient.get()
             .uri("/rbac-service/v1/target-group-belongings/4")
             .exchange()
             .expectStatus().isOk()
             .expectBody(TargetGroupBelonging.class)
             .consumeWith(response -> assertThat(response.getResponseBody())
-                .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getTargetId,
-                    TargetGroupBelonging::getTargetGroupId, TargetGroupBelonging::getCreatedBy)
-                .containsExactly(4L, 3L, 1L, 1L));
+                .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
+                    TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
+                    TargetGroupBelonging::getCreatedBy)
+                .containsExactly(4L, 1L, 3L, 1L, 1L));
       }
     }
   }

@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import org.example.listener.FlywayTestExecutionListener;
-import org.example.persistence.entity.Service;
+import org.example.persistence.entity.Namespace;
 import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -20,10 +20,10 @@ import reactor.test.StepVerifier;
 
 @SpringBootTest
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-class ServiceRepositoryTest {
+class NamespaceRepositoryTest {
 
   @Autowired
-  private ServiceRepository serviceRepository;
+  private NamespaceRepository namespaceRepository;
 
   @Order(1)
   @Nested
@@ -34,10 +34,10 @@ class ServiceRepositoryTest {
     class regular {
 
       @Test
-      @DisplayName("サービスの件数を取得できる")
+      @DisplayName("ネームスペースの件数を取得できる")
       void countTheIndexes() {
         // when
-        Mono<Long> count = serviceRepository.count();
+        Mono<Long> count = namespaceRepository.count();
         // then
         StepVerifier.create(count).expectNext(3L).verifyComplete();
       }
@@ -53,23 +53,23 @@ class ServiceRepositoryTest {
     class regular {
 
       @Test
-      @DisplayName("サービスを全件取得できる")
+      @DisplayName("ネームスペースを全件取得できる")
       void findAllTheIndexes() {
         // when
-        Flux<Service> serviceFlux = serviceRepository.findAll();
+        Flux<Namespace> namespaceFlux = namespaceRepository.findAll();
         // then
-        StepVerifier.create(serviceFlux)
+        StepVerifier.create(namespaceFlux)
             .assertNext(
-                service -> assertThat(service)
-                    .extracting(Service::getId, Service::getName, Service::getCreatedBy)
+                namespace -> assertThat(namespace)
+                    .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
                     .containsExactly(1L, "front", 1L))
             .assertNext(
-                service -> assertThat(service)
-                    .extracting(Service::getId, Service::getName, Service::getCreatedBy)
+                namespace -> assertThat(namespace)
+                    .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
                     .containsExactly(2L, "backend", 2L))
             .assertNext(
-                service -> assertThat(service)
-                    .extracting(Service::getId, Service::getName, Service::getCreatedBy)
+                namespace -> assertThat(namespace)
+                    .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
                     .containsExactly(3L, "database", 3L))
             .verifyComplete();
       }
@@ -85,15 +85,15 @@ class ServiceRepositoryTest {
     class regular {
 
       @Test
-      @DisplayName("サービスをIDで取得できる")
+      @DisplayName("ネームスペースをIDで取得できる")
       void findUserById() {
         // when
-        Mono<Service> serviceMono = serviceRepository.findById(1L);
+        Mono<Namespace> namespaceMono = namespaceRepository.findById(1L);
         // then
-        StepVerifier.create(serviceMono)
+        StepVerifier.create(namespaceMono)
             .assertNext(
-                service -> assertThat(service)
-                    .extracting(Service::getId, Service::getName, Service::getCreatedBy)
+                namespace -> assertThat(namespace)
+                    .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
                     .containsExactly(1L, "front", 1L))
             .verifyComplete();
       }
@@ -110,10 +110,10 @@ class ServiceRepositoryTest {
     class regular {
 
       @Test
-      @DisplayName("サービスを更新できる")
-      void updateService() {
+      @DisplayName("ネームスペースを更新できる")
+      void updateNamespace() {
         // given
-        Service service = Service.builder()
+        Namespace namespace = Namespace.builder()
             .id(2L)
             .name("BACKEND")
             .createdBy(1L)
@@ -121,43 +121,43 @@ class ServiceRepositoryTest {
             .updatedAt(LocalDateTime.now())
             .build();
         // when
-        Mono<Service> serviceMono = serviceRepository.save(service);
+        Mono<Namespace> namespaceMono = namespaceRepository.save(namespace);
         // then
-        StepVerifier.create(serviceMono)
+        StepVerifier.create(namespaceMono)
             .assertNext(
-                service1 -> assertThat(service1)
-                    .extracting(Service::getId, Service::getName, Service::getCreatedBy)
+                namespace1 -> assertThat(namespace1)
+                    .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
                     .containsExactly(2L, "BACKEND", 1L))
             .verifyComplete();
-        serviceRepository.findById(2L).as(StepVerifier::create)
+        namespaceRepository.findById(2L).as(StepVerifier::create)
             .assertNext(
-                service1 -> assertThat(service1)
-                    .extracting(Service::getId, Service::getName, Service::getCreatedBy)
+                namespace1 -> assertThat(namespace1)
+                    .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
                     .containsExactly(2L, "BACKEND", 1L))
             .verifyComplete();
       }
 
       @Test
-      @DisplayName("サービスを新規登録できる")
-      void insertService() {
+      @DisplayName("ネームスペースを新規登録できる")
+      void insertNamespace() {
         // given
-        Service service = Service.builder()
+        Namespace namespace = Namespace.builder()
             .name("auth")
             .createdBy(1L)
             .build();
         // when
-        Mono<Service> serviceMono = serviceRepository.save(service);
+        Mono<Namespace> namespaceMono = namespaceRepository.save(namespace);
         // then
-        StepVerifier.create(serviceMono)
+        StepVerifier.create(namespaceMono)
             .assertNext(
-                service1 -> assertThat(service1)
-                    .extracting(Service::getId, Service::getName, Service::getCreatedBy)
+                namespace1 -> assertThat(namespace1)
+                    .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
                     .containsExactly(4L, "auth", 1L))
             .verifyComplete();
-        serviceRepository.findById(4L).as(StepVerifier::create)
+        namespaceRepository.findById(4L).as(StepVerifier::create)
             .assertNext(
-                service1 -> assertThat(service1)
-                    .extracting(Service::getId, Service::getName, Service::getCreatedBy)
+                namespace1 -> assertThat(namespace1)
+                    .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
                     .containsExactly(4L, "auth", 1L))
             .verifyComplete();
       }
@@ -175,13 +175,13 @@ class ServiceRepositoryTest {
     class regular {
 
       @Test
-      @DisplayName("サービスをIDで削除できる")
-      void deleteServiceById() {
+      @DisplayName("ネームスペースをIDで削除できる")
+      void deleteNamespaceById() {
         // when
-        Mono<Void> voidMono = serviceRepository.deleteById(3L);
+        Mono<Void> voidMono = namespaceRepository.deleteById(3L);
         // then
         StepVerifier.create(voidMono).verifyComplete();
-        serviceRepository.findById(3L).as(StepVerifier::create).verifyComplete();
+        namespaceRepository.findById(3L).as(StepVerifier::create).verifyComplete();
       }
     }
   }

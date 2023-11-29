@@ -61,16 +61,19 @@ class UserGroupRepositoryTest {
         StepVerifier.create(userGroupFlux)
             .assertNext(
                 group -> assertThat(group)
-                    .extracting(UserGroup::getId, UserGroup::getName, UserGroup::getCreatedBy)
-                    .containsExactly(1L, "group1", 1L))
+                    .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                        UserGroup::getName, UserGroup::getCreatedBy)
+                    .containsExactly(1L, 1L, "group1", 1L))
             .assertNext(
                 group -> assertThat(group)
-                    .extracting(UserGroup::getId, UserGroup::getName, UserGroup::getCreatedBy)
-                    .containsExactly(2L, "group2", 2L))
+                    .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                        UserGroup::getName, UserGroup::getCreatedBy)
+                    .containsExactly(2L, 2L, "group2", 2L))
             .assertNext(
                 group -> assertThat(group)
-                    .extracting(UserGroup::getId, UserGroup::getName, UserGroup::getCreatedBy)
-                    .containsExactly(3L, "group3", 3L))
+                    .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                        UserGroup::getName, UserGroup::getCreatedBy)
+                    .containsExactly(3L, 3L, "group3", 3L))
             .verifyComplete();
       }
     }
@@ -93,8 +96,9 @@ class UserGroupRepositoryTest {
         StepVerifier.create(userGroupMono)
             .assertNext(
                 group -> assertThat(group)
-                    .extracting(UserGroup::getId, UserGroup::getName, UserGroup::getCreatedBy)
-                    .containsExactly(1L, "group1", 1L))
+                    .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                        UserGroup::getName, UserGroup::getCreatedBy)
+                    .containsExactly(1L, 1L, "group1", 1L))
             .verifyComplete();
       }
     }
@@ -115,6 +119,7 @@ class UserGroupRepositoryTest {
         // given
         UserGroup userGroup = UserGroup.builder()
             .id(2L)
+            .namespaceId(1L)
             .name("group4")
             .createdBy(1L)
             .createdAt(LocalDateTime.now())
@@ -126,14 +131,16 @@ class UserGroupRepositoryTest {
         StepVerifier.create(userGroupMono)
             .assertNext(
                 group1 -> assertThat(group1)
-                    .extracting(UserGroup::getId, UserGroup::getName, UserGroup::getCreatedBy)
-                    .containsExactly(2L, "group4", 1L))
+                    .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                        UserGroup::getName, UserGroup::getCreatedBy)
+                    .containsExactly(2L, 1L, "group4", 1L))
             .verifyComplete();
         groupRepository.findById(2L).as(StepVerifier::create)
             .assertNext(
                 group1 -> assertThat(group1)
-                    .extracting(UserGroup::getId, UserGroup::getName, UserGroup::getCreatedBy)
-                    .containsExactly(2L, "group4", 1L))
+                    .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                        UserGroup::getName, UserGroup::getCreatedBy)
+                    .containsExactly(2L, 1L, "group4", 1L))
             .verifyComplete();
       }
 
@@ -142,6 +149,7 @@ class UserGroupRepositoryTest {
       void insertUserGroup() {
         // given
         UserGroup userGroup = UserGroup.builder()
+            .namespaceId(1L)
             .name("guest")
             .createdBy(1L)
             .build();
@@ -151,14 +159,16 @@ class UserGroupRepositoryTest {
         StepVerifier.create(userGroupMono)
             .assertNext(
                 group1 -> assertThat(group1)
-                    .extracting(UserGroup::getId, UserGroup::getName, UserGroup::getCreatedBy)
-                    .containsExactly(4L, "guest", 1L))
+                    .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                        UserGroup::getName, UserGroup::getCreatedBy)
+                    .containsExactly(4L, 1L, "guest", 1L))
             .verifyComplete();
         groupRepository.findById(4L).as(StepVerifier::create)
             .assertNext(
                 group1 -> assertThat(group1)
-                    .extracting(UserGroup::getId, UserGroup::getName, UserGroup::getCreatedBy)
-                    .containsExactly(4L, "guest", 1L))
+                    .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                        UserGroup::getName, UserGroup::getCreatedBy)
+                    .containsExactly(4L, 1L, "guest", 1L))
             .verifyComplete();
       }
     }

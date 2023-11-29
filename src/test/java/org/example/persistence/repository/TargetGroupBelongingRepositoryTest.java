@@ -61,19 +61,22 @@ class TargetGroupBelongingRepositoryTest {
         StepVerifier.create(targetBelongsGroupFlux)
             .assertNext(
                 targetClusterBelonging -> assertThat(targetClusterBelonging)
-                    .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getTargetId,
-                        TargetGroupBelonging::getTargetGroupId, TargetGroupBelonging::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, 1L))
+                    .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
+                        TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
+                        TargetGroupBelonging::getCreatedBy)
+                    .containsExactly(1L, 1L, 1L, 1L, 1L))
             .assertNext(
                 targetClusterBelonging -> assertThat(targetClusterBelonging)
-                    .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getTargetId,
-                        TargetGroupBelonging::getTargetGroupId, TargetGroupBelonging::getCreatedBy)
-                    .containsExactly(2L, 2L, 2L, 2L))
+                    .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
+                        TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
+                        TargetGroupBelonging::getCreatedBy)
+                    .containsExactly(2L, 2L, 2L, 2L, 2L))
             .assertNext(
                 targetClusterBelonging -> assertThat(targetClusterBelonging)
-                    .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getTargetId,
-                        TargetGroupBelonging::getTargetGroupId, TargetGroupBelonging::getCreatedBy)
-                    .containsExactly(3L, 3L, 3L, 3L))
+                    .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
+                        TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
+                        TargetGroupBelonging::getCreatedBy)
+                    .containsExactly(3L, 3L, 3L, 3L, 3L))
             .verifyComplete();
       }
     }
@@ -97,9 +100,10 @@ class TargetGroupBelongingRepositoryTest {
         StepVerifier.create(targetBelongsGroupMono)
             .assertNext(
                 targetClusterBelonging -> assertThat(targetClusterBelonging)
-                    .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getTargetId,
-                        TargetGroupBelonging::getTargetGroupId, TargetGroupBelonging::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, 1L))
+                    .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
+                        TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
+                        TargetGroupBelonging::getCreatedBy)
+                    .containsExactly(1L, 1L, 1L, 1L, 1L))
             .verifyComplete();
       }
     }
@@ -120,6 +124,7 @@ class TargetGroupBelongingRepositoryTest {
         // given
         TargetGroupBelonging targetGroupBelonging = TargetGroupBelonging.builder()
             .id(2L)
+            .namespaceId(1L)
             .targetId(1L)
             .targetGroupId(2L)
             .createdBy(3L)
@@ -133,16 +138,18 @@ class TargetGroupBelongingRepositoryTest {
         StepVerifier.create(targetBelongsGroupMono)
             .assertNext(
                 targetClusterBelonging1 -> assertThat(targetClusterBelonging1)
-                    .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getTargetId,
-                        TargetGroupBelonging::getTargetGroupId, TargetGroupBelonging::getCreatedBy)
-                    .containsExactly(2L, 1L, 2L, 3L))
+                    .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
+                        TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
+                        TargetGroupBelonging::getCreatedBy)
+                    .containsExactly(2L, 1L, 1L, 2L, 3L))
             .verifyComplete();
         targetGroupBelongingRepository.findById(2L).as(StepVerifier::create)
             .assertNext(
                 targetClusterBelonging1 -> assertThat(targetClusterBelonging1)
-                    .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getTargetId,
-                        TargetGroupBelonging::getTargetGroupId, TargetGroupBelonging::getCreatedBy)
-                    .containsExactly(2L, 1L, 2L, 3L))
+                    .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
+                        TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
+                        TargetGroupBelonging::getCreatedBy)
+                    .containsExactly(2L, 1L, 1L, 2L, 3L))
             .verifyComplete();
       }
 
@@ -151,6 +158,7 @@ class TargetGroupBelongingRepositoryTest {
       void insertTargetBelongsGroup() {
         // given
         TargetGroupBelonging targetGroupBelonging = TargetGroupBelonging.builder()
+            .namespaceId(3L)
             .targetId(3L)
             .targetGroupId(1L)
             .createdBy(1L)
@@ -162,16 +170,18 @@ class TargetGroupBelongingRepositoryTest {
         StepVerifier.create(targetBelongsGroupMono)
             .assertNext(
                 targetClusterBelonging1 -> assertThat(targetClusterBelonging1)
-                    .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getTargetId,
-                        TargetGroupBelonging::getTargetGroupId, TargetGroupBelonging::getCreatedBy)
-                    .containsExactly(4L, 3L, 1L, 1L))
+                    .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
+                        TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
+                        TargetGroupBelonging::getCreatedBy)
+                    .containsExactly(4L, 3L, 3L, 1L, 1L))
             .verifyComplete();
         targetGroupBelongingRepository.findById(4L).as(StepVerifier::create)
             .assertNext(
                 targetClusterBelonging1 -> assertThat(targetClusterBelonging1)
-                    .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getTargetId,
-                        TargetGroupBelonging::getTargetGroupId, TargetGroupBelonging::getCreatedBy)
-                    .containsExactly(4L, 3L, 1L, 1L))
+                    .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
+                        TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
+                        TargetGroupBelonging::getCreatedBy)
+                    .containsExactly(4L, 3L, 3L, 1L, 1L))
             .verifyComplete();
       }
     }

@@ -59,11 +59,11 @@ class PathRepositoryTest {
         Flux<Path> pathFlux = pathRepository.findAll();
         // then
         StepVerifier.create(pathFlux).assertNext(
-                path -> assertThat(path).extracting(Path::getId, Path::getServiceId, Path::getRegex,
+                path -> assertThat(path).extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
                     Path::getCreatedBy).containsExactly(1L, 1L, "/user-service/v1/", 1L)).assertNext(
-                path -> assertThat(path).extracting(Path::getId, Path::getServiceId, Path::getRegex,
+                path -> assertThat(path).extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
                     Path::getCreatedBy).containsExactly(2L, 2L, "/billing-service/v1/", 2L)).assertNext(
-                path -> assertThat(path).extracting(Path::getId, Path::getServiceId, Path::getRegex,
+                path -> assertThat(path).extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
                     Path::getCreatedBy).containsExactly(3L, 3L, "/inventory-service/v2/", 3L))
             .verifyComplete();
       }
@@ -85,7 +85,7 @@ class PathRepositoryTest {
         Mono<Path> pathMono = pathRepository.findById(1L);
         // then
         StepVerifier.create(pathMono).assertNext(
-                path -> assertThat(path).extracting(Path::getId, Path::getServiceId, Path::getRegex,
+                path -> assertThat(path).extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
                     Path::getCreatedBy).containsExactly(1L, 1L, "/user-service/v1/", 1L))
             .verifyComplete();
       }
@@ -105,17 +105,18 @@ class PathRepositoryTest {
       @DisplayName("パスを更新できる")
       void updatePath() {
         // given
-        Path path = Path.builder().id(2L).serviceId(1L).regex("/replace-service/v1/").createdBy(1L)
+        Path path = Path.builder().id(2L).namespaceId(1L).regex("/replace-service/v1/")
+            .createdBy(1L)
             .createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now()).build();
         // when
         Mono<Path> pathMono = pathRepository.save(path);
         // then
         StepVerifier.create(pathMono).assertNext(
-                path1 -> assertThat(path1).extracting(Path::getId, Path::getServiceId, Path::getRegex,
+                path1 -> assertThat(path1).extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
                     Path::getCreatedBy).containsExactly(2L, 1L, "/replace-service/v1/", 1L))
             .verifyComplete();
         pathRepository.findById(2L).as(StepVerifier::create).assertNext(
-                path1 -> assertThat(path1).extracting(Path::getId, Path::getServiceId, Path::getRegex,
+                path1 -> assertThat(path1).extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
                     Path::getCreatedBy).containsExactly(2L, 1L, "/replace-service/v1/", 1L))
             .verifyComplete();
       }
@@ -124,16 +125,16 @@ class PathRepositoryTest {
       @DisplayName("パスを新規登録できる")
       void insertPath() {
         // given
-        Path path = Path.builder().serviceId(1L).regex("/next-service/v1/").createdBy(1L).build();
+        Path path = Path.builder().namespaceId(1L).regex("/next-service/v1/").createdBy(1L).build();
         // when
         Mono<Path> pathMono = pathRepository.save(path);
         // then
         StepVerifier.create(pathMono).assertNext(
-                path1 -> assertThat(path1).extracting(Path::getId, Path::getServiceId, Path::getRegex,
+                path1 -> assertThat(path1).extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
                     Path::getCreatedBy).containsExactly(4L, 1L, "/next-service/v1/", 1L))
             .verifyComplete();
         pathRepository.findById(4L).as(StepVerifier::create).assertNext(
-                path1 -> assertThat(path1).extracting(Path::getId, Path::getServiceId, Path::getRegex,
+                path1 -> assertThat(path1).extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
                     Path::getCreatedBy).containsExactly(4L, 1L, "/next-service/v1/", 1L))
             .verifyComplete();
       }

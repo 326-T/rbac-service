@@ -1,7 +1,7 @@
 package org.example.web.controller;
 
-import org.example.persistence.entity.Service;
-import org.example.service.ServiceService;
+import org.example.persistence.entity.Namespace;
+import org.example.service.NamespaceService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,44 +16,44 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/rbac-service/v1/services")
-public class ServiceController {
+@RequestMapping("/rbac-service/v1/namespaces")
+public class NamespaceRestController {
 
-  private final ServiceService serviceService;
+  private final NamespaceService namespaceService;
 
-  public ServiceController(ServiceService serviceService) {
-    this.serviceService = serviceService;
+  public NamespaceRestController(NamespaceService namespaceService) {
+    this.namespaceService = namespaceService;
   }
 
   @GetMapping
-  public Flux<Service> index() {
-    return serviceService.findAll();
+  public Flux<Namespace> index() {
+    return namespaceService.findAll();
   }
 
   @GetMapping("/count")
   public Mono<Long> count() {
-    return serviceService.count();
+    return namespaceService.count();
   }
 
   @GetMapping("/{id}")
-  public Mono<Service> findById(@PathVariable Long id) {
-    return serviceService.findById(id);
+  public Mono<Namespace> findById(@PathVariable Long id) {
+    return namespaceService.findById(id);
   }
 
   @PostMapping
-  public Mono<Service> save(@RequestBody Service service) {
-    return serviceService.insert(service);
+  public Mono<Namespace> save(@RequestBody Namespace namespace) {
+    return namespaceService.insert(namespace);
   }
 
   @PutMapping("/{id}")
-  public Mono<Service> update(@PathVariable Long id, @RequestBody Service service) {
-    service.setId(id);
-    return serviceService.update(service);
+  public Mono<Namespace> update(@PathVariable Long id, @RequestBody Namespace namespace) {
+    namespace.setId(id);
+    return namespaceService.update(namespace);
   }
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public Mono<Void> deleteById(@PathVariable Long id) {
-    return serviceService.deleteById(id);
+    return namespaceService.deleteById(id);
   }
 }

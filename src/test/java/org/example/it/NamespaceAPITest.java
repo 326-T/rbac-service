@@ -5,7 +5,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 
 import org.example.Application;
 import org.example.listener.FlywayTestExecutionListener;
-import org.example.persistence.entity.Service;
+import org.example.persistence.entity.Namespace;
 import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,7 +22,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @AutoConfigureWebClient
-public class ServiceAPITest {
+public class NamespaceAPITest {
 
   @Autowired
   private WebTestClient webTestClient;
@@ -36,11 +36,11 @@ public class ServiceAPITest {
     class regular {
 
       @Test
-      @DisplayName("サービスの件数を取得できる")
+      @DisplayName("ネームスペースの件数を取得できる")
       void countTheIndexes() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/services/count")
+            .uri("/rbac-namespace/v1/namespaces/count")
             .exchange()
             .expectStatus().isOk()
             .expectBody(Long.class).isEqualTo(3L);
@@ -57,18 +57,18 @@ public class ServiceAPITest {
     class regular {
 
       @Test
-      @DisplayName("サービスを全件取得できる")
+      @DisplayName("ネームスペースを全件取得できる")
       void findAllTheIndexes() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/services")
+            .uri("/rbac-namespace/v1/namespaces")
             .exchange()
             .expectStatus().isOk()
-            .expectBodyList(Service.class)
+            .expectBodyList(Namespace.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody()).hasSize(3);
               assertThat(response.getResponseBody())
-                  .extracting(Service::getId, Service::getName, Service::getCreatedBy)
+                  .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
                   .containsExactly(
                       tuple(1L, "front", 1L),
                       tuple(2L, "backend", 2L),
@@ -87,17 +87,17 @@ public class ServiceAPITest {
     class regular {
 
       @Test
-      @DisplayName("サービスをIDで取得できる")
+      @DisplayName("ネームスペースをIDで取得できる")
       void findUserById() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/services/1")
+            .uri("/rbac-namespace/v1/namespaces/1")
             .exchange()
             .expectStatus().isOk()
-            .expectBody(Service.class)
+            .expectBody(Namespace.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(Service::getId, Service::getName, Service::getCreatedBy)
+                  .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
                   .containsExactly(1L, "front", 1L);
             });
       }
@@ -114,11 +114,11 @@ public class ServiceAPITest {
     class regular {
 
       @Test
-      @DisplayName("サービスを更新できる")
-      void updateTargetService() {
+      @DisplayName("ネームスペースを更新できる")
+      void updateTargetNamespace() {
         // when, then
         webTestClient.put()
-            .uri("/rbac-service/v1/services/2")
+            .uri("/rbac-namespace/v1/namespaces/2")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
@@ -129,20 +129,20 @@ public class ServiceAPITest {
             )
             .exchange()
             .expectStatus().isOk()
-            .expectBody(Service.class)
+            .expectBody(Namespace.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(Service::getId, Service::getName, Service::getCreatedBy)
+                  .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
                   .containsExactly(2L, "BACKEND", 1L);
             });
         webTestClient.get()
-            .uri("/rbac-service/v1/services/2")
+            .uri("/rbac-namespace/v1/namespaces/2")
             .exchange()
             .expectStatus().isOk()
-            .expectBody(Service.class)
+            .expectBody(Namespace.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(Service::getId, Service::getName, Service::getCreatedBy)
+                  .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
                   .containsExactly(2L, "BACKEND", 1L);
             });
       }
@@ -155,11 +155,11 @@ public class ServiceAPITest {
     class Save {
 
       @Test
-      @DisplayName("サービスを新規登録できる")
-      void insertTargetService() {
+      @DisplayName("ネームスペースを新規登録できる")
+      void insertTargetNamespace() {
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/services")
+            .uri("/rbac-namespace/v1/namespaces")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
@@ -170,20 +170,20 @@ public class ServiceAPITest {
             )
             .exchange()
             .expectStatus().isOk()
-            .expectBody(Service.class)
+            .expectBody(Namespace.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(Service::getId, Service::getName, Service::getCreatedBy)
+                  .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
                   .containsExactly(4L, "auth", 1L);
             });
         webTestClient.get()
-            .uri("/rbac-service/v1/services/4")
+            .uri("/rbac-namespace/v1/namespaces/4")
             .exchange()
             .expectStatus().isOk()
-            .expectBody(Service.class)
+            .expectBody(Namespace.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(Service::getId, Service::getName, Service::getCreatedBy)
+                  .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
                   .containsExactly(4L, "auth", 1L);
             });
       }
@@ -201,16 +201,16 @@ public class ServiceAPITest {
     class regular {
 
       @Test
-      @DisplayName("サービスをIDで削除できる")
-      void deleteTargetServiceById() {
+      @DisplayName("ネームスペースをIDで削除できる")
+      void deleteTargetNamespaceById() {
         // when, then
         webTestClient.delete()
-            .uri("/rbac-service/v1/services/3")
+            .uri("/rbac-namespace/v1/namespaces/3")
             .exchange()
             .expectStatus().isNoContent()
             .expectBody(Void.class);
         webTestClient.get()
-            .uri("/rbac-service/v1/services/3")
+            .uri("/rbac-namespace/v1/namespaces/3")
             .exchange()
             .expectStatus().isOk()
             .expectBody(Void.class);

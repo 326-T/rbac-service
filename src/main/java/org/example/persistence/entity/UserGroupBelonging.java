@@ -17,6 +17,7 @@ public class UserGroupBelonging {
 
   @Id
   private Long id;
+  private Long namespaceId;
   private Long userId;
   private Long userGroupId;
   private Long createdBy;

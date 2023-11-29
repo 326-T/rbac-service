@@ -59,13 +59,13 @@ class TargetRepositoryTest {
         Flux<Target> targetFlux = targetRepository.findAll();
         // then
         StepVerifier.create(targetFlux).assertNext(
-            target -> assertThat(target).extracting(Target::getId, Target::getServiceId,
+            target -> assertThat(target).extracting(Target::getId, Target::getNamespaceId,
                     Target::getObjectIdRegex, Target::getCreatedBy)
                 .containsExactly(1L, 1L, "object-id-1", 1L)).assertNext(
-            target -> assertThat(target).extracting(Target::getId, Target::getServiceId,
+            target -> assertThat(target).extracting(Target::getId, Target::getNamespaceId,
                     Target::getObjectIdRegex, Target::getCreatedBy)
                 .containsExactly(2L, 2L, "object-id-2", 2L)).assertNext(
-            target -> assertThat(target).extracting(Target::getId, Target::getServiceId,
+            target -> assertThat(target).extracting(Target::getId, Target::getNamespaceId,
                     Target::getObjectIdRegex, Target::getCreatedBy)
                 .containsExactly(3L, 3L, "object-id-3", 3L)).verifyComplete();
       }
@@ -87,7 +87,7 @@ class TargetRepositoryTest {
         Mono<Target> targetMono = targetRepository.findById(1L);
         // then
         StepVerifier.create(targetMono).assertNext(
-            target -> assertThat(target).extracting(Target::getId, Target::getServiceId,
+            target -> assertThat(target).extracting(Target::getId, Target::getNamespaceId,
                     Target::getObjectIdRegex, Target::getCreatedBy)
                 .containsExactly(1L, 1L, "object-id-1", 1L)).verifyComplete();
       }
@@ -107,18 +107,18 @@ class TargetRepositoryTest {
       @DisplayName("ターゲットを更新できる")
       void updateTarget() {
         // given
-        Target target = Target.builder().id(2L).serviceId(1L).objectIdRegex("OBJECT-ID-2")
+        Target target = Target.builder().id(2L).namespaceId(1L).objectIdRegex("OBJECT-ID-2")
             .createdBy(1L)
             .createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now()).build();
         // when
         Mono<Target> targetMono = targetRepository.save(target);
         // then
         StepVerifier.create(targetMono).assertNext(
-            target1 -> assertThat(target1).extracting(Target::getId, Target::getServiceId,
+            target1 -> assertThat(target1).extracting(Target::getId, Target::getNamespaceId,
                     Target::getObjectIdRegex, Target::getCreatedBy)
                 .containsExactly(2L, 1L, "OBJECT-ID-2", 1L)).verifyComplete();
         targetRepository.findById(2L).as(StepVerifier::create).assertNext(
-            target1 -> assertThat(target1).extracting(Target::getId, Target::getServiceId,
+            target1 -> assertThat(target1).extracting(Target::getId, Target::getNamespaceId,
                     Target::getObjectIdRegex, Target::getCreatedBy)
                 .containsExactly(2L, 1L, "OBJECT-ID-2", 1L)).verifyComplete();
       }
@@ -127,17 +127,17 @@ class TargetRepositoryTest {
       @DisplayName("ターゲットを新規登録できる")
       void insertTarget() {
         // given
-        Target target = Target.builder().serviceId(1L).objectIdRegex("object-id-4").createdBy(1L)
+        Target target = Target.builder().namespaceId(1L).objectIdRegex("object-id-4").createdBy(1L)
             .build();
         // when
         Mono<Target> targetMono = targetRepository.save(target);
         // then
         StepVerifier.create(targetMono).assertNext(
-            target1 -> assertThat(target1).extracting(Target::getId, Target::getServiceId,
+            target1 -> assertThat(target1).extracting(Target::getId, Target::getNamespaceId,
                     Target::getObjectIdRegex, Target::getCreatedBy)
                 .containsExactly(4L, 1L, "object-id-4", 1L)).verifyComplete();
         targetRepository.findById(4L).as(StepVerifier::create).assertNext(
-            target1 -> assertThat(target1).extracting(Target::getId, Target::getServiceId,
+            target1 -> assertThat(target1).extracting(Target::getId, Target::getNamespaceId,
                     Target::getObjectIdRegex, Target::getCreatedBy)
                 .containsExactly(4L, 1L, "object-id-4", 1L)).verifyComplete();
       }

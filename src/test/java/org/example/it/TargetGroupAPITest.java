@@ -36,7 +36,7 @@ public class TargetGroupAPITest {
     class regular {
 
       @Test
-      @DisplayName("クラスタの件数を取得できる")
+      @DisplayName("ターゲットグループの件数を取得できる")
       void countTheIndexes() {
         // when, then
         webTestClient.get()
@@ -57,7 +57,7 @@ public class TargetGroupAPITest {
     class regular {
 
       @Test
-      @DisplayName("クラスタを全件取得できる")
+      @DisplayName("ターゲットグループを全件取得できる")
       void findAllTheIndexes() {
         // when, then
         webTestClient.get()
@@ -68,11 +68,12 @@ public class TargetGroupAPITest {
             .consumeWith(response -> {
               assertThat(response.getResponseBody()).hasSize(3);
               assertThat(response.getResponseBody())
-                  .extracting(TargetGroup::getId, TargetGroup::getName, TargetGroup::getCreatedBy)
+                  .extracting(TargetGroup::getId, TargetGroup::getNamespaceId, TargetGroup::getName,
+                      TargetGroup::getCreatedBy)
                   .containsExactly(
-                      tuple(1L, "target-group-1", 1L),
-                      tuple(2L, "target-group-2", 2L),
-                      tuple(3L, "target-group-3", 3L));
+                      tuple(1L, 1L, "target-group-1", 1L),
+                      tuple(2L, 2L, "target-group-2", 2L),
+                      tuple(3L, 3L, "target-group-3", 3L));
             });
       }
     }
@@ -87,7 +88,7 @@ public class TargetGroupAPITest {
     class regular {
 
       @Test
-      @DisplayName("クラスタをIDで取得できる")
+      @DisplayName("ターゲットグループをIDで取得できる")
       void findUserById() {
         // when, then
         webTestClient.get()
@@ -97,8 +98,9 @@ public class TargetGroupAPITest {
             .expectBody(TargetGroup.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(TargetGroup::getId, TargetGroup::getName, TargetGroup::getCreatedBy)
-                  .containsExactly(1L, "target-group-1", 1L);
+                  .extracting(TargetGroup::getId, TargetGroup::getNamespaceId, TargetGroup::getName,
+                      TargetGroup::getCreatedBy)
+                  .containsExactly(1L, 1L, "target-group-1", 1L);
             });
       }
     }
@@ -114,7 +116,7 @@ public class TargetGroupAPITest {
     class regular {
 
       @Test
-      @DisplayName("クラスタを更新できる")
+      @DisplayName("ターゲットグループを更新できる")
       void updateTargetGroup() {
         // when, then
         webTestClient.put()
@@ -122,6 +124,7 @@ public class TargetGroupAPITest {
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
+                  "namespaceId": 1,
                   "name": "TARGET-GROUP-2",
                   "createdBy": 1
                 }
@@ -131,8 +134,9 @@ public class TargetGroupAPITest {
             .expectBody(TargetGroup.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(TargetGroup::getId, TargetGroup::getName, TargetGroup::getCreatedBy)
-                  .containsExactly(2L, "TARGET-GROUP-2", 1L);
+                  .extracting(TargetGroup::getId, TargetGroup::getNamespaceId, TargetGroup::getName,
+                      TargetGroup::getCreatedBy)
+                  .containsExactly(2L, 1L, "TARGET-GROUP-2", 1L);
             });
         webTestClient.get()
             .uri("/rbac-service/v1/target-groups/2")
@@ -141,8 +145,9 @@ public class TargetGroupAPITest {
             .expectBody(TargetGroup.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(TargetGroup::getId, TargetGroup::getName, TargetGroup::getCreatedBy)
-                  .containsExactly(2L, "TARGET-GROUP-2", 1L);
+                  .extracting(TargetGroup::getId, TargetGroup::getNamespaceId, TargetGroup::getName,
+                      TargetGroup::getCreatedBy)
+                  .containsExactly(2L, 1L, "TARGET-GROUP-2", 1L);
             });
       }
     }
@@ -154,7 +159,7 @@ public class TargetGroupAPITest {
     class Save {
 
       @Test
-      @DisplayName("クラスタを新規登録できる")
+      @DisplayName("ターゲットグループを新規登録できる")
       void insertTargetGroup() {
         // when, then
         webTestClient.post()
@@ -162,6 +167,7 @@ public class TargetGroupAPITest {
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
+                  "namespaceId": 1,
                   "name": "target-group-4",
                   "createdBy": 1
                 }
@@ -171,8 +177,9 @@ public class TargetGroupAPITest {
             .expectBody(TargetGroup.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(TargetGroup::getId, TargetGroup::getName, TargetGroup::getCreatedBy)
-                  .containsExactly(4L, "target-group-4", 1L);
+                  .extracting(TargetGroup::getId, TargetGroup::getNamespaceId, TargetGroup::getName,
+                      TargetGroup::getCreatedBy)
+                  .containsExactly(4L, 1L, "target-group-4", 1L);
             });
         webTestClient.get()
             .uri("/rbac-service/v1/target-groups/4")
@@ -181,8 +188,9 @@ public class TargetGroupAPITest {
             .expectBody(TargetGroup.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(TargetGroup::getId, TargetGroup::getName, TargetGroup::getCreatedBy)
-                  .containsExactly(4L, "target-group-4", 1L);
+                  .extracting(TargetGroup::getId, TargetGroup::getNamespaceId, TargetGroup::getName,
+                      TargetGroup::getCreatedBy)
+                  .containsExactly(4L, 1L, "target-group-4", 1L);
             });
       }
     }
@@ -199,7 +207,7 @@ public class TargetGroupAPITest {
     class regular {
 
       @Test
-      @DisplayName("クラスタをIDで削除できる")
+      @DisplayName("ターゲットグループをIDで削除できる")
       void deleteTargetGroupById() {
         // when, then
         webTestClient.delete()

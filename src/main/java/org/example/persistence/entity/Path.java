@@ -17,7 +17,7 @@ public class Path {
 
   @Id
   private Long id;
-  private Long serviceId;
+  private Long namespaceId;
   private String regex;
   private Long createdBy;
   private LocalDateTime createdAt;

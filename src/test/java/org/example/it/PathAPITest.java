@@ -68,7 +68,7 @@ public class PathAPITest {
             .consumeWith(response -> {
               assertThat(response.getResponseBody()).hasSize(3);
               assertThat(response.getResponseBody())
-                  .extracting(Path::getId, Path::getServiceId, Path::getRegex, Path::getCreatedBy)
+                  .extracting(Path::getId, Path::getNamespaceId, Path::getRegex, Path::getCreatedBy)
                   .containsExactly(
 
                       tuple(1L, 1L, "/user-service/v1/", 1L),
@@ -98,7 +98,7 @@ public class PathAPITest {
             .expectBody(Path.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(Path::getId, Path::getServiceId, Path::getRegex, Path::getCreatedBy)
+                  .extracting(Path::getId, Path::getNamespaceId, Path::getRegex, Path::getCreatedBy)
                   .containsExactly(1L, 1L, "/user-service/v1/", 1L);
             });
       }
@@ -123,7 +123,7 @@ public class PathAPITest {
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "serviceId": 1,
+                  "namespaceId": 1,
                   "regex": "/replace-service/v1/",
                   "createdBy": 1
                 }
@@ -134,7 +134,8 @@ public class PathAPITest {
             .expectBody(Path.class)
             .consumeWith(response ->
                 assertThat(response.getResponseBody())
-                    .extracting(Path::getId, Path::getServiceId, Path::getRegex, Path::getCreatedBy)
+                    .extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
+                        Path::getCreatedBy)
                     .containsExactly(2L, 1L, "/replace-service/v1/", 1L)
             );
         webTestClient.get()
@@ -144,7 +145,8 @@ public class PathAPITest {
             .expectBody(Path.class)
             .consumeWith(response ->
                 assertThat(response.getResponseBody())
-                    .extracting(Path::getId, Path::getServiceId, Path::getRegex, Path::getCreatedBy)
+                    .extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
+                        Path::getCreatedBy)
                     .containsExactly(2L, 1L, "/replace-service/v1/", 1L)
             );
       }
@@ -165,7 +167,7 @@ public class PathAPITest {
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "serviceId": 1,
+                  "namespaceId": 1,
                   "regex": "/next-service/v1/",
                   "createdBy": 1
                 }
@@ -176,7 +178,8 @@ public class PathAPITest {
             .expectBody(Path.class)
             .consumeWith(response ->
                 assertThat(response.getResponseBody())
-                    .extracting(Path::getId, Path::getServiceId, Path::getRegex, Path::getCreatedBy)
+                    .extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
+                        Path::getCreatedBy)
                     .containsExactly(4L, 1L, "/next-service/v1/", 1L)
             );
         webTestClient.get()
@@ -186,7 +189,8 @@ public class PathAPITest {
             .expectBody(Path.class)
             .consumeWith(response ->
                 assertThat(response.getResponseBody())
-                    .extracting(Path::getId, Path::getServiceId, Path::getRegex, Path::getCreatedBy)
+                    .extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
+                        Path::getCreatedBy)
                     .containsExactly(4L, 1L, "/next-service/v1/", 1L)
             );
       }

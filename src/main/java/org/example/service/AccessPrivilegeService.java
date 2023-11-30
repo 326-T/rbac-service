@@ -24,7 +24,7 @@ public class AccessPrivilegeService {
     return accessPrivilegeRepository.findByUser(ask.getUserId())
         .any(truth ->
             ask.getNamespaceId().equals(truth.getNamespaceId())
-                && ask.getMethod().equals(truth.getMethod())
+                && ask.getMethod().matches(truth.getMethod())
                 && ask.getPath().matches(truth.getPathRegex())
                 && ask.getObjectId().matches(truth.getObjectIdRegex())
         );

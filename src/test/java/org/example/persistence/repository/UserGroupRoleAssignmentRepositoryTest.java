@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import org.example.listener.FlywayTestExecutionListener;
-import org.example.persistence.entity.GroupRoleAssignment;
+import org.example.persistence.entity.UserGroupRoleAssignment;
 import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -23,7 +23,7 @@ import reactor.test.StepVerifier;
 class UserGroupRoleAssignmentRepositoryTest {
 
   @Autowired
-  private GroupRoleAssignmentRepository groupRoleAssignmentRepository;
+  private UserGroupRoleAssignmentRepository userGroupRoleAssignmentRepository;
 
   @Order(1)
   @Nested
@@ -37,7 +37,7 @@ class UserGroupRoleAssignmentRepositoryTest {
       @DisplayName("グループとロールの関係情報の件数を取得できる")
       void countTheIndexes() {
         // when
-        Mono<Long> count = groupRoleAssignmentRepository.count();
+        Mono<Long> count = userGroupRoleAssignmentRepository.count();
         // then
         StepVerifier.create(count).expectNext(3L).verifyComplete();
       }
@@ -56,32 +56,32 @@ class UserGroupRoleAssignmentRepositoryTest {
       @DisplayName("グループとロールの関係情報を全件取得できる")
       void findAllTheIndexes() {
         // when
-        Flux<GroupRoleAssignment> groupHasRoleFlux = groupRoleAssignmentRepository.findAll();
+        Flux<UserGroupRoleAssignment> groupHasRoleFlux = userGroupRoleAssignmentRepository.findAll();
         // then
         StepVerifier.create(groupHasRoleFlux)
             .assertNext(
                 groupRoleAssignment -> assertThat(groupRoleAssignment)
-                    .extracting(GroupRoleAssignment::getId,
-                        GroupRoleAssignment::getNamespaceId,
-                        GroupRoleAssignment::getRoleId,
-                        GroupRoleAssignment::getUserGroupId,
-                        GroupRoleAssignment::getCreatedBy)
+                    .extracting(UserGroupRoleAssignment::getId,
+                        UserGroupRoleAssignment::getNamespaceId,
+                        UserGroupRoleAssignment::getRoleId,
+                        UserGroupRoleAssignment::getUserGroupId,
+                        UserGroupRoleAssignment::getCreatedBy)
                     .containsExactly(1L, 1L, 1L, 1L, 1L))
             .assertNext(
                 groupRoleAssignment -> assertThat(groupRoleAssignment)
-                    .extracting(GroupRoleAssignment::getId,
-                        GroupRoleAssignment::getNamespaceId,
-                        GroupRoleAssignment::getRoleId,
-                        GroupRoleAssignment::getUserGroupId,
-                        GroupRoleAssignment::getCreatedBy)
+                    .extracting(UserGroupRoleAssignment::getId,
+                        UserGroupRoleAssignment::getNamespaceId,
+                        UserGroupRoleAssignment::getRoleId,
+                        UserGroupRoleAssignment::getUserGroupId,
+                        UserGroupRoleAssignment::getCreatedBy)
                     .containsExactly(2L, 2L, 2L, 2L, 2L))
             .assertNext(
                 groupRoleAssignment -> assertThat(groupRoleAssignment)
-                    .extracting(GroupRoleAssignment::getId,
-                        GroupRoleAssignment::getNamespaceId,
-                        GroupRoleAssignment::getRoleId,
-                        GroupRoleAssignment::getUserGroupId,
-                        GroupRoleAssignment::getCreatedBy)
+                    .extracting(UserGroupRoleAssignment::getId,
+                        UserGroupRoleAssignment::getNamespaceId,
+                        UserGroupRoleAssignment::getRoleId,
+                        UserGroupRoleAssignment::getUserGroupId,
+                        UserGroupRoleAssignment::getCreatedBy)
                     .containsExactly(3L, 3L, 3L, 3L, 3L))
             .verifyComplete();
       }
@@ -100,16 +100,17 @@ class UserGroupRoleAssignmentRepositoryTest {
       @DisplayName("グループとロールの関係情報をIDで取得できる")
       void findUserById() {
         // when
-        Mono<GroupRoleAssignment> groupHasRoleMono = groupRoleAssignmentRepository.findById(1L);
+        Mono<UserGroupRoleAssignment> groupHasRoleMono = userGroupRoleAssignmentRepository.findById(
+            1L);
         // then
         StepVerifier.create(groupHasRoleMono)
             .assertNext(
                 groupRoleAssignment -> assertThat(groupRoleAssignment)
-                    .extracting(GroupRoleAssignment::getId,
-                        GroupRoleAssignment::getNamespaceId,
-                        GroupRoleAssignment::getRoleId,
-                        GroupRoleAssignment::getUserGroupId,
-                        GroupRoleAssignment::getCreatedBy)
+                    .extracting(UserGroupRoleAssignment::getId,
+                        UserGroupRoleAssignment::getNamespaceId,
+                        UserGroupRoleAssignment::getRoleId,
+                        UserGroupRoleAssignment::getUserGroupId,
+                        UserGroupRoleAssignment::getCreatedBy)
                     .containsExactly(1L, 1L, 1L, 1L, 1L))
             .verifyComplete();
       }
@@ -129,7 +130,7 @@ class UserGroupRoleAssignmentRepositoryTest {
       @DisplayName("グループとロールの関係情報を更新できる")
       void updateGroupHasRole() {
         // given
-        GroupRoleAssignment groupRoleAssignment = GroupRoleAssignment.builder()
+        UserGroupRoleAssignment userGroupRoleAssignment = UserGroupRoleAssignment.builder()
             .id(2L)
             .namespaceId(1L)
             .roleId(1L)
@@ -139,27 +140,27 @@ class UserGroupRoleAssignmentRepositoryTest {
             .updatedAt(LocalDateTime.now())
             .build();
         // when
-        Mono<GroupRoleAssignment> groupHasRoleMono = groupRoleAssignmentRepository.save(
-            groupRoleAssignment);
+        Mono<UserGroupRoleAssignment> groupHasRoleMono = userGroupRoleAssignmentRepository.save(
+            userGroupRoleAssignment);
         // then
         StepVerifier.create(groupHasRoleMono)
             .assertNext(
                 groupRoleAssignment1 -> assertThat(groupRoleAssignment1)
-                    .extracting(GroupRoleAssignment::getId,
-                        GroupRoleAssignment::getNamespaceId,
-                        GroupRoleAssignment::getRoleId,
-                        GroupRoleAssignment::getUserGroupId,
-                        GroupRoleAssignment::getCreatedBy)
+                    .extracting(UserGroupRoleAssignment::getId,
+                        UserGroupRoleAssignment::getNamespaceId,
+                        UserGroupRoleAssignment::getRoleId,
+                        UserGroupRoleAssignment::getUserGroupId,
+                        UserGroupRoleAssignment::getCreatedBy)
                     .containsExactly(2L, 1L, 1L, 2L, 3L))
             .verifyComplete();
-        groupRoleAssignmentRepository.findById(2L).as(StepVerifier::create)
+        userGroupRoleAssignmentRepository.findById(2L).as(StepVerifier::create)
             .assertNext(
                 groupRoleAssignment1 -> assertThat(groupRoleAssignment1)
-                    .extracting(GroupRoleAssignment::getId,
-                        GroupRoleAssignment::getNamespaceId,
-                        GroupRoleAssignment::getRoleId,
-                        GroupRoleAssignment::getUserGroupId,
-                        GroupRoleAssignment::getCreatedBy)
+                    .extracting(UserGroupRoleAssignment::getId,
+                        UserGroupRoleAssignment::getNamespaceId,
+                        UserGroupRoleAssignment::getRoleId,
+                        UserGroupRoleAssignment::getUserGroupId,
+                        UserGroupRoleAssignment::getCreatedBy)
                     .containsExactly(2L, 1L, 1L, 2L, 3L))
             .verifyComplete();
       }
@@ -168,34 +169,34 @@ class UserGroupRoleAssignmentRepositoryTest {
       @DisplayName("グループとロールの関係情報を新規登録できる")
       void insertGroupHasRole() {
         // given
-        GroupRoleAssignment groupRoleAssignment = GroupRoleAssignment.builder()
+        UserGroupRoleAssignment userGroupRoleAssignment = UserGroupRoleAssignment.builder()
             .namespaceId(1L)
             .roleId(3L)
             .userGroupId(1L)
             .createdBy(1L)
             .build();
         // when
-        Mono<GroupRoleAssignment> groupHasRoleMono = groupRoleAssignmentRepository.save(
-            groupRoleAssignment);
+        Mono<UserGroupRoleAssignment> groupHasRoleMono = userGroupRoleAssignmentRepository.save(
+            userGroupRoleAssignment);
         // then
         StepVerifier.create(groupHasRoleMono)
             .assertNext(
                 groupRoleAssignment1 -> assertThat(groupRoleAssignment1)
-                    .extracting(GroupRoleAssignment::getId,
-                        GroupRoleAssignment::getNamespaceId,
-                        GroupRoleAssignment::getRoleId,
-                        GroupRoleAssignment::getUserGroupId,
-                        GroupRoleAssignment::getCreatedBy)
+                    .extracting(UserGroupRoleAssignment::getId,
+                        UserGroupRoleAssignment::getNamespaceId,
+                        UserGroupRoleAssignment::getRoleId,
+                        UserGroupRoleAssignment::getUserGroupId,
+                        UserGroupRoleAssignment::getCreatedBy)
                     .containsExactly(4L, 1L, 3L, 1L, 1L))
             .verifyComplete();
-        groupRoleAssignmentRepository.findById(4L).as(StepVerifier::create)
+        userGroupRoleAssignmentRepository.findById(4L).as(StepVerifier::create)
             .assertNext(
                 groupRoleAssignment1 -> assertThat(groupRoleAssignment1)
-                    .extracting(GroupRoleAssignment::getId,
-                        GroupRoleAssignment::getNamespaceId,
-                        GroupRoleAssignment::getRoleId,
-                        GroupRoleAssignment::getUserGroupId,
-                        GroupRoleAssignment::getCreatedBy)
+                    .extracting(UserGroupRoleAssignment::getId,
+                        UserGroupRoleAssignment::getNamespaceId,
+                        UserGroupRoleAssignment::getRoleId,
+                        UserGroupRoleAssignment::getUserGroupId,
+                        UserGroupRoleAssignment::getCreatedBy)
                     .containsExactly(4L, 1L, 3L, 1L, 1L))
             .verifyComplete();
       }
@@ -216,10 +217,10 @@ class UserGroupRoleAssignmentRepositoryTest {
       @DisplayName("グループとロールの関係情報をIDで削除できる")
       void deleteGroupHasRoleById() {
         // when
-        Mono<Void> voidMono = groupRoleAssignmentRepository.deleteById(3L);
+        Mono<Void> voidMono = userGroupRoleAssignmentRepository.deleteById(3L);
         // then
         StepVerifier.create(voidMono).verifyComplete();
-        groupRoleAssignmentRepository.findById(3L).as(StepVerifier::create).verifyComplete();
+        userGroupRoleAssignmentRepository.findById(3L).as(StepVerifier::create).verifyComplete();
       }
     }
   }

@@ -4,16 +4,30 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[add]NamespaceをUser以外の全てに含めるように修正">
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/dto/AccessPrivilege.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/AccessPrivilegeRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/AccessPrivilegeService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/AccessPrivilegeController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/AccessPrivilegeRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/it/AccessPrivilegeAPITest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/AccessPrivilegeRepositoryTest.java" afterDir="false" />
+    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[add]権限の一覧と権限があるか確認するAPIとそのテストの実装">
+      <change afterPath="$PROJECT_DIR$/.idea/git_toolbox_prj.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/service/AccessPrivilegeServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/service/EndpointServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/service/NamespaceServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/service/PathServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/service/RoleEndpointPermissionServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/service/RoleServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/service/TargetGroupBelongingServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupBelongingServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupRoleAssignmentServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/service/UserServiceTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/persistence/entity/GroupRoleAssignment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/entity/UserGroupRoleAssignment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/GroupRoleAssignmentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/UserGroupRoleAssignmentRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/AccessPrivilegeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/AccessPrivilegeService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/GroupRoleAssignmentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/UserGroupRoleAssignmentService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/GroupRoleAssignmentRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserGroupRoleAssignmentRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/db/migration/V1.0.6__group_role_assignments_schema.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V1.0.6__group_role_assignments_schema.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/UserGroupRoleAssignmentAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/UserGroupRoleAssignmentAPITest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/UserGroupRoleAssignmentRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/UserGroupRoleAssignmentRepositoryTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/TargetGroupServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/TargetGroupServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.106__group_role_assignments_data.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.106__group_role_assignments_data.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,9 +42,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="JUnit5 Test Class" />
         <option value="Interface" />
         <option value="Class" />
+        <option value="JUnit5 Test Class" />
       </list>
     </option>
   </component>
@@ -90,87 +104,84 @@
       <recent name="org.example.it.persistence.repository" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="org.example.service" />
       <recent name="org.example.persistence.repository" />
       <recent name="org.example.web.controller" />
-      <recent name="org.example.service" />
       <recent name="org.example.persistence.entity" />
       <recent name="org.example.it" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.AccessPrivilegeAPITest$findByNamespace$regular.findByNamespace">
-    <configuration name="AccessPrivilegeAPITest$canAccess$irregular.canAccess" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="JUnit.UserServiceTest">
+    <configuration name="EndpointServiceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.it.*" />
+          <option name="PATTERN" value="org.example.service.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.it.AccessPrivilegeAPITest.canAccess" />
-      <option name="MAIN_CLASS_NAME" value="org.example.it.AccessPrivilegeAPITest$canAccess$irregular" />
-      <option name="METHOD_NAME" value="canAccess" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="AccessPrivilegeAPITest$canAccess$regular" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="rbac-service" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.it.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.it.AccessPrivilegeAPITest.canAccess" />
-      <option name="MAIN_CLASS_NAME" value="org.example.it.AccessPrivilegeAPITest$canAccess$regular" />
+      <option name="PACKAGE_NAME" value="org.example.service" />
+      <option name="MAIN_CLASS_NAME" value="org.example.service.EndpointServiceTest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="AccessPrivilegeAPITest$canAccess$regular.canAccess" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="NamespaceServiceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.it.*" />
+          <option name="PATTERN" value="org.example.service.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.it.AccessPrivilegeAPITest.canAccess" />
-      <option name="MAIN_CLASS_NAME" value="org.example.it.AccessPrivilegeAPITest$canAccess$regular" />
-      <option name="METHOD_NAME" value="canAccess" />
-      <option name="TEST_OBJECT" value="method" />
+      <option name="PACKAGE_NAME" value="org.example.service" />
+      <option name="MAIN_CLASS_NAME" value="org.example.service.NamespaceServiceTest" />
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="AccessPrivilegeAPITest$findByNamespace$regular.findByNamespace" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="PathServiceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.it.*" />
+          <option name="PATTERN" value="org.example.service.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.it.AccessPrivilegeAPITest.findByNamespace" />
-      <option name="MAIN_CLASS_NAME" value="org.example.it.AccessPrivilegeAPITest$findByNamespace$regular" />
-      <option name="METHOD_NAME" value="findByNamespace" />
-      <option name="TEST_OBJECT" value="method" />
+      <option name="PACKAGE_NAME" value="org.example.service" />
+      <option name="MAIN_CLASS_NAME" value="org.example.service.PathServiceTest" />
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="AccessPrivilegeRepositoryTest$findByUser" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="RoleServiceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.persistence.repository.*" />
+          <option name="PATTERN" value="org.example.service.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.persistence.repository.AccessPrivilegeRepositoryTest" />
-      <option name="MAIN_CLASS_NAME" value="org.example.persistence.repository.AccessPrivilegeRepositoryTest$findByUser" />
+      <option name="PACKAGE_NAME" value="org.example.service" />
+      <option name="MAIN_CLASS_NAME" value="org.example.service.RoleServiceTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UserServiceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rbac-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.service" />
+      <option name="MAIN_CLASS_NAME" value="org.example.service.UserServiceTest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -178,11 +189,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.AccessPrivilegeAPITest$findByNamespace$regular.findByNamespace" />
-        <item itemvalue="JUnit.AccessPrivilegeAPITest$canAccess$regular" />
-        <item itemvalue="JUnit.AccessPrivilegeAPITest$canAccess$irregular.canAccess" />
-        <item itemvalue="JUnit.AccessPrivilegeAPITest$canAccess$regular.canAccess" />
-        <item itemvalue="JUnit.AccessPrivilegeRepositoryTest$findByUser" />
+        <item itemvalue="JUnit.UserServiceTest" />
+        <item itemvalue="JUnit.RoleServiceTest" />
+        <item itemvalue="JUnit.PathServiceTest" />
+        <item itemvalue="JUnit.EndpointServiceTest" />
+        <item itemvalue="JUnit.NamespaceServiceTest" />
       </list>
     </recent_temporary>
   </component>
@@ -227,7 +238,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701240009573</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="[add]権限の一覧と権限があるか確認するAPIとそのテストの実装">
+      <option name="closed" value="true" />
+      <created>1701259403891</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1701259403891</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -235,7 +254,8 @@
     <MESSAGE value="[add]Service, Controller, 結合テストの実装" />
     <MESSAGE value="[update]命名の変更" />
     <MESSAGE value="[add]NamespaceをUser以外の全てに含めるように修正" />
-    <option name="LAST_COMMIT_MESSAGE" value="[add]NamespaceをUser以外の全てに含めるように修正" />
+    <MESSAGE value="[add]権限の一覧と権限があるか確認するAPIとそのテストの実装" />
+    <option name="LAST_COMMIT_MESSAGE" value="[add]権限の一覧と権限があるか確認するAPIとそのテストの実装" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

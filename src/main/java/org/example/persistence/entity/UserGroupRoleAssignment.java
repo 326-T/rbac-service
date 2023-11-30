@@ -12,8 +12,8 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Data
 @Builder
-@Table("rbac_group_role_assignments")
-public class GroupRoleAssignment {
+@Table("rbac_user_group_role_assignments")
+public class UserGroupRoleAssignment {
 
   @Id
   private Long id;

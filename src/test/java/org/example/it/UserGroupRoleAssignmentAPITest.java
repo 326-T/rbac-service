@@ -5,7 +5,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 
 import org.example.Application;
 import org.example.listener.FlywayTestExecutionListener;
-import org.example.persistence.entity.GroupRoleAssignment;
+import org.example.persistence.entity.UserGroupRoleAssignment;
 import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -64,13 +64,14 @@ public class UserGroupRoleAssignmentAPITest {
             .uri("/rbac-service/v1/group-role-assignments")
             .exchange()
             .expectStatus().isOk()
-            .expectBodyList(GroupRoleAssignment.class)
+            .expectBodyList(UserGroupRoleAssignment.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody()).hasSize(3);
               assertThat(response.getResponseBody())
-                  .extracting(GroupRoleAssignment::getId, GroupRoleAssignment::getNamespaceId,
-                      GroupRoleAssignment::getUserGroupId, GroupRoleAssignment::getRoleId,
-                      GroupRoleAssignment::getCreatedBy)
+                  .extracting(UserGroupRoleAssignment::getId,
+                      UserGroupRoleAssignment::getNamespaceId,
+                      UserGroupRoleAssignment::getUserGroupId, UserGroupRoleAssignment::getRoleId,
+                      UserGroupRoleAssignment::getCreatedBy)
                   .containsExactly(
                       tuple(1L, 1L, 1L, 1L, 1L),
                       tuple(2L, 2L, 2L, 2L, 2L),
@@ -96,12 +97,13 @@ public class UserGroupRoleAssignmentAPITest {
             .uri("/rbac-service/v1/group-role-assignments/1")
             .exchange()
             .expectStatus().isOk()
-            .expectBody(GroupRoleAssignment.class)
+            .expectBody(UserGroupRoleAssignment.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
-                  .extracting(GroupRoleAssignment::getId, GroupRoleAssignment::getNamespaceId,
-                      GroupRoleAssignment::getUserGroupId, GroupRoleAssignment::getRoleId,
-                      GroupRoleAssignment::getCreatedBy)
+                  .extracting(UserGroupRoleAssignment::getId,
+                      UserGroupRoleAssignment::getNamespaceId,
+                      UserGroupRoleAssignment::getUserGroupId, UserGroupRoleAssignment::getRoleId,
+                      UserGroupRoleAssignment::getCreatedBy)
                   .containsExactly(1L, 1L, 1L, 1L, 1L);
             });
       }
@@ -134,21 +136,21 @@ public class UserGroupRoleAssignmentAPITest {
                 """)
             .exchange()
             .expectStatus().isOk()
-            .expectBody(GroupRoleAssignment.class)
+            .expectBody(UserGroupRoleAssignment.class)
             .consumeWith(response -> assertThat(response.getResponseBody())
-                .extracting(GroupRoleAssignment::getId, GroupRoleAssignment::getNamespaceId,
-                    GroupRoleAssignment::getUserGroupId, GroupRoleAssignment::getRoleId,
-                    GroupRoleAssignment::getCreatedBy)
+                .extracting(UserGroupRoleAssignment::getId, UserGroupRoleAssignment::getNamespaceId,
+                    UserGroupRoleAssignment::getUserGroupId, UserGroupRoleAssignment::getRoleId,
+                    UserGroupRoleAssignment::getCreatedBy)
                 .containsExactly(4L, 1L, 3L, 1L, 1L));
         webTestClient.get()
             .uri("/rbac-service/v1/group-role-assignments/4")
             .exchange()
             .expectStatus().isOk()
-            .expectBody(GroupRoleAssignment.class)
+            .expectBody(UserGroupRoleAssignment.class)
             .consumeWith(response -> assertThat(response.getResponseBody())
-                .extracting(GroupRoleAssignment::getId, GroupRoleAssignment::getNamespaceId,
-                    GroupRoleAssignment::getUserGroupId, GroupRoleAssignment::getRoleId,
-                    GroupRoleAssignment::getCreatedBy)
+                .extracting(UserGroupRoleAssignment::getId, UserGroupRoleAssignment::getNamespaceId,
+                    UserGroupRoleAssignment::getUserGroupId, UserGroupRoleAssignment::getRoleId,
+                    UserGroupRoleAssignment::getCreatedBy)
                 .containsExactly(4L, 1L, 3L, 1L, 1L));
       }
     }

@@ -1,7 +1,7 @@
 package org.example.web.controller;
 
-import org.example.persistence.entity.GroupRoleAssignment;
-import org.example.service.GroupRoleAssignmentService;
+import org.example.persistence.entity.UserGroupRoleAssignment;
+import org.example.service.UserGroupRoleAssignmentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,37 +16,39 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/rbac-service/v1/group-role-assignments")
-public class GroupRoleAssignmentRestController {
+public class UserGroupRoleAssignmentRestController {
 
-  private final GroupRoleAssignmentService groupRoleAssignmentService;
+  private final UserGroupRoleAssignmentService userGroupRoleAssignmentService;
 
-  public GroupRoleAssignmentRestController(GroupRoleAssignmentService groupRoleAssignmentService) {
-    this.groupRoleAssignmentService = groupRoleAssignmentService;
+  public UserGroupRoleAssignmentRestController(
+      UserGroupRoleAssignmentService userGroupRoleAssignmentService) {
+    this.userGroupRoleAssignmentService = userGroupRoleAssignmentService;
   }
 
   @GetMapping
-  public Flux<GroupRoleAssignment> index() {
-    return groupRoleAssignmentService.findAll();
+  public Flux<UserGroupRoleAssignment> index() {
+    return userGroupRoleAssignmentService.findAll();
   }
 
   @GetMapping("/count")
   public Mono<Long> count() {
-    return groupRoleAssignmentService.count();
+    return userGroupRoleAssignmentService.count();
   }
 
   @GetMapping("/{id}")
-  public Mono<GroupRoleAssignment> findById(@PathVariable Long id) {
-    return groupRoleAssignmentService.findById(id);
+  public Mono<UserGroupRoleAssignment> findById(@PathVariable Long id) {
+    return userGroupRoleAssignmentService.findById(id);
   }
 
   @PostMapping
-  public Mono<GroupRoleAssignment> save(@RequestBody GroupRoleAssignment groupRoleAssignment) {
-    return groupRoleAssignmentService.insert(groupRoleAssignment);
+  public Mono<UserGroupRoleAssignment> save(
+      @RequestBody UserGroupRoleAssignment userGroupRoleAssignment) {
+    return userGroupRoleAssignmentService.insert(userGroupRoleAssignment);
   }
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public Mono<Void> deleteById(@PathVariable Long id) {
-    return groupRoleAssignmentService.deleteById(id);
+    return userGroupRoleAssignmentService.deleteById(id);
   }
 }

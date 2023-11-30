@@ -65,21 +65,18 @@ class PathServiceTest {
         Flux<Path> clusterFlux = pathService.findAll();
         // then
         StepVerifier.create(clusterFlux)
-            .assertNext(
-                cluster -> assertThat(cluster)
-                    .extracting(Path::getId, Path::getNamespaceId,
-                        Path::getRegex, Path::getCreatedBy)
-                    .containsExactly(1L, 1L, "/user-service/v1", 1L))
-            .assertNext(
-                cluster -> assertThat(cluster)
-                    .extracting(Path::getId, Path::getNamespaceId,
-                        Path::getRegex, Path::getCreatedBy)
-                    .containsExactly(2L, 2L, "/billing-service/v1", 2L))
-            .assertNext(
-                cluster -> assertThat(cluster)
-                    .extracting(Path::getId, Path::getNamespaceId,
-                        Path::getRegex, Path::getCreatedBy)
-                    .containsExactly(3L, 3L, "/movie-service/v1", 3L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(Path::getId, Path::getNamespaceId,
+                    Path::getRegex, Path::getCreatedBy)
+                .containsExactly(1L, 1L, "/user-service/v1", 1L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(Path::getId, Path::getNamespaceId,
+                    Path::getRegex, Path::getCreatedBy)
+                .containsExactly(2L, 2L, "/billing-service/v1", 2L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(Path::getId, Path::getNamespaceId,
+                    Path::getRegex, Path::getCreatedBy)
+                .containsExactly(3L, 3L, "/movie-service/v1", 3L))
             .verifyComplete();
       }
     }
@@ -102,11 +99,10 @@ class PathServiceTest {
         Mono<Path> clusterMono = pathService.findById(1L);
         // then
         StepVerifier.create(clusterMono)
-            .assertNext(
-                cluster -> assertThat(cluster)
-                    .extracting(Path::getId, Path::getNamespaceId,
-                        Path::getRegex, Path::getCreatedBy)
-                    .containsExactly(1L, 1L, "/user-service/v1", 1L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(Path::getId, Path::getNamespaceId,
+                    Path::getRegex, Path::getCreatedBy)
+                .containsExactly(1L, 1L, "/user-service/v1", 1L))
             .verifyComplete();
       }
     }
@@ -130,11 +126,10 @@ class PathServiceTest {
         Mono<Path> clusterMono = pathService.insert(path1);
         // then
         StepVerifier.create(clusterMono)
-            .assertNext(
-                cluster -> assertThat(cluster)
-                    .extracting(Path::getId, Path::getNamespaceId,
-                        Path::getRegex, Path::getCreatedBy)
-                    .containsExactly(null, 1L, "/user-service/v1", 1L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(Path::getId, Path::getNamespaceId,
+                    Path::getRegex, Path::getCreatedBy)
+                .containsExactly(null, 1L, "/user-service/v1", 1L))
             .verifyComplete();
       }
     }
@@ -150,20 +145,20 @@ class PathServiceTest {
       @DisplayName("パスを更新できる")
       void updateTheIndex() {
         // given
-        Path path1 = Path.builder()
-            .id(1L).namespaceId(1L).regex("/user-service/v1").createdBy(1L).build();
-        when(pathRepository.findById(1L)).thenReturn(Mono.just(path1));
-        when(pathRepository.save(any(Path.class))).thenReturn(
-            Mono.just(path1));
+        Path before = Path.builder()
+            .id(2L).namespaceId(2L).regex("/billing-service/v1").createdBy(2L).build();
+        Path after = Path.builder()
+            .id(2L).namespaceId(2L).regex("/user-service/v1").createdBy(2L).build();
+        when(pathRepository.findById(2L)).thenReturn(Mono.just(before));
+        when(pathRepository.save(any(Path.class))).thenReturn(Mono.just(after));
         // when
-        Mono<Path> clusterMono = pathService.update(path1);
+        Mono<Path> clusterMono = pathService.update(after);
         // then
         StepVerifier.create(clusterMono)
-            .assertNext(
-                cluster -> assertThat(cluster)
-                    .extracting(Path::getId, Path::getNamespaceId,
-                        Path::getRegex, Path::getCreatedBy)
-                    .containsExactly(1L, 1L, "/user-service/v1", 1L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(Path::getId, Path::getNamespaceId,
+                    Path::getRegex, Path::getCreatedBy)
+                .containsExactly(2L, 2L, "/user-service/v1", 2L))
             .verifyComplete();
       }
     }

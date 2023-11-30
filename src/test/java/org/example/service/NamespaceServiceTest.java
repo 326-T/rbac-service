@@ -65,18 +65,15 @@ class NamespaceServiceTest {
         Flux<Namespace> namespaceFlux = namespaceService.findAll();
         // then
         StepVerifier.create(namespaceFlux)
-            .assertNext(
-                namespace -> assertThat(namespace)
-                    .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                    .containsExactly(1L, "namespace1", 1L))
-            .assertNext(
-                namespace -> assertThat(namespace)
-                    .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                    .containsExactly(2L, "namespace2", 2L))
-            .assertNext(
-                namespace -> assertThat(namespace)
-                    .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                    .containsExactly(3L, "namespace3", 3L))
+            .assertNext(namespace -> assertThat(namespace)
+                .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
+                .containsExactly(1L, "namespace1", 1L))
+            .assertNext(namespace -> assertThat(namespace)
+                .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
+                .containsExactly(2L, "namespace2", 2L))
+            .assertNext(namespace -> assertThat(namespace)
+                .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
+                .containsExactly(3L, "namespace3", 3L))
             .verifyComplete();
       }
     }
@@ -99,10 +96,9 @@ class NamespaceServiceTest {
         Mono<Namespace> namespaceMono = namespaceService.findById(1L);
         // then
         StepVerifier.create(namespaceMono)
-            .assertNext(
-                namespace -> assertThat(namespace)
-                    .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                    .containsExactly(1L, "namespace1", 1L))
+            .assertNext(namespace -> assertThat(namespace)
+                .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
+                .containsExactly(1L, "namespace1", 1L))
             .verifyComplete();
       }
     }
@@ -126,10 +122,9 @@ class NamespaceServiceTest {
         Mono<Namespace> namespaceMono = namespaceService.insert(namespace1);
         // then
         StepVerifier.create(namespaceMono)
-            .assertNext(
-                namespace -> assertThat(namespace)
-                    .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                    .containsExactly(null, "namespace1", 1L))
+            .assertNext(namespace -> assertThat(namespace)
+                .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
+                .containsExactly(null, "namespace1", 1L))
             .verifyComplete();
       }
     }
@@ -145,19 +140,19 @@ class NamespaceServiceTest {
       @DisplayName("ネームスペースを更新できる")
       void updateTheIndex() {
         // given
-        Namespace namespace1 = Namespace.builder()
+        Namespace before = Namespace.builder()
+            .id(2L).name("namespace2").createdBy(2L).build();
+        Namespace after = Namespace.builder()
             .id(1L).name("namespace1").createdBy(1L).build();
-        when(namespaceRepository.findById(1L)).thenReturn(Mono.just(namespace1));
-        when(namespaceRepository.save(any(Namespace.class))).thenReturn(
-            Mono.just(namespace1));
+        when(namespaceRepository.findById(1L)).thenReturn(Mono.just(before));
+        when(namespaceRepository.save(any(Namespace.class))).thenReturn(Mono.just(after));
         // when
-        Mono<Namespace> namespaceMono = namespaceService.update(namespace1);
+        Mono<Namespace> namespaceMono = namespaceService.update(after);
         // then
         StepVerifier.create(namespaceMono)
-            .assertNext(
-                namespace -> assertThat(namespace)
-                    .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                    .containsExactly(1L, "namespace1", 1L))
+            .assertNext(namespace -> assertThat(namespace)
+                .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
+                .containsExactly(1L, "namespace1", 1L))
             .verifyComplete();
       }
     }

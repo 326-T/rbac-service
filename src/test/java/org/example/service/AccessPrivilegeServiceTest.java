@@ -53,28 +53,27 @@ class AccessPrivilegeServiceTest {
         Flux<AccessPrivilege> accessPrivilegeFlux = accessPrivilegeService.findByNamespace(1L);
         // then
         StepVerifier.create(accessPrivilegeFlux)
-            .assertNext(
-                access -> assertThat(access)
-                    .extracting(
-                        AccessPrivilege::getUserId, AccessPrivilege::getUserName,
-                        AccessPrivilege::getNamespaceId, AccessPrivilege::getNamespaceName,
-                        AccessPrivilege::getUserGroupId, AccessPrivilege::getUserGroupName,
-                        AccessPrivilege::getRoleId, AccessPrivilege::getRoleName,
-                        AccessPrivilege::getPathId, AccessPrivilege::getPathRegex,
-                        AccessPrivilege::getMethod,
-                        AccessPrivilege::getTargetGroupId, AccessPrivilege::getTargetGroupName,
-                        AccessPrivilege::getTargetId, AccessPrivilege::getObjectIdRegex
-                    )
-                    .containsExactly(
-                        1L, "user1",
-                        1L, "developers",
-                        1L, "group1",
-                        1L, "developers",
-                        1L, "/user-service/v1/",
-                        "GET",
-                        1L, "target-group-1",
-                        1L, "object-id-1"
-                    ))
+            .assertNext(access -> assertThat(access)
+                .extracting(
+                    AccessPrivilege::getUserId, AccessPrivilege::getUserName,
+                    AccessPrivilege::getNamespaceId, AccessPrivilege::getNamespaceName,
+                    AccessPrivilege::getUserGroupId, AccessPrivilege::getUserGroupName,
+                    AccessPrivilege::getRoleId, AccessPrivilege::getRoleName,
+                    AccessPrivilege::getPathId, AccessPrivilege::getPathRegex,
+                    AccessPrivilege::getMethod,
+                    AccessPrivilege::getTargetGroupId, AccessPrivilege::getTargetGroupName,
+                    AccessPrivilege::getTargetId, AccessPrivilege::getObjectIdRegex
+                )
+                .containsExactly(
+                    1L, "user1",
+                    1L, "developers",
+                    1L, "group1",
+                    1L, "developers",
+                    1L, "/user-service/v1/",
+                    "GET",
+                    1L, "target-group-1",
+                    1L, "object-id-1"
+                ))
             .verifyComplete();
       }
     }

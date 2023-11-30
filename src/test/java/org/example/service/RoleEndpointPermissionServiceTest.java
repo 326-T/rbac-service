@@ -66,30 +66,27 @@ class RoleEndpointPermissionServiceTest {
         Flux<RoleEndpointPermission> groupFlux = roleEndpointPermissionService.findAll();
         // then
         StepVerifier.create(groupFlux)
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(RoleEndpointPermission::getId,
-                        RoleEndpointPermission::getNamespaceId,
-                        RoleEndpointPermission::getRoleId,
-                        RoleEndpointPermission::getEndpointId,
-                        RoleEndpointPermission::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, 1L, 1L))
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(RoleEndpointPermission::getId,
-                        RoleEndpointPermission::getNamespaceId,
-                        RoleEndpointPermission::getRoleId,
-                        RoleEndpointPermission::getEndpointId,
-                        RoleEndpointPermission::getCreatedBy)
-                    .containsExactly(2L, 2L, 2L, 2L, 2L))
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(RoleEndpointPermission::getId,
-                        RoleEndpointPermission::getNamespaceId,
-                        RoleEndpointPermission::getRoleId,
-                        RoleEndpointPermission::getEndpointId,
-                        RoleEndpointPermission::getCreatedBy)
-                    .containsExactly(3L, 3L, 3L, 3L, 3L))
+            .assertNext(group -> assertThat(group)
+                .extracting(RoleEndpointPermission::getId,
+                    RoleEndpointPermission::getNamespaceId,
+                    RoleEndpointPermission::getRoleId,
+                    RoleEndpointPermission::getEndpointId,
+                    RoleEndpointPermission::getCreatedBy)
+                .containsExactly(1L, 1L, 1L, 1L, 1L))
+            .assertNext(group -> assertThat(group)
+                .extracting(RoleEndpointPermission::getId,
+                    RoleEndpointPermission::getNamespaceId,
+                    RoleEndpointPermission::getRoleId,
+                    RoleEndpointPermission::getEndpointId,
+                    RoleEndpointPermission::getCreatedBy)
+                .containsExactly(2L, 2L, 2L, 2L, 2L))
+            .assertNext(group -> assertThat(group)
+                .extracting(RoleEndpointPermission::getId,
+                    RoleEndpointPermission::getNamespaceId,
+                    RoleEndpointPermission::getRoleId,
+                    RoleEndpointPermission::getEndpointId,
+                    RoleEndpointPermission::getCreatedBy)
+                .containsExactly(3L, 3L, 3L, 3L, 3L))
             .verifyComplete();
       }
     }
@@ -113,14 +110,13 @@ class RoleEndpointPermissionServiceTest {
         Mono<RoleEndpointPermission> groupMono = roleEndpointPermissionService.findById(1L);
         // then
         StepVerifier.create(groupMono)
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(RoleEndpointPermission::getId,
-                        RoleEndpointPermission::getNamespaceId,
-                        RoleEndpointPermission::getRoleId,
-                        RoleEndpointPermission::getEndpointId,
-                        RoleEndpointPermission::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, 1L, 1L))
+            .assertNext(group -> assertThat(group)
+                .extracting(RoleEndpointPermission::getId,
+                    RoleEndpointPermission::getNamespaceId,
+                    RoleEndpointPermission::getRoleId,
+                    RoleEndpointPermission::getEndpointId,
+                    RoleEndpointPermission::getCreatedBy)
+                .containsExactly(1L, 1L, 1L, 1L, 1L))
             .verifyComplete();
       }
     }
@@ -145,14 +141,13 @@ class RoleEndpointPermissionServiceTest {
             roleEndpointPermission1);
         // then
         StepVerifier.create(groupMono)
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(RoleEndpointPermission::getId,
-                        RoleEndpointPermission::getNamespaceId,
-                        RoleEndpointPermission::getRoleId,
-                        RoleEndpointPermission::getEndpointId,
-                        RoleEndpointPermission::getCreatedBy)
-                    .containsExactly(null, 1L, 1L, 1L, 1L))
+            .assertNext(group -> assertThat(group)
+                .extracting(RoleEndpointPermission::getId,
+                    RoleEndpointPermission::getNamespaceId,
+                    RoleEndpointPermission::getRoleId,
+                    RoleEndpointPermission::getEndpointId,
+                    RoleEndpointPermission::getCreatedBy)
+                .containsExactly(null, 1L, 1L, 1L, 1L))
             .verifyComplete();
       }
     }

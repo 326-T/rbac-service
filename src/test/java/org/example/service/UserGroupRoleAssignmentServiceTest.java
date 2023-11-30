@@ -66,30 +66,27 @@ class UserGroupRoleAssignmentServiceTest {
         Flux<UserGroupRoleAssignment> groupFlux = userGroupRoleAssignmentService.findAll();
         // then
         StepVerifier.create(groupFlux)
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(UserGroupRoleAssignment::getId,
-                        UserGroupRoleAssignment::getNamespaceId,
-                        UserGroupRoleAssignment::getUserGroupId,
-                        UserGroupRoleAssignment::getRoleId,
-                        UserGroupRoleAssignment::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, 1L, 1L))
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(UserGroupRoleAssignment::getId,
-                        UserGroupRoleAssignment::getNamespaceId,
-                        UserGroupRoleAssignment::getUserGroupId,
-                        UserGroupRoleAssignment::getRoleId,
-                        UserGroupRoleAssignment::getCreatedBy)
-                    .containsExactly(2L, 2L, 2L, 2L, 2L))
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(UserGroupRoleAssignment::getId,
-                        UserGroupRoleAssignment::getNamespaceId,
-                        UserGroupRoleAssignment::getUserGroupId,
-                        UserGroupRoleAssignment::getRoleId,
-                        UserGroupRoleAssignment::getCreatedBy)
-                    .containsExactly(3L, 3L, 3L, 3L, 3L))
+            .assertNext(group -> assertThat(group)
+                .extracting(UserGroupRoleAssignment::getId,
+                    UserGroupRoleAssignment::getNamespaceId,
+                    UserGroupRoleAssignment::getUserGroupId,
+                    UserGroupRoleAssignment::getRoleId,
+                    UserGroupRoleAssignment::getCreatedBy)
+                .containsExactly(1L, 1L, 1L, 1L, 1L))
+            .assertNext(group -> assertThat(group)
+                .extracting(UserGroupRoleAssignment::getId,
+                    UserGroupRoleAssignment::getNamespaceId,
+                    UserGroupRoleAssignment::getUserGroupId,
+                    UserGroupRoleAssignment::getRoleId,
+                    UserGroupRoleAssignment::getCreatedBy)
+                .containsExactly(2L, 2L, 2L, 2L, 2L))
+            .assertNext(group -> assertThat(group)
+                .extracting(UserGroupRoleAssignment::getId,
+                    UserGroupRoleAssignment::getNamespaceId,
+                    UserGroupRoleAssignment::getUserGroupId,
+                    UserGroupRoleAssignment::getRoleId,
+                    UserGroupRoleAssignment::getCreatedBy)
+                .containsExactly(3L, 3L, 3L, 3L, 3L))
             .verifyComplete();
       }
     }
@@ -113,14 +110,13 @@ class UserGroupRoleAssignmentServiceTest {
         Mono<UserGroupRoleAssignment> groupMono = userGroupRoleAssignmentService.findById(1L);
         // then
         StepVerifier.create(groupMono)
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(UserGroupRoleAssignment::getId,
-                        UserGroupRoleAssignment::getNamespaceId,
-                        UserGroupRoleAssignment::getUserGroupId,
-                        UserGroupRoleAssignment::getRoleId,
-                        UserGroupRoleAssignment::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, 1L, 1L))
+            .assertNext(group -> assertThat(group)
+                .extracting(UserGroupRoleAssignment::getId,
+                    UserGroupRoleAssignment::getNamespaceId,
+                    UserGroupRoleAssignment::getUserGroupId,
+                    UserGroupRoleAssignment::getRoleId,
+                    UserGroupRoleAssignment::getCreatedBy)
+                .containsExactly(1L, 1L, 1L, 1L, 1L))
             .verifyComplete();
       }
     }
@@ -145,14 +141,13 @@ class UserGroupRoleAssignmentServiceTest {
             userGroupRoleAssignment1);
         // then
         StepVerifier.create(groupMono)
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(UserGroupRoleAssignment::getId,
-                        UserGroupRoleAssignment::getNamespaceId,
-                        UserGroupRoleAssignment::getUserGroupId,
-                        UserGroupRoleAssignment::getRoleId,
-                        UserGroupRoleAssignment::getCreatedBy)
-                    .containsExactly(null, 1L, 1L, 1L, 1L))
+            .assertNext(group -> assertThat(group)
+                .extracting(UserGroupRoleAssignment::getId,
+                    UserGroupRoleAssignment::getNamespaceId,
+                    UserGroupRoleAssignment::getUserGroupId,
+                    UserGroupRoleAssignment::getRoleId,
+                    UserGroupRoleAssignment::getCreatedBy)
+                .containsExactly(null, 1L, 1L, 1L, 1L))
             .verifyComplete();
       }
     }

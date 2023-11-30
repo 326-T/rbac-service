@@ -65,21 +65,18 @@ class UserGroupServiceTest {
         Flux<UserGroup> groupFlux = userGroupService.findAll();
         // then
         StepVerifier.create(groupFlux)
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(UserGroup::getId, UserGroup::getNamespaceId,
-                        UserGroup::getName, UserGroup::getCreatedBy)
-                    .containsExactly(1L, 1L, "group1", 1L))
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(UserGroup::getId, UserGroup::getNamespaceId,
-                        UserGroup::getName, UserGroup::getCreatedBy)
-                    .containsExactly(2L, 2L, "group2", 2L))
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(UserGroup::getId, UserGroup::getNamespaceId,
-                        UserGroup::getName, UserGroup::getCreatedBy)
-                    .containsExactly(3L, 3L, "group3", 3L))
+            .assertNext(group -> assertThat(group)
+                .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                    UserGroup::getName, UserGroup::getCreatedBy)
+                .containsExactly(1L, 1L, "group1", 1L))
+            .assertNext(group -> assertThat(group)
+                .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                    UserGroup::getName, UserGroup::getCreatedBy)
+                .containsExactly(2L, 2L, "group2", 2L))
+            .assertNext(group -> assertThat(group)
+                .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                    UserGroup::getName, UserGroup::getCreatedBy)
+                .containsExactly(3L, 3L, "group3", 3L))
             .verifyComplete();
       }
     }
@@ -102,11 +99,10 @@ class UserGroupServiceTest {
         Mono<UserGroup> groupMono = userGroupService.findById(1L);
         // then
         StepVerifier.create(groupMono)
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(UserGroup::getId, UserGroup::getNamespaceId,
-                        UserGroup::getName, UserGroup::getCreatedBy)
-                    .containsExactly(1L, 1L, "group1", 1L))
+            .assertNext(group -> assertThat(group)
+                .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                    UserGroup::getName, UserGroup::getCreatedBy)
+                .containsExactly(1L, 1L, "group1", 1L))
             .verifyComplete();
       }
     }
@@ -130,11 +126,10 @@ class UserGroupServiceTest {
         Mono<UserGroup> groupMono = userGroupService.insert(userGroup1);
         // then
         StepVerifier.create(groupMono)
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(UserGroup::getId, UserGroup::getNamespaceId,
-                        UserGroup::getName, UserGroup::getCreatedBy)
-                    .containsExactly(null, 1L, "group1", 1L))
+            .assertNext(group -> assertThat(group)
+                .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                    UserGroup::getName, UserGroup::getCreatedBy)
+                .containsExactly(null, 1L, "group1", 1L))
             .verifyComplete();
       }
     }
@@ -150,20 +145,21 @@ class UserGroupServiceTest {
       @DisplayName("ユーザグループを更新できる")
       void updateTheIndex() {
         // given
-        UserGroup userGroup1 = UserGroup.builder()
-            .id(1L).namespaceId(1L).name("group1").createdBy(1L).build();
-        when(userGroupRepository.findById(1L)).thenReturn(Mono.just(userGroup1));
-        when(userGroupRepository.save(any(UserGroup.class))).thenReturn(
-            Mono.just(userGroup1));
+        UserGroup before = UserGroup.builder()
+            .id(2L).namespaceId(2L).name("group2").createdBy(2L).build();
+        UserGroup after = UserGroup.builder()
+            .id(2L).namespaceId(2L).name("group2").createdBy(2L).build();
+        when(userGroupRepository.findById(2L)).thenReturn(Mono.just(before));
+        when(userGroupRepository.save(any(UserGroup.class)))
+            .thenReturn(Mono.just(after));
         // when
-        Mono<UserGroup> groupMono = userGroupService.update(userGroup1);
+        Mono<UserGroup> groupMono = userGroupService.update(after);
         // then
         StepVerifier.create(groupMono)
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(UserGroup::getId, UserGroup::getNamespaceId,
-                        UserGroup::getName, UserGroup::getCreatedBy)
-                    .containsExactly(1L, 1L, "group1", 1L))
+            .assertNext(group -> assertThat(group)
+                .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                    UserGroup::getName, UserGroup::getCreatedBy)
+                .containsExactly(1L, 1L, "group1", 1L))
             .verifyComplete();
       }
     }

@@ -157,15 +157,19 @@ class UserServiceTest {
       @DisplayName("ユーザグループを更新できる")
       void updateTheIndex() {
         // given
-        User user = User.builder()
+        User before = User.builder()
+            .id(2L).name("user2").email("yyy@example.org")
+            .passwordDigest("password_digest2").token("token2")
+            .build();
+        User after = User.builder()
             .id(2L).name("USER2").email("bbb@example.org")
             .passwordDigest("PASSWORD_DIGEST2").token("TOKEN2")
             .build();
-        when(userRepository.findById(2L)).thenReturn(Mono.just(user));
-        when(userRepository.save(any(User.class))).thenReturn(
-            Mono.just(user));
+        when(userRepository.findById(2L)).thenReturn(Mono.just(before));
+        when(userRepository.save(any(User.class)))
+            .thenReturn(Mono.just(after));
         // when
-        Mono<User> groupMono = userService.update(user);
+        Mono<User> groupMono = userService.update(after);
         // then
         StepVerifier.create(groupMono)
             .assertNext(user1 -> assertThat(user1)

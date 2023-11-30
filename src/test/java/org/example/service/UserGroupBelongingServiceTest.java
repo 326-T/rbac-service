@@ -66,24 +66,21 @@ class UserGroupBelongingServiceTest {
         Flux<UserGroupBelonging> groupFlux = userGroupBelongingService.findAll();
         // then
         StepVerifier.create(groupFlux)
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
-                        UserGroupBelonging::getUserId, UserGroupBelonging::getUserGroupId,
-                        UserGroupBelonging::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, 1L, 1L))
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
-                        UserGroupBelonging::getUserId, UserGroupBelonging::getUserGroupId,
-                        UserGroupBelonging::getCreatedBy)
-                    .containsExactly(2L, 2L, 2L, 2L, 2L))
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
-                        UserGroupBelonging::getUserId, UserGroupBelonging::getUserGroupId,
-                        UserGroupBelonging::getCreatedBy)
-                    .containsExactly(3L, 3L, 3L, 3L, 3L))
+            .assertNext(group -> assertThat(group)
+                .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
+                    UserGroupBelonging::getUserId, UserGroupBelonging::getUserGroupId,
+                    UserGroupBelonging::getCreatedBy)
+                .containsExactly(1L, 1L, 1L, 1L, 1L))
+            .assertNext(group -> assertThat(group)
+                .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
+                    UserGroupBelonging::getUserId, UserGroupBelonging::getUserGroupId,
+                    UserGroupBelonging::getCreatedBy)
+                .containsExactly(2L, 2L, 2L, 2L, 2L))
+            .assertNext(group -> assertThat(group)
+                .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
+                    UserGroupBelonging::getUserId, UserGroupBelonging::getUserGroupId,
+                    UserGroupBelonging::getCreatedBy)
+                .containsExactly(3L, 3L, 3L, 3L, 3L))
             .verifyComplete();
       }
     }
@@ -106,12 +103,11 @@ class UserGroupBelongingServiceTest {
         Mono<UserGroupBelonging> groupMono = userGroupBelongingService.findById(1L);
         // then
         StepVerifier.create(groupMono)
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
-                        UserGroupBelonging::getUserId, UserGroupBelonging::getUserGroupId,
-                        UserGroupBelonging::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, 1L, 1L))
+            .assertNext(group -> assertThat(group)
+                .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
+                    UserGroupBelonging::getUserId, UserGroupBelonging::getUserGroupId,
+                    UserGroupBelonging::getCreatedBy)
+                .containsExactly(1L, 1L, 1L, 1L, 1L))
             .verifyComplete();
       }
     }
@@ -135,12 +131,11 @@ class UserGroupBelongingServiceTest {
         Mono<UserGroupBelonging> groupMono = userGroupBelongingService.insert(userGroupBelonging1);
         // then
         StepVerifier.create(groupMono)
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
-                        UserGroupBelonging::getUserId, UserGroupBelonging::getUserGroupId,
-                        UserGroupBelonging::getCreatedBy)
-                    .containsExactly(null, 1L, 1L, 1L, 1L))
+            .assertNext(group -> assertThat(group)
+                .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
+                    UserGroupBelonging::getUserId, UserGroupBelonging::getUserGroupId,
+                    UserGroupBelonging::getCreatedBy)
+                .containsExactly(null, 1L, 1L, 1L, 1L))
             .verifyComplete();
       }
     }

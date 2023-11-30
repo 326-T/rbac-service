@@ -65,21 +65,18 @@ class RoleServiceTest {
         Flux<Role> groupFlux = roleService.findAll();
         // then
         StepVerifier.create(groupFlux)
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(Role::getId, Role::getNamespaceId,
-                        Role::getName, Role::getCreatedBy)
-                    .containsExactly(1L, 1L, "developer", 1L))
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(Role::getId, Role::getNamespaceId,
-                        Role::getName, Role::getCreatedBy)
-                    .containsExactly(2L, 2L, "operator", 2L))
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(Role::getId, Role::getNamespaceId,
-                        Role::getName, Role::getCreatedBy)
-                    .containsExactly(3L, 3L, "security", 3L))
+            .assertNext(group -> assertThat(group)
+                .extracting(Role::getId, Role::getNamespaceId,
+                    Role::getName, Role::getCreatedBy)
+                .containsExactly(1L, 1L, "developer", 1L))
+            .assertNext(group -> assertThat(group)
+                .extracting(Role::getId, Role::getNamespaceId,
+                    Role::getName, Role::getCreatedBy)
+                .containsExactly(2L, 2L, "operator", 2L))
+            .assertNext(group -> assertThat(group)
+                .extracting(Role::getId, Role::getNamespaceId,
+                    Role::getName, Role::getCreatedBy)
+                .containsExactly(3L, 3L, "security", 3L))
             .verifyComplete();
       }
     }
@@ -102,11 +99,10 @@ class RoleServiceTest {
         Mono<Role> groupMono = roleService.findById(1L);
         // then
         StepVerifier.create(groupMono)
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(Role::getId, Role::getNamespaceId,
-                        Role::getName, Role::getCreatedBy)
-                    .containsExactly(1L, 1L, "developer", 1L))
+            .assertNext(group -> assertThat(group)
+                .extracting(Role::getId, Role::getNamespaceId,
+                    Role::getName, Role::getCreatedBy)
+                .containsExactly(1L, 1L, "developer", 1L))
             .verifyComplete();
       }
     }
@@ -130,11 +126,10 @@ class RoleServiceTest {
         Mono<Role> groupMono = roleService.insert(role1);
         // then
         StepVerifier.create(groupMono)
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(Role::getId, Role::getNamespaceId,
-                        Role::getName, Role::getCreatedBy)
-                    .containsExactly(null, 1L, "developer", 1L))
+            .assertNext(group -> assertThat(group)
+                .extracting(Role::getId, Role::getNamespaceId,
+                    Role::getName, Role::getCreatedBy)
+                .containsExactly(null, 1L, "developer", 1L))
             .verifyComplete();
       }
     }
@@ -150,20 +145,21 @@ class RoleServiceTest {
       @DisplayName("ロールを更新できる")
       void updateTheIndex() {
         // given
-        Role role1 = Role.builder()
-            .id(1L).namespaceId(1L).name("developer").createdBy(1L).build();
-        when(roleRepository.findById(1L)).thenReturn(Mono.just(role1));
-        when(roleRepository.save(any(Role.class))).thenReturn(
-            Mono.just(role1));
+        Role before = Role.builder()
+            .id(2L).namespaceId(2L).name("operator").createdBy(2L).build();
+        Role after = Role.builder()
+            .id(2L).namespaceId(2L).name("developer").createdBy(2L).build();
+        when(roleRepository.findById(2L)).thenReturn(Mono.just(before));
+        when(roleRepository.save(any(Role.class)))
+            .thenReturn(Mono.just(after));
         // when
-        Mono<Role> groupMono = roleService.update(role1);
+        Mono<Role> groupMono = roleService.update(after);
         // then
         StepVerifier.create(groupMono)
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(Role::getId, Role::getNamespaceId,
-                        Role::getName, Role::getCreatedBy)
-                    .containsExactly(1L, 1L, "developer", 1L))
+            .assertNext(group -> assertThat(group)
+                .extracting(Role::getId, Role::getNamespaceId,
+                    Role::getName, Role::getCreatedBy)
+                .containsExactly(2L, 2L, "developer", 2L))
             .verifyComplete();
       }
     }

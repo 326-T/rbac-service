@@ -65,21 +65,18 @@ class TargetGroupServiceTest {
         Flux<TargetGroup> clusterFlux = targetGroupService.findAll();
         // then
         StepVerifier.create(clusterFlux)
-            .assertNext(
-                cluster -> assertThat(cluster)
-                    .extracting(TargetGroup::getId, TargetGroup::getNamespaceId,
-                        TargetGroup::getName, TargetGroup::getCreatedBy)
-                    .containsExactly(1L, 1L, "cluster1", 1L))
-            .assertNext(
-                cluster -> assertThat(cluster)
-                    .extracting(TargetGroup::getId, TargetGroup::getNamespaceId,
-                        TargetGroup::getName, TargetGroup::getCreatedBy)
-                    .containsExactly(2L, 2L, "cluster2", 2L))
-            .assertNext(
-                cluster -> assertThat(cluster)
-                    .extracting(TargetGroup::getId, TargetGroup::getNamespaceId,
-                        TargetGroup::getName, TargetGroup::getCreatedBy)
-                    .containsExactly(3L, 3L, "cluster3", 3L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(TargetGroup::getId, TargetGroup::getNamespaceId,
+                    TargetGroup::getName, TargetGroup::getCreatedBy)
+                .containsExactly(1L, 1L, "cluster1", 1L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(TargetGroup::getId, TargetGroup::getNamespaceId,
+                    TargetGroup::getName, TargetGroup::getCreatedBy)
+                .containsExactly(2L, 2L, "cluster2", 2L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(TargetGroup::getId, TargetGroup::getNamespaceId,
+                    TargetGroup::getName, TargetGroup::getCreatedBy)
+                .containsExactly(3L, 3L, "cluster3", 3L))
             .verifyComplete();
       }
     }
@@ -102,11 +99,10 @@ class TargetGroupServiceTest {
         Mono<TargetGroup> clusterMono = targetGroupService.findById(1L);
         // then
         StepVerifier.create(clusterMono)
-            .assertNext(
-                cluster -> assertThat(cluster)
-                    .extracting(TargetGroup::getId, TargetGroup::getNamespaceId,
-                        TargetGroup::getName, TargetGroup::getCreatedBy)
-                    .containsExactly(1L, 1L, "cluster1", 1L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(TargetGroup::getId, TargetGroup::getNamespaceId,
+                    TargetGroup::getName, TargetGroup::getCreatedBy)
+                .containsExactly(1L, 1L, "cluster1", 1L))
             .verifyComplete();
       }
     }
@@ -130,11 +126,10 @@ class TargetGroupServiceTest {
         Mono<TargetGroup> clusterMono = targetGroupService.insert(targetGroup1);
         // then
         StepVerifier.create(clusterMono)
-            .assertNext(
-                cluster -> assertThat(cluster)
-                    .extracting(TargetGroup::getId, TargetGroup::getNamespaceId,
-                        TargetGroup::getName, TargetGroup::getCreatedBy)
-                    .containsExactly(null, 1L, "cluster1", 1L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(TargetGroup::getId, TargetGroup::getNamespaceId,
+                    TargetGroup::getName, TargetGroup::getCreatedBy)
+                .containsExactly(null, 1L, "cluster1", 1L))
             .verifyComplete();
       }
     }
@@ -150,20 +145,21 @@ class TargetGroupServiceTest {
       @DisplayName("クラスターを更新できる")
       void updateTheIndex() {
         // given
-        TargetGroup targetGroup1 = TargetGroup.builder()
-            .id(1L).namespaceId(1L).name("cluster1").createdBy(1L).build();
-        when(targetGroupRepository.findById(1L)).thenReturn(Mono.just(targetGroup1));
-        when(targetGroupRepository.save(any(TargetGroup.class))).thenReturn(
-            Mono.just(targetGroup1));
+        TargetGroup before = TargetGroup.builder()
+            .id(2L).namespaceId(2L).name("cluster2").createdBy(2L).build();
+        TargetGroup after = TargetGroup.builder()
+            .id(2L).namespaceId(2L).name("CLUSTER2").createdBy(2L).build();
+        when(targetGroupRepository.findById(2L)).thenReturn(Mono.just(before));
+        when(targetGroupRepository.save(any(TargetGroup.class)))
+            .thenReturn(Mono.just(after));
         // when
-        Mono<TargetGroup> clusterMono = targetGroupService.update(targetGroup1);
+        Mono<TargetGroup> clusterMono = targetGroupService.update(after);
         // then
         StepVerifier.create(clusterMono)
-            .assertNext(
-                cluster -> assertThat(cluster)
-                    .extracting(TargetGroup::getId, TargetGroup::getNamespaceId,
-                        TargetGroup::getName, TargetGroup::getCreatedBy)
-                    .containsExactly(1L, 1L, "cluster1", 1L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(TargetGroup::getId, TargetGroup::getNamespaceId,
+                    TargetGroup::getName, TargetGroup::getCreatedBy)
+                .containsExactly(2L, 2L, "CLUSTER2", 2L))
             .verifyComplete();
       }
     }

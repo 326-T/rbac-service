@@ -68,24 +68,21 @@ class EndpointServiceTest {
         Flux<Endpoint> clusterFlux = endpointService.findAll();
         // then
         StepVerifier.create(clusterFlux)
-            .assertNext(
-                cluster -> assertThat(cluster)
-                    .extracting(Endpoint::getId, Endpoint::getNamespaceId,
-                        Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, "GET", 1L, 1L))
-            .assertNext(
-                cluster -> assertThat(cluster)
-                    .extracting(Endpoint::getId, Endpoint::getNamespaceId,
-                        Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                    .containsExactly(2L, 2L, 2L, "POST", 2L, 2L))
-            .assertNext(
-                cluster -> assertThat(cluster)
-                    .extracting(Endpoint::getId, Endpoint::getNamespaceId,
-                        Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                    .containsExactly(3L, 3L, 3L, "PUT", 3L, 3L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(Endpoint::getId, Endpoint::getNamespaceId,
+                    Endpoint::getPathId, Endpoint::getMethod,
+                    Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
+                .containsExactly(1L, 1L, 1L, "GET", 1L, 1L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(Endpoint::getId, Endpoint::getNamespaceId,
+                    Endpoint::getPathId, Endpoint::getMethod,
+                    Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
+                .containsExactly(2L, 2L, 2L, "POST", 2L, 2L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(Endpoint::getId, Endpoint::getNamespaceId,
+                    Endpoint::getPathId, Endpoint::getMethod,
+                    Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
+                .containsExactly(3L, 3L, 3L, "PUT", 3L, 3L))
             .verifyComplete();
       }
     }
@@ -109,12 +106,11 @@ class EndpointServiceTest {
         Mono<Endpoint> clusterMono = endpointService.findById(1L);
         // then
         StepVerifier.create(clusterMono)
-            .assertNext(
-                cluster -> assertThat(cluster)
-                    .extracting(Endpoint::getId, Endpoint::getNamespaceId,
-                        Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, "GET", 1L, 1L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(Endpoint::getId, Endpoint::getNamespaceId,
+                    Endpoint::getPathId, Endpoint::getMethod,
+                    Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
+                .containsExactly(1L, 1L, 1L, "GET", 1L, 1L))
             .verifyComplete();
       }
     }
@@ -138,12 +134,11 @@ class EndpointServiceTest {
         Mono<Endpoint> clusterMono = endpointService.insert(endpoint1);
         // then
         StepVerifier.create(clusterMono)
-            .assertNext(
-                cluster -> assertThat(cluster)
-                    .extracting(Endpoint::getId, Endpoint::getNamespaceId,
-                        Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                    .containsExactly(null, 1L, 1L, "GET", 1L, 1L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(Endpoint::getId, Endpoint::getNamespaceId,
+                    Endpoint::getPathId, Endpoint::getMethod,
+                    Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
+                .containsExactly(null, 1L, 1L, "GET", 1L, 1L))
             .verifyComplete();
       }
     }
@@ -159,22 +154,23 @@ class EndpointServiceTest {
       @DisplayName("エンドポイントを更新できる")
       void updateTheIndex() {
         // given
-        Endpoint endpoint1 = Endpoint.builder()
-            .id(1L).namespaceId(1L).pathId(1L).method("GET")
-            .targetGroupId(1L).createdBy(1L).build();
-        when(endpointRepository.findById(1L)).thenReturn(Mono.just(endpoint1));
-        when(endpointRepository.save(any(Endpoint.class)))
-            .thenReturn(Mono.just(endpoint1));
+        Endpoint before = Endpoint.builder()
+            .id(2L).namespaceId(2L).pathId(2L).method("POST")
+            .targetGroupId(2L).createdBy(2L).build();
+        Endpoint after = Endpoint.builder()
+            .id(2L).namespaceId(2L).pathId(3L).method("GET")
+            .targetGroupId(3L).createdBy(2L).build();
+        when(endpointRepository.findById(2L)).thenReturn(Mono.just(after));
+        when(endpointRepository.save(any(Endpoint.class))).thenReturn(Mono.just(after));
         // when
-        Mono<Endpoint> clusterMono = endpointService.update(endpoint1);
+        Mono<Endpoint> clusterMono = endpointService.update(after);
         // then
         StepVerifier.create(clusterMono)
-            .assertNext(
-                cluster -> assertThat(cluster)
-                    .extracting(Endpoint::getId, Endpoint::getNamespaceId,
-                        Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, "GET", 1L, 1L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(Endpoint::getId, Endpoint::getNamespaceId,
+                    Endpoint::getPathId, Endpoint::getMethod,
+                    Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
+                .containsExactly(2L, 2L, 3L, "GET", 3L, 2L))
             .verifyComplete();
       }
     }

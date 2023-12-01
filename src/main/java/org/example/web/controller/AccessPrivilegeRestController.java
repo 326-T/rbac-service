@@ -14,11 +14,11 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/rbac-service/v1/access-privileges")
-public class AccessPrivilegeController {
+public class AccessPrivilegeRestController {
 
   private final AccessPrivilegeService accessPrivilegeService;
 
-  public AccessPrivilegeController(AccessPrivilegeService accessPrivilegeService) {
+  public AccessPrivilegeRestController(AccessPrivilegeService accessPrivilegeService) {
     this.accessPrivilegeService = accessPrivilegeService;
   }
 

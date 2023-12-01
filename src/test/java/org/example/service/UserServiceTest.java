@@ -31,7 +31,7 @@ class UserServiceTest {
     class regular {
 
       @Test
-      @DisplayName("ユーザグループの件数を取得できる")
+      @DisplayName("ユーザの件数を取得できる")
       void countTheIndexes() {
         // given
         when(userRepository.count()).thenReturn(Mono.just(3L));
@@ -50,7 +50,7 @@ class UserServiceTest {
     class regular {
 
       @Test
-      @DisplayName("ユーザグループを全件取得できる")
+      @DisplayName("ユーザを全件取得できる")
       void findAllTheIndexes() {
         // given
         User user1 = User.builder()
@@ -97,7 +97,7 @@ class UserServiceTest {
     class regular {
 
       @Test
-      @DisplayName("ユーザグループをIDで取得できる")
+      @DisplayName("ユーザをIDで取得できる")
       void findByIdTheIndex() {
         // given
         User user1 = User.builder()
@@ -125,7 +125,7 @@ class UserServiceTest {
     class regular {
 
       @Test
-      @DisplayName("ユーザグループを登録できる")
+      @DisplayName("ユーザを登録できる")
       void insertTheIndex() {
         // given
         User user = User.builder()
@@ -154,7 +154,7 @@ class UserServiceTest {
     class regular {
 
       @Test
-      @DisplayName("ユーザグループを更新できる")
+      @DisplayName("ユーザを更新できる")
       void updateTheIndex() {
         // given
         User before = User.builder()
@@ -188,7 +188,7 @@ class UserServiceTest {
     class regular {
 
       @Test
-      @DisplayName("ユーザグループを削除できる")
+      @DisplayName("ユーザを削除できる")
       void deleteTheIndex() {
         // given
         when(userRepository.deleteById(1L)).thenReturn(Mono.empty());

@@ -62,8 +62,7 @@ class EndpointServiceTest {
         Endpoint endpoint3 = Endpoint.builder()
             .id(3L).namespaceId(3L).pathId(3L).method("PUT").targetGroupId(3L).createdBy(3L)
             .build();
-        when(endpointRepository.findAll()).thenReturn(Flux.just(endpoint1, endpoint2,
-            endpoint3));
+        when(endpointRepository.findAll()).thenReturn(Flux.just(endpoint1, endpoint2, endpoint3));
         // when
         Flux<Endpoint> clusterFlux = endpointService.findAll();
         // then

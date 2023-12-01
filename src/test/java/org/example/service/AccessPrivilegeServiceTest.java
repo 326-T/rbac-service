@@ -46,7 +46,6 @@ class AccessPrivilegeServiceTest {
             .targetGroupId(1L).targetGroupName("target-group-1")
             .targetId(1L).objectIdRegex("object-id-1")
             .method("GET")
-
             .build();
         when(accessPrivilegeRepository.findByNamespace(1L)).thenReturn(Flux.just(accessPrivilege));
         // when

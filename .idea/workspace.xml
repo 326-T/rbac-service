@@ -4,19 +4,27 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[add]サービスのテストの実装">
+    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[update]サービスのテストのリファクタ">
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/service/TargetServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/AccessPrivilegeRestControllerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/EndpointRestControllerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/NamespaceRestControllerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/PathRestControllerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/RoleEndpointPermissionRestControllerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/RoleRestControllerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/TargetGroupBelongingRestControllerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/TargetGroupRestControllerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/TargetRestControllerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserGroupBelongingRestControllerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserGroupRestControllerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserGroupRoleAssignmentRestControllerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserRestControllerTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/AccessPrivilegeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/AccessPrivilegeRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/EndpointAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/EndpointAPITest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/AccessPrivilegeServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/AccessPrivilegeServiceTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/EndpointServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/EndpointServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/NamespaceServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/NamespaceServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/PathServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/PathServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/RoleEndpointPermissionServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/RoleEndpointPermissionServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/RoleServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/RoleServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/TargetGroupBelongingServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/TargetGroupBelongingServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/TargetGroupServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/TargetGroupServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupBelongingServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupBelongingServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupRoleAssignmentServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupRoleAssignmentServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupServiceTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/UserServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/UserServiceTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -43,6 +51,9 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitToolBoxStore">
+    <option name="projectConfigVersion" value="5" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -71,7 +82,7 @@
     &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.Java&quot;
   }
 }</component>
   <component name="RecentsManager">
@@ -89,105 +100,102 @@
       <recent name="org.example.persistence.repository" />
     </key>
     <key name="CreateTestDialog.RecentsKey">
+      <recent name="org.example.web.controller" />
       <recent name="org.example.service" />
       <recent name="org.example.persistence.repository" />
       <recent name="org.example.it.persistence.repository" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="org.example.web.controller" />
       <recent name="org.example.service" />
       <recent name="org.example.persistence.repository" />
-      <recent name="org.example.web.controller" />
       <recent name="org.example.persistence.entity" />
       <recent name="org.example.it" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.EndpointServiceTest">
-    <configuration name="EndpointServiceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="JUnit.UserRestControllerTest">
+    <configuration name="RoleEndpointPermissionRestControllerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.service.*" />
+          <option name="PATTERN" value="org.example.web.controller.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.service" />
-      <option name="MAIN_CLASS_NAME" value="org.example.service.EndpointServiceTest" />
+      <option name="PACKAGE_NAME" value="org.example.web.controller" />
+      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.RoleEndpointPermissionRestControllerTest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="PathServiceTest$update$regular.updateTheIndex" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="TargetGroupBelongingRestControllerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.service.*" />
+          <option name="PATTERN" value="org.example.web.controller.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.service.PathServiceTest.update" />
-      <option name="MAIN_CLASS_NAME" value="org.example.service.PathServiceTest$update$regular" />
-      <option name="METHOD_NAME" value="updateTheIndex" />
-      <option name="TEST_OBJECT" value="method" />
+      <option name="PACKAGE_NAME" value="org.example.web.controller" />
+      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.TargetGroupBelongingRestControllerTest" />
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="RoleServiceTest$update$regular.updateTheIndex" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="UserGroupBelongingRestControllerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.service.*" />
+          <option name="PATTERN" value="org.example.web.controller.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.service.RoleServiceTest.update" />
-      <option name="MAIN_CLASS_NAME" value="org.example.service.RoleServiceTest$update$regular" />
-      <option name="METHOD_NAME" value="updateTheIndex" />
-      <option name="TEST_OBJECT" value="method" />
+      <option name="PACKAGE_NAME" value="org.example.web.controller" />
+      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.UserGroupBelongingRestControllerTest" />
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TargetGroupServiceTest$update$regular.updateTheIndex" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="UserGroupRoleAssignmentRestControllerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.service.*" />
+          <option name="PATTERN" value="org.example.web.controller.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.service.TargetGroupServiceTest.update" />
-      <option name="MAIN_CLASS_NAME" value="org.example.service.TargetGroupServiceTest$update$regular" />
-      <option name="METHOD_NAME" value="updateTheIndex" />
-      <option name="TEST_OBJECT" value="method" />
+      <option name="PACKAGE_NAME" value="org.example.web.controller" />
+      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.UserGroupRoleAssignmentRestControllerTest" />
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="UserServiceTest$update$regular.updateTheIndex" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="UserRestControllerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.service.*" />
+          <option name="PATTERN" value="org.example.web.controller.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.service.UserServiceTest.update" />
-      <option name="MAIN_CLASS_NAME" value="org.example.service.UserServiceTest$update$regular" />
-      <option name="METHOD_NAME" value="updateTheIndex" />
-      <option name="TEST_OBJECT" value="method" />
+      <option name="PACKAGE_NAME" value="org.example.web.controller" />
+      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.UserRestControllerTest" />
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.EndpointServiceTest" />
-        <item itemvalue="JUnit.PathServiceTest$update$regular.updateTheIndex" />
-        <item itemvalue="JUnit.RoleServiceTest$update$regular.updateTheIndex" />
-        <item itemvalue="JUnit.TargetGroupServiceTest$update$regular.updateTheIndex" />
-        <item itemvalue="JUnit.UserServiceTest$update$regular.updateTheIndex" />
+        <item itemvalue="JUnit.UserRestControllerTest" />
+        <item itemvalue="JUnit.TargetGroupBelongingRestControllerTest" />
+        <item itemvalue="JUnit.UserGroupRoleAssignmentRestControllerTest" />
+        <item itemvalue="JUnit.UserGroupBelongingRestControllerTest" />
+        <item itemvalue="JUnit.RoleEndpointPermissionRestControllerTest" />
       </list>
     </recent_temporary>
   </component>
@@ -248,7 +256,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701334395069</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="[update]サービスのテストのリファクタ">
+      <option name="closed" value="true" />
+      <created>1701335721836</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1701335721836</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -258,7 +274,8 @@
     <MESSAGE value="[add]NamespaceをUser以外の全てに含めるように修正" />
     <MESSAGE value="[add]権限の一覧と権限があるか確認するAPIとそのテストの実装" />
     <MESSAGE value="[add]サービスのテストの実装" />
-    <option name="LAST_COMMIT_MESSAGE" value="[add]サービスのテストの実装" />
+    <MESSAGE value="[update]サービスのテストのリファクタ" />
+    <option name="LAST_COMMIT_MESSAGE" value="[update]サービスのテストのリファクタ" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

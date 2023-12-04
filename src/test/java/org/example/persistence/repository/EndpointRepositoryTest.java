@@ -210,4 +210,30 @@ class EndpointRepositoryTest {
       }
     }
   }
+
+  @Order(1)
+  @Nested
+  class findDuplicated {
+
+    @Nested
+    @DisplayName("正常系")
+    class regular {
+
+      @Test
+      @DisplayName("エンドポイントを重複チェックできる")
+      void findDuplicated() {
+        // when
+        Mono<Endpoint> booleanMono = endpointRepository.findDuplicated(1L, 1L, 1L, "GET");
+        // then
+        StepVerifier.create(booleanMono)
+            .assertNext(
+                endpoint -> assertThat(endpoint)
+                    .extracting(Endpoint::getId, Endpoint::getNamespaceId,
+                        Endpoint::getPathId, Endpoint::getMethod,
+                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
+                    .containsExactly(1L, 1L, 1L, "GET", 1L, 1L))
+            .verifyComplete();
+      }
+    }
+  }
 }

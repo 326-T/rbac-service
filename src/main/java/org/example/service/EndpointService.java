@@ -1,7 +1,6 @@
 package org.example.service;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.Endpoint;
@@ -32,21 +31,27 @@ public class EndpointService {
   }
 
   public Mono<Endpoint> insert(Endpoint endpoint) {
-    if (Objects.nonNull(endpoint.getId())) {
-      return Mono.error(new RedundantException("Id field must be empty"));
-    }
-    return endpointRepository.save(endpoint);
+    endpoint.setCreatedAt(LocalDateTime.now());
+    endpoint.setUpdatedAt(LocalDateTime.now());
+    return endpointRepository.findDuplicated(
+            endpoint.getNamespaceId(), endpoint.getPathId(),
+            endpoint.getTargetGroupId(), endpoint.getMethod())
+        .flatMap(present -> Mono.<Endpoint>error(new RedundantException("Endpoint already exists")))
+        .switchIfEmpty(Mono.just(endpoint))
+        .flatMap(endpointRepository::save);
   }
 
   public Mono<Endpoint> update(Endpoint endpoint) {
-    return endpointRepository.findById(endpoint.getId()).flatMap(present -> {
-      if (Objects.isNull(present)) {
-        return Mono.error(new NotExistingException("Endpoint not found"));
-      }
-      endpoint.setUpdatedAt(LocalDateTime.now());
-      endpoint.setCreatedAt(present.getCreatedAt());
-      return endpointRepository.save(endpoint);
-    });
+    return endpointRepository.findById(endpoint.getId())
+        .switchIfEmpty(Mono.error(new NotExistingException("Endpoint not found")))
+        .flatMap(present -> {
+          present.setPathId(endpoint.getPathId());
+          present.setTargetGroupId(endpoint.getTargetGroupId());
+          present.setMethod(endpoint.getMethod());
+          present.setUpdatedAt(LocalDateTime.now());
+          return Mono.just(present);
+        })
+        .flatMap(endpointRepository::save);
   }
 
   public Mono<Void> deleteById(Long id) {

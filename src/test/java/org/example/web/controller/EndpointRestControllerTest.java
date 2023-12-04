@@ -6,7 +6,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import org.example.persistence.entity.Endpoint;
+import org.example.persistence.entity.User;
 import org.example.service.EndpointService;
+import org.example.service.ReactiveContextService;
+import org.example.web.filter.AuthenticationWebFilter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,17 +17,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@WebFluxTest(EndpointRestController.class)
+@WebFluxTest(
+    controllers = EndpointRestController.class,
+    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AuthenticationWebFilter.class)})
 @AutoConfigureWebTestClient
 class EndpointRestControllerTest {
 
   @MockBean
   private EndpointService endpointService;
+  @MockBean
+  private ReactiveContextService reactiveContextService;
   @Autowired
   private WebTestClient webTestClient;
 
@@ -139,19 +148,16 @@ class EndpointRestControllerTest {
         Endpoint endpoint = Endpoint.builder()
             .id(2L).namespaceId(2L).pathId(3L).method("GET").targetGroupId(2L).createdBy(1L)
             .build();
-        when(endpointService.update(endpoint)).thenReturn(Mono.just(endpoint));
+        when(endpointService.update(any(Endpoint.class))).thenReturn(Mono.just(endpoint));
         // when, then
         webTestClient.put()
             .uri("/rbac-service/v1/endpoints/2")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "id": 2,
-                  "namespaceId": 2,
                   "pathId": 3,
                   "method": "GET",
-                  "targetGroupId": 2,
-                  "createdBy": 1
+                  "targetGroupId": 2
                 }
                 """
             )
@@ -184,17 +190,16 @@ class EndpointRestControllerTest {
             .id(4L).namespaceId(2L).pathId(3L).method("GET").targetGroupId(2L).createdBy(1L)
             .build();
         when(endpointService.insert(any(Endpoint.class))).thenReturn(Mono.just(endpoint));
+        when(reactiveContextService.getCurrentUser()).thenReturn(Mono.just(User.builder().id(1L).build()));
         // when, then
         webTestClient.post()
             .uri("/rbac-service/v1/endpoints")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "namespaceId": 2,
                   "pathId": 3,
                   "method": "GET",
-                  "targetGroupId": 2,
-                  "createdBy": 1
+                  "targetGroupId": 2
                 }
                 """
             )

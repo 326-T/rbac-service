@@ -20,7 +20,6 @@ public class User {
   private String name;
   private String email;
   private String passwordDigest;
-  private String token;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 }

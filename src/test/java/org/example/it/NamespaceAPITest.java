@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 
 import org.example.Application;
+import org.example.error.response.ErrorResponse;
 import org.example.listener.FlywayTestExecutionListener;
 import org.example.persistence.entity.Namespace;
 import org.example.persistence.entity.User;
@@ -130,6 +131,7 @@ public class NamespaceAPITest {
   class Update {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -168,11 +170,51 @@ public class NamespaceAPITest {
       }
     }
 
-    @Order(2)
     @Nested
-    @TestExecutionListeners(listeners = {
-        FlywayTestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-    class Save {
+    @DisplayName("異常系")
+    class irregular {
+
+      @Test
+      @DisplayName("存在しないネームスペースの場合はエラーになる")
+      void notExistingNamespaceCauseException() {
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/namespaces/999")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                "name": "STAGING"
+                }
+                """
+            )
+            .exchange()
+            .expectStatus().isNotFound()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        404, null,
+                        "idに該当するリソースが存在しない",
+                        "org.example.error.exception.NotExistingException: Namespace not found",
+                        "指定されたリソースは存在しません。")
+            );
+      }
+    }
+  }
+
+  @Order(2)
+  @Nested
+  @TestExecutionListeners(listeners = {
+      FlywayTestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+  class Save {
+
+    @Nested
+    @DisplayName("正常系")
+    class regular {
 
       @Test
       @DisplayName("ネームスペースを新規登録できる")
@@ -207,6 +249,41 @@ public class NamespaceAPITest {
                   .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
                   .containsExactly(4L, "integration", 2L);
             });
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class irregular {
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotCreateDuplicated() {
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/namespaces")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "name": "develop"
+                }
+                """
+            )
+            .exchange()
+            .expectStatus().is4xxClientError()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        409, null,
+                        "Unique制約に違反している",
+                        "org.example.error.exception.RedundantException: Namespace already exists",
+                        "作成済みのリソースと重複しています。")
+            );
       }
     }
   }

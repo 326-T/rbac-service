@@ -1,6 +1,7 @@
 package org.example.persistence.repository;
 
 import org.example.persistence.entity.UserGroupRoleAssignment;
+import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
@@ -19,4 +20,12 @@ public interface UserGroupRoleAssignmentRepository extends
   Mono<UserGroupRoleAssignment> save(UserGroupRoleAssignment userGroupRoleAssignment);
 
   Mono<Void> deleteById(Long id);
+
+  @Query("""
+      SELECT * FROM rbac_user_group_role_assignments
+      WHERE namespace_id = :namespaceId
+        AND user_group_id = :userGroupId
+        AND role_id = :roleId;
+      """)
+  Mono<UserGroupRoleAssignment> findDuplicated(Long namespaceId, Long userGroupId, Long roleId);
 }

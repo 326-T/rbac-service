@@ -224,4 +224,32 @@ class UserGroupRoleAssignmentRepositoryTest {
       }
     }
   }
+
+  @Order(1)
+  @Nested
+  class FindDuplicated {
+
+    @Nested
+    @DisplayName("正常系")
+    class regular {
+
+      @Test
+      @DisplayName("重複するグループとロールの関係情報を検知できる")
+      void findDuplicatedGroupHasRole() {
+        // when
+        Mono<UserGroupRoleAssignment> groupHasRoleMono = userGroupRoleAssignmentRepository
+            .findDuplicated(1L, 1L, 1L);
+        // then
+        StepVerifier.create(groupHasRoleMono)
+            .assertNext(
+                groupRoleAssignment -> assertThat(groupRoleAssignment)
+                    .extracting(UserGroupRoleAssignment::getId,
+                        UserGroupRoleAssignment::getNamespaceId,
+                        UserGroupRoleAssignment::getRoleId,
+                        UserGroupRoleAssignment::getUserGroupId,
+                        UserGroupRoleAssignment::getCreatedBy)
+                    .containsExactly(1L, 1L, 1L, 1L, 1L));
+      }
+    }
+  }
 }

@@ -195,4 +195,29 @@ class UserGroupRepositoryTest {
       }
     }
   }
+
+  @Order(1)
+  @Nested
+  class FindDuplicated {
+
+    @Nested
+    @DisplayName("正常系")
+    class regular {
+
+      @Test
+      @DisplayName("ユーザグループの重複を検知できる")
+      void findDuplicatedUserGroup() {
+        // when
+        Mono<UserGroup> userGroupMono = groupRepository.findDuplicated(1L, "group1");
+        // then
+        StepVerifier.create(userGroupMono)
+            .assertNext(
+                group -> assertThat(group)
+                    .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                        UserGroup::getName, UserGroup::getCreatedBy)
+                    .containsExactly(1L, 1L, "group1", 1L))
+            .verifyComplete();
+      }
+    }
+  }
 }

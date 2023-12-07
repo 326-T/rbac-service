@@ -20,6 +20,11 @@ public interface PathRepository extends ReactiveCrudRepository<Path, Long> {
 
   Mono<Void> deleteById(Long id);
 
-  @Query("SELECT * FROM rbac_paths WHERE namespace_id = :namespaceId AND regex = :regex")
+  @Query("""
+      SELECT *
+      FROM rbac_paths
+      WHERE namespace_id = :namespaceId
+        AND regex = :regex;
+      """)
   Mono<Path> findDuplicated(Long namespaceId, String regex);
 }

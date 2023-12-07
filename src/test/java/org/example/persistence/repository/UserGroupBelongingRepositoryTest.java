@@ -64,19 +64,19 @@ class UserGroupBelongingRepositoryTest {
                     .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
                         UserGroupBelonging::getUserGroupId, UserGroupBelonging::getUserId,
                         UserGroupBelonging::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, 1L, 1L))
+                    .containsExactly(1L, 1L, 1L, 2L, 1L))
             .assertNext(
                 userGroupBelonging -> assertThat(userGroupBelonging)
                     .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
                         UserGroupBelonging::getUserGroupId, UserGroupBelonging::getUserId,
                         UserGroupBelonging::getCreatedBy)
-                    .containsExactly(2L, 2L, 2L, 2L, 2L))
+                    .containsExactly(2L, 2L, 2L, 3L, 2L))
             .assertNext(
                 userGroupBelonging -> assertThat(userGroupBelonging)
                     .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
                         UserGroupBelonging::getUserGroupId, UserGroupBelonging::getUserId,
                         UserGroupBelonging::getCreatedBy)
-                    .containsExactly(3L, 3L, 3L, 3L, 3L))
+                    .containsExactly(3L, 3L, 3L, 4L, 3L))
             .verifyComplete();
       }
     }
@@ -102,7 +102,7 @@ class UserGroupBelongingRepositoryTest {
                     .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
                         UserGroupBelonging::getUserGroupId, UserGroupBelonging::getUserId,
                         UserGroupBelonging::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, 1L, 1L))
+                    .containsExactly(1L, 1L, 1L, 2L, 1L))
             .verifyComplete();
       }
     }
@@ -204,6 +204,32 @@ class UserGroupBelongingRepositoryTest {
         // then
         StepVerifier.create(voidMono).verifyComplete();
         userGroupBelongingRepository.findById(3L).as(StepVerifier::create).verifyComplete();
+      }
+    }
+  }
+
+  @Order(1)
+  @Nested
+  class FindDuplicated {
+
+    @Nested
+    @DisplayName("正常系")
+    class regular {
+
+      @Test
+      @DisplayName("重複するユーザとグループの関係情報を検知できる")
+      void findDuplicatedUserGroupBelonging() {
+        // when
+        Mono<UserGroupBelonging> userBelongsGroupMono = userGroupBelongingRepository.findDuplicated(1L, 2L, 1L);
+        // then
+        StepVerifier.create(userBelongsGroupMono)
+            .assertNext(
+                userGroupBelonging -> assertThat(userGroupBelonging)
+                    .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
+                        UserGroupBelonging::getUserGroupId, UserGroupBelonging::getUserId,
+                        UserGroupBelonging::getCreatedBy)
+                    .containsExactly(1L, 1L, 1L, 2L, 1L))
+            .verifyComplete();
       }
     }
   }

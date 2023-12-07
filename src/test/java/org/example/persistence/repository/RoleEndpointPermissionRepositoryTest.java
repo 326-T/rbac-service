@@ -231,4 +231,34 @@ class RoleEndpointPermissionRepositoryTest {
       }
     }
   }
+
+  @Order(1)
+  @Nested
+  class FindDuplicated {
+
+    @Nested
+    @DisplayName("正常系")
+    class regular {
+
+      @Test
+      @DisplayName("グループとロールの関係情報を重複チェックできる")
+      void findDuplicated() {
+        // when
+        Mono<RoleEndpointPermission> roleEndpointPermissionMono = roleEndpointPermissionRepository
+            .findDuplicated(1L, 1L, 1L);
+        // then
+        StepVerifier.create(roleEndpointPermissionMono)
+            .assertNext(
+                roleEndpointPermission -> assertThat(roleEndpointPermission)
+                    .extracting(
+                        RoleEndpointPermission::getId,
+                        RoleEndpointPermission::getNamespaceId,
+                        RoleEndpointPermission::getRoleId,
+                        RoleEndpointPermission::getEndpointId,
+                        RoleEndpointPermission::getCreatedBy)
+                    .containsExactly(1L, 1L, 1L, 1L, 1L))
+            .verifyComplete();
+      }
+    }
+  }
 }

@@ -208,4 +208,30 @@ class TargetGroupBelongingRepositoryTest {
       }
     }
   }
+
+  @Order(1)
+  @Nested
+  class FindDuplicated {
+
+    @Nested
+    @DisplayName("正常系")
+    class regular {
+
+      @Test
+      @DisplayName("ターゲットとグループの関係情報が重複しているかどうかを取得できる")
+      void findDuplicated() {
+        // when
+        Mono<TargetGroupBelonging> targetBelongsGroupMono = targetGroupBelongingRepository.findDuplicated(1L, 1L, 1L);
+        // then
+        StepVerifier.create(targetBelongsGroupMono)
+            .assertNext(
+                targetClusterBelonging -> assertThat(targetClusterBelonging)
+                    .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
+                        TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
+                        TargetGroupBelonging::getCreatedBy)
+                    .containsExactly(1L, 1L, 1L, 1L, 1L))
+            .verifyComplete();
+      }
+    }
+  }
 }

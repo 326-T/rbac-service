@@ -34,7 +34,7 @@ class TargetGroupRepositoryTest {
     class regular {
 
       @Test
-      @DisplayName("クラスタの件数を取得できる")
+      @DisplayName("ターゲットグループの件数を取得できる")
       void countTheIndexes() {
         // when
         Mono<Long> count = targetGroupRepository.count();
@@ -53,7 +53,7 @@ class TargetGroupRepositoryTest {
     class regular {
 
       @Test
-      @DisplayName("クラスタを全件取得できる")
+      @DisplayName("ターゲットグループを全件取得できる")
       void findAllTheIndexes() {
         // when
         Flux<TargetGroup> targetGroupFlux = targetGroupRepository.findAll();
@@ -88,7 +88,7 @@ class TargetGroupRepositoryTest {
     class regular {
 
       @Test
-      @DisplayName("クラスタをIDで取得できる")
+      @DisplayName("ターゲットグループをIDで取得できる")
       void findUserById() {
         // when
         Mono<TargetGroup> targetGroupMono = targetGroupRepository.findById(1L);
@@ -114,7 +114,7 @@ class TargetGroupRepositoryTest {
     class regular {
 
       @Test
-      @DisplayName("クラスタを更新できる")
+      @DisplayName("ターゲットグループを更新できる")
       void updateTargetGroup() {
         // given
         TargetGroup targetGroup = TargetGroup.builder()
@@ -145,7 +145,7 @@ class TargetGroupRepositoryTest {
       }
 
       @Test
-      @DisplayName("クラスタを新規登録できる")
+      @DisplayName("ターゲットグループを新規登録できる")
       void insertTargetGroup() {
         // given
         TargetGroup targetGroup = TargetGroup.builder()
@@ -185,13 +185,38 @@ class TargetGroupRepositoryTest {
     class regular {
 
       @Test
-      @DisplayName("クラスタをIDで削除できる")
+      @DisplayName("ターゲットグループをIDで削除できる")
       void deleteTargetGroupById() {
         // when
         Mono<Void> voidMono = targetGroupRepository.deleteById(3L);
         // then
         StepVerifier.create(voidMono).verifyComplete();
         targetGroupRepository.findById(3L).as(StepVerifier::create).verifyComplete();
+      }
+    }
+  }
+
+  @Order(1)
+  @Nested
+  class FindDuplicated {
+
+    @Nested
+    @DisplayName("正常系")
+    class regular {
+
+      @Test
+      @DisplayName("重複するターゲットグループを検索できる")
+      void findDuplicatedTargetGroup() {
+        // when
+        Mono<TargetGroup> targetGroupMono = targetGroupRepository.findDuplicated(1L, "target-group-1");
+        // then
+        StepVerifier.create(targetGroupMono)
+            .assertNext(
+                cluster -> assertThat(cluster)
+                    .extracting(TargetGroup::getId, TargetGroup::getNamespaceId,
+                        TargetGroup::getName, TargetGroup::getCreatedBy)
+                    .containsExactly(1L, 1L, "target-group-1", 1L))
+            .verifyComplete();
       }
     }
   }

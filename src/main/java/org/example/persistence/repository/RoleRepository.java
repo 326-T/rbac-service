@@ -20,6 +20,11 @@ public interface RoleRepository extends ReactiveCrudRepository<Role, Long> {
 
   Mono<Void> deleteById(Long id);
 
-  @Query("SELECT * FROM rbac_roles WHERE namespace_id = :namespaceId AND name = :name")
+  @Query("""
+      SELECT *
+      FROM rbac_roles
+      WHERE namespace_id = :namespaceId
+        AND name = :name;
+      """)
   Mono<Role> findDuplicated(Long namespaceId, String name);
 }

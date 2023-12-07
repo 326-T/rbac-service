@@ -195,8 +195,8 @@ class NamespaceRepositoryTest {
     class regular {
 
       @Test
-      @DisplayName("ネームスペースを名前で取得できる")
-      void findUserByName() {
+      @DisplayName("重複するネームスペースを検索できる")
+      void findDuplicated() {
         // when
         Mono<Namespace> namespaceMono = namespaceRepository.findDuplicated("develop");
         // then

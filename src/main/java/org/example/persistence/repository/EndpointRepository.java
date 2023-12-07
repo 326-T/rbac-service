@@ -24,9 +24,9 @@ public interface EndpointRepository extends
   @Query("""
       SELECT * FROM rbac_endpoints
       WHERE namespace_id = :namespaceId
-      AND path_id = :pathId
-      AND target_group_id = :targetGroupId
-      AND method = :method
+        AND path_id = :pathId
+        AND target_group_id = :targetGroupId
+        AND method = :method;
       """)
   Mono<Endpoint> findDuplicated(Long namespaceId, Long pathId, Long targetGroupId, String method);
 }

@@ -62,15 +62,15 @@ class NamespaceRepositoryTest {
             .assertNext(
                 namespace -> assertThat(namespace)
                     .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                    .containsExactly(1L, "front", 1L))
+                    .containsExactly(1L, "develop", 1L))
             .assertNext(
                 namespace -> assertThat(namespace)
                     .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                    .containsExactly(2L, "backend", 2L))
+                    .containsExactly(2L, "staging", 2L))
             .assertNext(
                 namespace -> assertThat(namespace)
                     .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                    .containsExactly(3L, "database", 3L))
+                    .containsExactly(3L, "production", 3L))
             .verifyComplete();
       }
     }
@@ -94,7 +94,7 @@ class NamespaceRepositoryTest {
             .assertNext(
                 namespace -> assertThat(namespace)
                     .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                    .containsExactly(1L, "front", 1L))
+                    .containsExactly(1L, "develop", 1L))
             .verifyComplete();
       }
     }
@@ -115,7 +115,7 @@ class NamespaceRepositoryTest {
         // given
         Namespace namespace = Namespace.builder()
             .id(2L)
-            .name("BACKEND")
+            .name("STAGING")
             .createdBy(1L)
             .createdAt(LocalDateTime.now())
             .updatedAt(LocalDateTime.now())
@@ -127,13 +127,13 @@ class NamespaceRepositoryTest {
             .assertNext(
                 namespace1 -> assertThat(namespace1)
                     .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                    .containsExactly(2L, "BACKEND", 1L))
+                    .containsExactly(2L, "STAGING", 1L))
             .verifyComplete();
         namespaceRepository.findById(2L).as(StepVerifier::create)
             .assertNext(
                 namespace1 -> assertThat(namespace1)
                     .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                    .containsExactly(2L, "BACKEND", 1L))
+                    .containsExactly(2L, "STAGING", 1L))
             .verifyComplete();
       }
 
@@ -142,7 +142,7 @@ class NamespaceRepositoryTest {
       void insertNamespace() {
         // given
         Namespace namespace = Namespace.builder()
-            .name("auth")
+            .name("integration")
             .createdBy(1L)
             .build();
         // when
@@ -152,13 +152,13 @@ class NamespaceRepositoryTest {
             .assertNext(
                 namespace1 -> assertThat(namespace1)
                     .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                    .containsExactly(4L, "auth", 1L))
+                    .containsExactly(4L, "integration", 1L))
             .verifyComplete();
         namespaceRepository.findById(4L).as(StepVerifier::create)
             .assertNext(
                 namespace1 -> assertThat(namespace1)
                     .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                    .containsExactly(4L, "auth", 1L))
+                    .containsExactly(4L, "integration", 1L))
             .verifyComplete();
       }
     }
@@ -182,6 +182,30 @@ class NamespaceRepositoryTest {
         // then
         StepVerifier.create(voidMono).verifyComplete();
         namespaceRepository.findById(3L).as(StepVerifier::create).verifyComplete();
+      }
+    }
+  }
+
+  @Order(1)
+  @Nested
+  class FindDuplicated {
+
+    @Nested
+    @DisplayName("正常系")
+    class regular {
+
+      @Test
+      @DisplayName("ネームスペースを名前で取得できる")
+      void findUserByName() {
+        // when
+        Mono<Namespace> namespaceMono = namespaceRepository.findDuplicated("develop");
+        // then
+        StepVerifier.create(namespaceMono)
+            .assertNext(
+                namespace -> assertThat(namespace)
+                    .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
+                    .containsExactly(1L, "develop", 1L))
+            .verifyComplete();
       }
     }
   }

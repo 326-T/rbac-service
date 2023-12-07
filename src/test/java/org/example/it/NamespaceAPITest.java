@@ -6,26 +6,42 @@ import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 import org.example.Application;
 import org.example.listener.FlywayTestExecutionListener;
 import org.example.persistence.entity.Namespace;
+import org.example.persistence.entity.User;
+import org.example.service.JwtService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestClassOrder;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureWebClient
 public class NamespaceAPITest {
 
   @Autowired
   private WebTestClient webTestClient;
+
+  @Autowired
+  private JwtService jwtService;
+
+  private String jwt;
+
+  @BeforeAll
+  void beforeAll() {
+    jwt = jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build());
+  }
 
   @Nested
   @Order(1)
@@ -40,7 +56,8 @@ public class NamespaceAPITest {
       void countTheIndexes() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-namespace/v1/namespaces/count")
+            .uri("/rbac-service/v1/namespaces/count")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBody(Long.class).isEqualTo(3L);
@@ -61,7 +78,8 @@ public class NamespaceAPITest {
       void findAllTheIndexes() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-namespace/v1/namespaces")
+            .uri("/rbac-service/v1/namespaces")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(Namespace.class)
@@ -70,9 +88,9 @@ public class NamespaceAPITest {
               assertThat(response.getResponseBody())
                   .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
                   .containsExactly(
-                      tuple(1L, "front", 1L),
-                      tuple(2L, "backend", 2L),
-                      tuple(3L, "database", 3L));
+                      tuple(1L, "develop", 1L),
+                      tuple(2L, "staging", 2L),
+                      tuple(3L, "production", 3L));
             });
       }
     }
@@ -91,14 +109,15 @@ public class NamespaceAPITest {
       void findUserById() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-namespace/v1/namespaces/1")
+            .uri("/rbac-service/v1/namespaces/1")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBody(Namespace.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
                   .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                  .containsExactly(1L, "front", 1L);
+                  .containsExactly(1L, "develop", 1L);
             });
       }
     }
@@ -118,12 +137,12 @@ public class NamespaceAPITest {
       void updateTargetNamespace() {
         // when, then
         webTestClient.put()
-            .uri("/rbac-namespace/v1/namespaces/2")
+            .uri("/rbac-service/v1/namespaces/2")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "name": "BACKEND",
-                  "createdBy": 1
+                  "name": "STAGING"
                 }
                 """
             )
@@ -133,17 +152,18 @@ public class NamespaceAPITest {
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
                   .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                  .containsExactly(2L, "BACKEND", 1L);
+                  .containsExactly(2L, "STAGING", 2L);
             });
         webTestClient.get()
-            .uri("/rbac-namespace/v1/namespaces/2")
+            .uri("/rbac-service/v1/namespaces/2")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBody(Namespace.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
                   .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                  .containsExactly(2L, "BACKEND", 1L);
+                  .containsExactly(2L, "STAGING", 2L);
             });
       }
     }
@@ -159,12 +179,12 @@ public class NamespaceAPITest {
       void insertTargetNamespace() {
         // when, then
         webTestClient.post()
-            .uri("/rbac-namespace/v1/namespaces")
+            .uri("/rbac-service/v1/namespaces")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                    "name": "auth",
-                  "createdBy": 1
+                  "name": "integration"
                 }
                 """
             )
@@ -174,17 +194,18 @@ public class NamespaceAPITest {
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
                   .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                  .containsExactly(4L, "auth", 1L);
+                  .containsExactly(4L, "integration", 2L);
             });
         webTestClient.get()
-            .uri("/rbac-namespace/v1/namespaces/4")
+            .uri("/rbac-service/v1/namespaces/4")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBody(Namespace.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody())
                   .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                  .containsExactly(4L, "auth", 1L);
+                  .containsExactly(4L, "integration", 2L);
             });
       }
     }
@@ -205,12 +226,14 @@ public class NamespaceAPITest {
       void deleteTargetNamespaceById() {
         // when, then
         webTestClient.delete()
-            .uri("/rbac-namespace/v1/namespaces/3")
+            .uri("/rbac-service/v1/namespaces/3")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isNoContent()
             .expectBody(Void.class);
         webTestClient.get()
-            .uri("/rbac-namespace/v1/namespaces/3")
+            .uri("/rbac-service/v1/namespaces/3")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBody(Void.class);

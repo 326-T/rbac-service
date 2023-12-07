@@ -1,7 +1,6 @@
 package org.example.service;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.Namespace;
@@ -32,21 +31,22 @@ public class NamespaceService {
   }
 
   public Mono<Namespace> insert(Namespace namespace) {
-    if (Objects.nonNull(namespace.getId())) {
-      return Mono.error(new RedundantException("Id field must be empty"));
-    }
-    return namespaceRepository.save(namespace);
+    namespace.setCreatedAt(LocalDateTime.now());
+    namespace.setUpdatedAt(LocalDateTime.now());
+    return namespaceRepository.findDuplicated(namespace.getName())
+        .flatMap(present -> Mono.<Namespace>error(new RedundantException("Namespace already exists")))
+        .switchIfEmpty(Mono.just(namespace))
+        .flatMap(namespaceRepository::save);
   }
 
   public Mono<Namespace> update(Namespace namespace) {
-    return namespaceRepository.findById(namespace.getId()).flatMap(present -> {
-      if (Objects.isNull(present)) {
-        return Mono.error(new NotExistingException("Namespace not found"));
-      }
-      namespace.setUpdatedAt(LocalDateTime.now());
-      namespace.setCreatedAt(present.getCreatedAt());
-      return namespaceRepository.save(namespace);
-    });
+    return namespaceRepository.findById(namespace.getId())
+        .switchIfEmpty(Mono.error(new NotExistingException("Namespace not found")))
+        .flatMap(present -> {
+          present.setName(namespace.getName());
+          present.setUpdatedAt(LocalDateTime.now());
+          return namespaceRepository.save(present);
+        });
   }
 
   public Mono<Void> deleteById(Long id) {

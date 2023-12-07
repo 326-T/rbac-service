@@ -5,9 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[fix]Namespaceを更新">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/PathInsertRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/PathUpdateRequest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/EndpointAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/EndpointAPITest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/NamespaceAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/NamespaceAPITest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/PathRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/PathRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/PathService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/PathService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/PathRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/PathRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/PathAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/PathAPITest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/PathRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/PathRepositoryTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/PathServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/PathServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/PathRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/PathRestControllerTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -122,22 +129,7 @@
       <recent name="org.example.service" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.NamespaceAPITest">
-    <configuration name="EndpointAPITest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="rbac-service" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.it.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.it" />
-      <option name="MAIN_CLASS_NAME" value="org.example.it.EndpointAPITest" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+  <component name="RunManager" selected="JUnit.PathAPITest">
     <configuration name="NamespaceAPITest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
@@ -153,7 +145,22 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="NamespaceRepositoryTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="PathAPITest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rbac-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.it.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.it" />
+      <option name="MAIN_CLASS_NAME" value="org.example.it.PathAPITest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PathRepositoryTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
@@ -162,13 +169,13 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="org.example.persistence.repository" />
-      <option name="MAIN_CLASS_NAME" value="org.example.persistence.repository.NamespaceRepositoryTest" />
+      <option name="MAIN_CLASS_NAME" value="org.example.persistence.repository.PathRepositoryTest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="NamespaceRestControllerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="PathRestControllerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
@@ -177,13 +184,13 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="org.example.web.controller" />
-      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.NamespaceRestControllerTest" />
+      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.PathRestControllerTest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="NamespaceServiceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="PathServiceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
@@ -192,7 +199,7 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="org.example.service" />
-      <option name="MAIN_CLASS_NAME" value="org.example.service.NamespaceServiceTest" />
+      <option name="MAIN_CLASS_NAME" value="org.example.service.PathServiceTest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -200,11 +207,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.PathAPITest" />
+        <item itemvalue="JUnit.PathRestControllerTest" />
+        <item itemvalue="JUnit.PathServiceTest" />
+        <item itemvalue="JUnit.PathRepositoryTest" />
         <item itemvalue="JUnit.NamespaceAPITest" />
-        <item itemvalue="JUnit.EndpointAPITest" />
-        <item itemvalue="JUnit.NamespaceRestControllerTest" />
-        <item itemvalue="JUnit.NamespaceServiceTest" />
-        <item itemvalue="JUnit.NamespaceRepositoryTest" />
       </list>
     </recent_temporary>
   </component>
@@ -297,7 +304,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701928968941</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="[fix]Namespaceを更新">
+      <option name="closed" value="true" />
+      <created>1701929558338</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1701929558338</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">

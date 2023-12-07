@@ -162,4 +162,26 @@ class PathRepositoryTest {
       }
     }
   }
+
+  @Order(1)
+  @Nested
+  class FindDuplicated {
+
+    @Nested
+    @DisplayName("正常系")
+    class regular {
+
+      @Test
+      @DisplayName("重複するパスを検索できる")
+      void findDuplicated() {
+        // when
+        Mono<Path> pathMono = pathRepository.findDuplicated(1L, "/user-service/v1/");
+        // then
+        StepVerifier.create(pathMono).assertNext(
+                path -> assertThat(path).extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
+                    Path::getCreatedBy).containsExactly(1L, 1L, "/user-service/v1/", 1L))
+            .verifyComplete();
+      }
+    }
+  }
 }

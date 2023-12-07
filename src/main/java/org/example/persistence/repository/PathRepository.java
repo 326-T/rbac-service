@@ -1,6 +1,7 @@
 package org.example.persistence.repository;
 
 import org.example.persistence.entity.Path;
+import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
@@ -18,4 +19,7 @@ public interface PathRepository extends ReactiveCrudRepository<Path, Long> {
   Mono<Path> save(Path path);
 
   Mono<Void> deleteById(Long id);
+
+  @Query("SELECT * FROM rbac_paths WHERE namespace_id = :namespaceId AND regex = :regex")
+  Mono<Path> findDuplicated(Long namespaceId, String regex);
 }

@@ -6,7 +6,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import org.example.persistence.entity.Path;
+import org.example.persistence.entity.User;
 import org.example.service.PathService;
+import org.example.service.ReactiveContextService;
+import org.example.web.filter.AuthenticationWebFilter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,17 +17,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@WebFluxTest(PathRestController.class)
+@WebFluxTest(
+    controllers = PathRestController.class,
+    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AuthenticationWebFilter.class)})
 @AutoConfigureWebTestClient
 class PathRestControllerTest {
 
   @MockBean
   private PathService pathService;
+  @MockBean
+  private ReactiveContextService reactiveContextService;
   @Autowired
   private WebTestClient webTestClient;
 
@@ -138,9 +147,7 @@ class PathRestControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "namespaceId": 1,
-                  "regex": "/replace-service/v1/",
-                  "createdBy": 1
+                  "regex": "/replace-service/v1/"
                 }
                 """
             )
@@ -170,6 +177,7 @@ class PathRestControllerTest {
         Path path = Path.builder()
             .id(4L).namespaceId(1L).regex("/next-service/v1/").createdBy(1L).build();
         when(pathService.insert(any(Path.class))).thenReturn(Mono.just(path));
+        when(reactiveContextService.getCurrentUser()).thenReturn(Mono.just(User.builder().id(1L).build()));
         // when, then
         webTestClient.post()
             .uri("/rbac-service/v1/paths")
@@ -177,8 +185,7 @@ class PathRestControllerTest {
             .bodyValue("""
                 {
                   "namespaceId": 1,
-                  "regex": "/next-service/v1/",
-                  "createdBy": 1
+                  "regex": "/next-service/v1/"
                 }
                 """
             )

@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import org.example.error.exception.NotExistingException;
+import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.UserGroup;
 import org.example.persistence.repository.UserGroupRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +30,7 @@ class UserGroupServiceTest {
   class Count {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -47,6 +50,7 @@ class UserGroupServiceTest {
   class FindAll {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -86,6 +90,7 @@ class UserGroupServiceTest {
   class FindById {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -112,16 +117,16 @@ class UserGroupServiceTest {
   class insert {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
       @DisplayName("ユーザグループを登録できる")
       void insertTheIndex() {
         // given
-        UserGroup userGroup1 = UserGroup.builder()
-            .namespaceId(1L).name("group1").createdBy(1L).build();
-        when(userGroupRepository.save(any(UserGroup.class))).thenReturn(
-            Mono.just(userGroup1));
+        UserGroup userGroup1 = UserGroup.builder().namespaceId(1L).name("group1").createdBy(1L).build();
+        when(userGroupRepository.save(any(UserGroup.class))).thenReturn(Mono.just(userGroup1));
+        when(userGroupRepository.findDuplicated(1L, "group1")).thenReturn(Mono.empty());
         // when
         Mono<UserGroup> groupMono = userGroupService.insert(userGroup1);
         // then
@@ -133,25 +138,41 @@ class UserGroupServiceTest {
             .verifyComplete();
       }
     }
+
+    @Nested
+    @DisplayName("異常系")
+    class irregular {
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotCreateDuplicatedUserGroup() {
+        // given
+        UserGroup before = UserGroup.builder().namespaceId(1L).name("group1").createdBy(1L).build();
+        UserGroup after = UserGroup.builder().namespaceId(1L).name("group1").createdBy(1L).build();
+        when(userGroupRepository.findDuplicated(1L, "group1")).thenReturn(Mono.just(before));
+        // when
+        Mono<UserGroup> groupMono = userGroupService.insert(after);
+        // then
+        StepVerifier.create(groupMono).expectError(RedundantException.class).verify();
+      }
+    }
   }
 
   @Nested
   class update {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
       @DisplayName("ユーザグループを更新できる")
       void updateTheIndex() {
         // given
-        UserGroup before = UserGroup.builder()
-            .id(2L).namespaceId(2L).name("group2").createdBy(2L).build();
-        UserGroup after = UserGroup.builder()
-            .id(2L).namespaceId(2L).name("group2").createdBy(2L).build();
+        UserGroup before = UserGroup.builder().id(2L).namespaceId(2L).name("group2").createdBy(2L).build();
+        UserGroup after = UserGroup.builder().id(2L).namespaceId(3L).name("GROUP2").createdBy(2L).build();
         when(userGroupRepository.findById(2L)).thenReturn(Mono.just(before));
-        when(userGroupRepository.save(any(UserGroup.class)))
-            .thenReturn(Mono.just(after));
+        when(userGroupRepository.save(any(UserGroup.class))).thenReturn(Mono.just(after));
         // when
         Mono<UserGroup> groupMono = userGroupService.update(after);
         // then
@@ -159,8 +180,25 @@ class UserGroupServiceTest {
             .assertNext(group -> assertThat(group)
                 .extracting(UserGroup::getId, UserGroup::getNamespaceId,
                     UserGroup::getName, UserGroup::getCreatedBy)
-                .containsExactly(1L, 1L, "group1", 1L))
+                .containsExactly(2L, 3L, "GROUP2", 2L))
             .verifyComplete();
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class irregular {
+
+      @Test
+      @DisplayName("存在しないユーザグループの場合はエラーになる")
+      void notExistingUserGroupCauseException() {
+        // given
+        UserGroup after = UserGroup.builder().id(2L).namespaceId(2L).name("group2").createdBy(2L).build();
+        when(userGroupRepository.findById(2L)).thenReturn(Mono.empty());
+        // when
+        Mono<UserGroup> groupMono = userGroupService.update(after);
+        // then
+        StepVerifier.create(groupMono).expectError(NotExistingException.class).verify();
       }
     }
   }
@@ -169,6 +207,7 @@ class UserGroupServiceTest {
   class delete {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test

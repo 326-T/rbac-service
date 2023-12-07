@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.UserGroupRoleAssignment;
 import org.example.persistence.repository.UserGroupRoleAssignmentRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +29,7 @@ class UserGroupRoleAssignmentServiceTest {
   class Count {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -47,6 +49,7 @@ class UserGroupRoleAssignmentServiceTest {
   class FindAll {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -96,6 +99,7 @@ class UserGroupRoleAssignmentServiceTest {
   class FindById {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -126,6 +130,7 @@ class UserGroupRoleAssignmentServiceTest {
   class insert {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -134,8 +139,10 @@ class UserGroupRoleAssignmentServiceTest {
         // given
         UserGroupRoleAssignment userGroupRoleAssignment1 = UserGroupRoleAssignment.builder()
             .namespaceId(1L).userGroupId(1L).roleId(1L).createdBy(1L).build();
-        when(userGroupRoleAssignmentRepository.save(any(UserGroupRoleAssignment.class))).thenReturn(
-            Mono.just(userGroupRoleAssignment1));
+        when(userGroupRoleAssignmentRepository.save(any(UserGroupRoleAssignment.class)))
+            .thenReturn(Mono.just(userGroupRoleAssignment1));
+        when(userGroupRoleAssignmentRepository.findDuplicated(1L, 1L, 1L))
+            .thenReturn(Mono.empty());
         // when
         Mono<UserGroupRoleAssignment> groupMono = userGroupRoleAssignmentService.insert(
             userGroupRoleAssignment1);
@@ -151,12 +158,36 @@ class UserGroupRoleAssignmentServiceTest {
             .verifyComplete();
       }
     }
+
+    @Nested
+    @DisplayName("異常系")
+    class irregular {
+
+      @Test
+      @DisplayName("ユーザグループとロールの関係を登録できない")
+      void cannotCreateDuplicatedUserGroupRoleAssignment() {
+        // given
+        UserGroupRoleAssignment before = UserGroupRoleAssignment.builder()
+            .namespaceId(1L).userGroupId(1L).roleId(1L).createdBy(1L).build();
+        UserGroupRoleAssignment after = UserGroupRoleAssignment.builder()
+            .namespaceId(1L).userGroupId(1L).roleId(1L).createdBy(1L).build();
+        when(userGroupRoleAssignmentRepository.save(any(UserGroupRoleAssignment.class)))
+            .thenReturn(Mono.just(after));
+        when(userGroupRoleAssignmentRepository.findDuplicated(1L, 1L, 1L))
+            .thenReturn(Mono.just(before));
+        // when
+        Mono<UserGroupRoleAssignment> groupMono = userGroupRoleAssignmentService.insert(after);
+        // then
+        StepVerifier.create(groupMono).expectError(RedundantException.class).verify();
+      }
+    }
   }
 
   @Nested
   class delete {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test

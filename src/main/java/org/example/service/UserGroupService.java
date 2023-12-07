@@ -1,7 +1,6 @@
 package org.example.service;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.UserGroup;
@@ -32,21 +31,23 @@ public class UserGroupService {
   }
 
   public Mono<UserGroup> insert(UserGroup userGroup) {
-    if (Objects.nonNull(userGroup.getId())) {
-      return Mono.error(new RedundantException("Id field must be empty"));
-    }
-    return groupRepository.save(userGroup);
+    userGroup.setCreatedAt(LocalDateTime.now());
+    userGroup.setUpdatedAt(LocalDateTime.now());
+    return groupRepository.findDuplicated(userGroup.getNamespaceId(), userGroup.getName())
+        .flatMap(present -> Mono.<UserGroup>error(new RedundantException("Group already exists")))
+        .switchIfEmpty(Mono.just(userGroup))
+        .flatMap(groupRepository::save);
   }
 
   public Mono<UserGroup> update(UserGroup userGroup) {
-    return groupRepository.findById(userGroup.getId()).flatMap(present -> {
-      if (Objects.isNull(present)) {
-        return Mono.error(new NotExistingException("Group not found"));
-      }
-      userGroup.setUpdatedAt(LocalDateTime.now());
-      userGroup.setCreatedAt(present.getCreatedAt());
-      return groupRepository.save(userGroup);
-    });
+    return groupRepository.findById(userGroup.getId())
+        .switchIfEmpty(Mono.error(new NotExistingException("Group not found")))
+        .flatMap(present -> {
+          present.setName(userGroup.getName());
+          present.setUpdatedAt(LocalDateTime.now());
+          return Mono.just(present);
+        })
+        .flatMap(groupRepository::save);
   }
 
   public Mono<Void> deleteById(Long id) {

@@ -1,6 +1,6 @@
 package org.example.service;
 
-import java.util.Objects;
+import java.time.LocalDateTime;
 import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.RoleEndpointPermission;
 import org.example.persistence.repository.RoleEndpointPermissionRepository;
@@ -31,10 +31,14 @@ public class RoleEndpointPermissionService {
   }
 
   public Mono<RoleEndpointPermission> insert(RoleEndpointPermission roleEndpointPermission) {
-    if (Objects.nonNull(roleEndpointPermission.getId())) {
-      return Mono.error(new RedundantException("Id field must be empty"));
-    }
-    return roleEndpointPermissionRepository.save(roleEndpointPermission);
+    roleEndpointPermission.setCreatedAt(LocalDateTime.now());
+    roleEndpointPermission.setUpdatedAt(LocalDateTime.now());
+    return roleEndpointPermissionRepository.findDuplicated(
+            roleEndpointPermission.getNamespaceId(),
+            roleEndpointPermission.getRoleId(), roleEndpointPermission.getEndpointId())
+        .flatMap(present -> Mono.<RoleEndpointPermission>error(new RedundantException("RoleEndpointPermission already exists")))
+        .switchIfEmpty(Mono.just(roleEndpointPermission))
+        .flatMap(roleEndpointPermissionRepository::save);
   }
 
   public Mono<Void> deleteById(Long id) {

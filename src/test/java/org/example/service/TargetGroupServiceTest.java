@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import org.example.error.exception.NotExistingException;
+import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.TargetGroup;
 import org.example.persistence.repository.TargetGroupRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +30,7 @@ class TargetGroupServiceTest {
   class Count {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -47,6 +50,7 @@ class TargetGroupServiceTest {
   class FindAll {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -59,8 +63,7 @@ class TargetGroupServiceTest {
             .id(2L).namespaceId(2L).name("cluster2").createdBy(2L).build();
         TargetGroup targetGroup3 = TargetGroup.builder()
             .id(3L).namespaceId(3L).name("cluster3").createdBy(3L).build();
-        when(targetGroupRepository.findAll()).thenReturn(Flux.just(targetGroup1, targetGroup2,
-            targetGroup3));
+        when(targetGroupRepository.findAll()).thenReturn(Flux.just(targetGroup1, targetGroup2, targetGroup3));
         // when
         Flux<TargetGroup> clusterFlux = targetGroupService.findAll();
         // then
@@ -86,6 +89,7 @@ class TargetGroupServiceTest {
   class FindById {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -112,6 +116,7 @@ class TargetGroupServiceTest {
   class insert {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -120,8 +125,9 @@ class TargetGroupServiceTest {
         // given
         TargetGroup targetGroup1 = TargetGroup.builder()
             .namespaceId(1L).name("cluster1").createdBy(1L).build();
-        when(targetGroupRepository.save(any(TargetGroup.class))).thenReturn(
-            Mono.just(targetGroup1));
+        when(targetGroupRepository.save(any(TargetGroup.class))).thenReturn(Mono.just(targetGroup1));
+        when(targetGroupRepository.findDuplicated(1L, "cluster1"))
+            .thenReturn(Mono.empty());
         // when
         Mono<TargetGroup> clusterMono = targetGroupService.insert(targetGroup1);
         // then
@@ -133,12 +139,32 @@ class TargetGroupServiceTest {
             .verifyComplete();
       }
     }
+
+    @Nested
+    @DisplayName("異常系")
+    class irregular {
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotCreateDuplicatedTargetGroup() {
+        // given
+        TargetGroup before = TargetGroup.builder().namespaceId(1L).name("cluster1").createdBy(1L).build();
+        TargetGroup after = TargetGroup.builder().namespaceId(1L).name("cluster1").createdBy(1L).build();
+        when(targetGroupRepository.findDuplicated(1L, "cluster1"))
+            .thenReturn(Mono.just(before));
+        // when
+        Mono<TargetGroup> clusterMono = targetGroupService.insert(after);
+        // then
+        StepVerifier.create(clusterMono).expectError(RedundantException.class).verify();
+      }
+    }
   }
 
   @Nested
   class update {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -150,8 +176,7 @@ class TargetGroupServiceTest {
         TargetGroup after = TargetGroup.builder()
             .id(2L).namespaceId(2L).name("CLUSTER2").createdBy(2L).build();
         when(targetGroupRepository.findById(2L)).thenReturn(Mono.just(before));
-        when(targetGroupRepository.save(any(TargetGroup.class)))
-            .thenReturn(Mono.just(after));
+        when(targetGroupRepository.save(any(TargetGroup.class))).thenReturn(Mono.just(after));
         // when
         Mono<TargetGroup> clusterMono = targetGroupService.update(after);
         // then
@@ -163,12 +188,32 @@ class TargetGroupServiceTest {
             .verifyComplete();
       }
     }
+
+    @Nested
+    @DisplayName("異常系")
+    class irregular {
+
+      @Test
+      @DisplayName("存在しないターゲットグループの場合はエラーになる")
+      void notExistingTargetGroupCauseException() {
+        // given
+        TargetGroup after = TargetGroup.builder()
+            .id(2L).namespaceId(2L).name("CLUSTER2").createdBy(2L).build();
+        when(targetGroupRepository.findById(2L)).thenReturn(Mono.empty());
+        when(targetGroupRepository.save(any(TargetGroup.class))).thenReturn(Mono.just(after));
+        // when
+        Mono<TargetGroup> clusterMono = targetGroupService.update(after);
+        // then
+        StepVerifier.create(clusterMono).expectError(NotExistingException.class).verify();
+      }
+    }
   }
 
   @Nested
   class delete {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test

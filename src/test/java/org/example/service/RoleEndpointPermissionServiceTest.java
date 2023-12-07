@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.RoleEndpointPermission;
 import org.example.persistence.repository.RoleEndpointPermissionRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +29,7 @@ class RoleEndpointPermissionServiceTest {
   class Count {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -47,6 +49,7 @@ class RoleEndpointPermissionServiceTest {
   class FindAll {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -96,6 +99,7 @@ class RoleEndpointPermissionServiceTest {
   class FindById {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -126,6 +130,7 @@ class RoleEndpointPermissionServiceTest {
   class insert {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -134,8 +139,10 @@ class RoleEndpointPermissionServiceTest {
         // given
         RoleEndpointPermission roleEndpointPermission1 = RoleEndpointPermission.builder()
             .namespaceId(1L).roleId(1L).endpointId(1L).createdBy(1L).build();
-        when(roleEndpointPermissionRepository.save(any(RoleEndpointPermission.class))).thenReturn(
-            Mono.just(roleEndpointPermission1));
+        when(roleEndpointPermissionRepository.save(any(RoleEndpointPermission.class)))
+            .thenReturn(Mono.just(roleEndpointPermission1));
+        when(roleEndpointPermissionRepository.findDuplicated(1L, 1L, 1L))
+            .thenReturn(Mono.empty());
         // when
         Mono<RoleEndpointPermission> groupMono = roleEndpointPermissionService.insert(
             roleEndpointPermission1);
@@ -151,12 +158,36 @@ class RoleEndpointPermissionServiceTest {
             .verifyComplete();
       }
     }
+
+    @Nested
+    @DisplayName("異常系")
+    class irregular {
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotCreateDuplicatedEndpoint() {
+        // given
+        RoleEndpointPermission before = RoleEndpointPermission.builder()
+            .namespaceId(1L).roleId(1L).endpointId(1L).createdBy(1L).build();
+        RoleEndpointPermission after = RoleEndpointPermission.builder()
+            .namespaceId(1L).roleId(1L).endpointId(1L).createdBy(1L).build();
+        when(roleEndpointPermissionRepository.save(any(RoleEndpointPermission.class)))
+            .thenReturn(Mono.just(after));
+        when(roleEndpointPermissionRepository.findDuplicated(1L, 1L, 1L))
+            .thenReturn(Mono.just(before));
+        // when
+        Mono<RoleEndpointPermission> groupMono = roleEndpointPermissionService.insert(after);
+        // then
+        StepVerifier.create(groupMono).expectError(RedundantException.class).verify();
+      }
+    }
   }
 
   @Nested
   class delete {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test

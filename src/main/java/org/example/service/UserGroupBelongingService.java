@@ -1,6 +1,6 @@
 package org.example.service;
 
-import java.util.Objects;
+import java.time.LocalDateTime;
 import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.UserGroupBelonging;
 import org.example.persistence.repository.UserGroupBelongingRepository;
@@ -30,10 +30,14 @@ public class UserGroupBelongingService {
   }
 
   public Mono<UserGroupBelonging> insert(UserGroupBelonging userGroupBelonging) {
-    if (Objects.nonNull(userGroupBelonging.getId())) {
-      return Mono.error(new RedundantException("Id field must be empty"));
-    }
-    return userGroupBelongingRepository.save(userGroupBelonging);
+    userGroupBelonging.setCreatedAt(LocalDateTime.now());
+    userGroupBelonging.setUpdatedAt(LocalDateTime.now());
+    return userGroupBelongingRepository.findDuplicated(
+            userGroupBelonging.getNamespaceId(),
+            userGroupBelonging.getUserGroupId(), userGroupBelonging.getUserId())
+        .flatMap(present -> Mono.<UserGroupBelonging>error(new RedundantException("UserGroupBelonging already exists")))
+        .switchIfEmpty(Mono.just(userGroupBelonging))
+        .flatMap(userGroupBelongingRepository::save);
   }
 
   public Mono<Void> deleteById(Long id) {

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.UserGroupBelonging;
 import org.example.persistence.repository.UserGroupBelongingRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +29,7 @@ class UserGroupBelongingServiceTest {
   class Count {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -47,6 +49,7 @@ class UserGroupBelongingServiceTest {
   class FindAll {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -90,6 +93,7 @@ class UserGroupBelongingServiceTest {
   class FindById {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -117,6 +121,7 @@ class UserGroupBelongingServiceTest {
   class insert {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -125,8 +130,9 @@ class UserGroupBelongingServiceTest {
         // given
         UserGroupBelonging userGroupBelonging1 = UserGroupBelonging.builder()
             .namespaceId(1L).userId(1L).userGroupId(1L).createdBy(1L).build();
-        when(userGroupBelongingRepository.save(any(UserGroupBelonging.class))).thenReturn(
-            Mono.just(userGroupBelonging1));
+        when(userGroupBelongingRepository.save(any(UserGroupBelonging.class)))
+            .thenReturn(Mono.just(userGroupBelonging1));
+        when(userGroupBelongingRepository.findDuplicated(1L, 1L, 1L)).thenReturn(Mono.empty());
         // when
         Mono<UserGroupBelonging> groupMono = userGroupBelongingService.insert(userGroupBelonging1);
         // then
@@ -139,12 +145,36 @@ class UserGroupBelongingServiceTest {
             .verifyComplete();
       }
     }
+
+    @Nested
+    @DisplayName("異常系")
+    class irregular {
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotCreateDuplicatedUserRoleBelonging() {
+        // given
+        UserGroupBelonging before = UserGroupBelonging.builder()
+            .namespaceId(1L).userId(1L).userGroupId(1L).createdBy(1L).build();
+        UserGroupBelonging after = UserGroupBelonging.builder()
+            .namespaceId(1L).userId(1L).userGroupId(1L).createdBy(1L).build();
+        when(userGroupBelongingRepository.save(any(UserGroupBelonging.class)))
+            .thenReturn(Mono.just(after));
+        when(userGroupBelongingRepository.findDuplicated(1L, 1L, 1L))
+            .thenReturn(Mono.just(before));
+        // when
+        Mono<UserGroupBelonging> groupMono = userGroupBelongingService.insert(after);
+        // then
+        StepVerifier.create(groupMono).expectError(RedundantException.class).verify();
+      }
+    }
   }
 
   @Nested
   class delete {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test

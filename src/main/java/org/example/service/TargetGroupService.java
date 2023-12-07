@@ -1,7 +1,6 @@
 package org.example.service;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.TargetGroup;
@@ -32,21 +31,24 @@ public class TargetGroupService {
   }
 
   public Mono<TargetGroup> insert(TargetGroup targetGroup) {
-    if (Objects.nonNull(targetGroup.getId())) {
-      return Mono.error(new RedundantException("Id field must be empty"));
-    }
-    return targetGroupRepository.save(targetGroup);
+    targetGroup.setCreatedAt(LocalDateTime.now());
+    targetGroup.setUpdatedAt(LocalDateTime.now());
+    return targetGroupRepository.findDuplicated(
+            targetGroup.getNamespaceId(), targetGroup.getName())
+        .flatMap(present -> Mono.<TargetGroup>error(new RedundantException("TargetGroup already exists")))
+        .switchIfEmpty(Mono.just(targetGroup))
+        .flatMap(targetGroupRepository::save);
   }
 
   public Mono<TargetGroup> update(TargetGroup targetGroup) {
-    return targetGroupRepository.findById(targetGroup.getId()).flatMap(present -> {
-      if (Objects.isNull(present)) {
-        return Mono.error(new NotExistingException("Cluster not found"));
-      }
-      targetGroup.setUpdatedAt(LocalDateTime.now());
-      targetGroup.setCreatedAt(present.getCreatedAt());
-      return targetGroupRepository.save(targetGroup);
-    });
+    return targetGroupRepository.findById(targetGroup.getId())
+        .switchIfEmpty(Mono.error(new NotExistingException("TargetGroup not found")))
+        .flatMap(present -> {
+          present.setName(targetGroup.getName());
+          present.setUpdatedAt(LocalDateTime.now());
+          return Mono.just(present);
+        })
+        .flatMap(targetGroupRepository::save);
   }
 
   public Mono<Void> deleteById(Long id) {

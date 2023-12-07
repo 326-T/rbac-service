@@ -1,7 +1,6 @@
 package org.example.service;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.Target;
@@ -32,21 +31,24 @@ public class TargetService {
   }
 
   public Mono<Target> insert(Target target) {
-    if (Objects.nonNull(target.getId())) {
-      return Mono.error(new RedundantException("Id field must be empty"));
-    }
-    return targetRepository.save(target);
+    target.setCreatedAt(LocalDateTime.now());
+    target.setUpdatedAt(LocalDateTime.now());
+    return targetRepository.findDuplicated(
+            target.getNamespaceId(), target.getObjectIdRegex())
+        .flatMap(present -> Mono.<Target>error(new RedundantException("Target already exists")))
+        .switchIfEmpty(Mono.just(target))
+        .flatMap(targetRepository::save);
   }
 
   public Mono<Target> update(Target target) {
-    return targetRepository.findById(target.getId()).flatMap(present -> {
-      if (Objects.isNull(present)) {
-        return Mono.error(new NotExistingException("Target not found"));
-      }
-      target.setUpdatedAt(LocalDateTime.now());
-      target.setCreatedAt(present.getCreatedAt());
-      return targetRepository.save(target);
-    });
+    return targetRepository.findById(target.getId())
+        .switchIfEmpty(Mono.error(new NotExistingException("Target not found")))
+        .flatMap(present -> {
+          present.setObjectIdRegex(target.getObjectIdRegex());
+          present.setUpdatedAt(LocalDateTime.now());
+          return Mono.just(present);
+        })
+        .flatMap(targetRepository::save);
   }
 
   public Mono<Void> deleteById(Long id) {

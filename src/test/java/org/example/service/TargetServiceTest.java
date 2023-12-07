@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import org.example.error.exception.NotExistingException;
+import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.Target;
 import org.example.persistence.repository.TargetRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +30,7 @@ class TargetServiceTest {
   class Count {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -47,6 +50,7 @@ class TargetServiceTest {
   class FindAll {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -86,6 +90,7 @@ class TargetServiceTest {
   class FindById {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -96,9 +101,9 @@ class TargetServiceTest {
             .id(1L).namespaceId(1L).objectIdRegex("object-id-1").createdBy(1L).build();
         when(targetRepository.findById(1L)).thenReturn(Mono.just(target1));
         // when
-        Mono<Target> clusterMono = targetService.findById(1L);
+        Mono<Target> targetMono = targetService.findById(1L);
         // then
-        StepVerifier.create(clusterMono)
+        StepVerifier.create(targetMono)
             .assertNext(cluster -> assertThat(cluster)
                 .extracting(Target::getId, Target::getNamespaceId,
                     Target::getObjectIdRegex, Target::getCreatedBy)
@@ -112,6 +117,7 @@ class TargetServiceTest {
   class insert {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -120,17 +126,35 @@ class TargetServiceTest {
         // given
         Target target1 = Target.builder()
             .namespaceId(1L).objectIdRegex("object-id-1").createdBy(1L).build();
-        when(targetRepository.save(any(Target.class))).thenReturn(
-            Mono.just(target1));
+        when(targetRepository.save(any(Target.class))).thenReturn(Mono.just(target1));
+        when(targetRepository.findDuplicated(1L, "object-id-1")).thenReturn(Mono.empty());
         // when
-        Mono<Target> clusterMono = targetService.insert(target1);
+        Mono<Target> targetMono = targetService.insert(target1);
         // then
-        StepVerifier.create(clusterMono)
+        StepVerifier.create(targetMono)
             .assertNext(cluster -> assertThat(cluster)
                 .extracting(Target::getId, Target::getNamespaceId,
                     Target::getObjectIdRegex, Target::getCreatedBy)
                 .containsExactly(null, 1L, "object-id-1", 1L))
             .verifyComplete();
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class irregular {
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotCreateDuplicatedTarget() {
+        // given
+        Target before = Target.builder().namespaceId(1L).objectIdRegex("object-id-1").createdBy(1L).build();
+        Target after = Target.builder().namespaceId(1L).objectIdRegex("object-id-1").createdBy(1L).build();
+        when(targetRepository.findDuplicated(1L, "object-id-1")).thenReturn(Mono.just(before));
+        // when
+        Mono<Target> targetMono = targetService.insert(after);
+        // then
+        StepVerifier.create(targetMono).expectError(RedundantException.class).verify();
       }
     }
   }
@@ -139,6 +163,7 @@ class TargetServiceTest {
   class update {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -152,14 +177,32 @@ class TargetServiceTest {
         when(targetRepository.findById(2L)).thenReturn(Mono.just(before));
         when(targetRepository.save(any(Target.class))).thenReturn(Mono.just(after));
         // when
-        Mono<Target> clusterMono = targetService.update(after);
+        Mono<Target> targetMono = targetService.update(after);
         // then
-        StepVerifier.create(clusterMono)
+        StepVerifier.create(targetMono)
             .assertNext(cluster -> assertThat(cluster)
                 .extracting(Target::getId, Target::getNamespaceId,
                     Target::getObjectIdRegex, Target::getCreatedBy)
                 .containsExactly(2L, 2L, "object-id-1", 2L))
             .verifyComplete();
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class irregular {
+
+      @Test
+      @DisplayName("存在しないターゲットの場合はエラーになる")
+      void notExistingTargetCauseException() {
+        // given
+        Target after = Target.builder().id(2L).namespaceId(2L).objectIdRegex("object-id-1").createdBy(2L).build();
+        when(targetRepository.findById(2L)).thenReturn(Mono.empty());
+        when(targetRepository.save(any(Target.class))).thenReturn(Mono.just(after));
+        // when
+        Mono<Target> targetMono = targetService.update(after);
+        // then
+        StepVerifier.create(targetMono).expectError(NotExistingException.class).verify();
       }
     }
   }
@@ -168,6 +211,7 @@ class TargetServiceTest {
   class delete {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -176,9 +220,9 @@ class TargetServiceTest {
         // given
         when(targetRepository.deleteById(1L)).thenReturn(Mono.empty());
         // when
-        Mono<Void> clusterMono = targetService.deleteById(1L);
+        Mono<Void> targetMono = targetService.deleteById(1L);
         // then
-        StepVerifier.create(clusterMono).verifyComplete();
+        StepVerifier.create(targetMono).verifyComplete();
       }
     }
   }

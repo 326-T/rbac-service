@@ -1,6 +1,6 @@
 package org.example.service;
 
-import java.util.Objects;
+import java.time.LocalDateTime;
 import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.UserGroupRoleAssignment;
 import org.example.persistence.repository.UserGroupRoleAssignmentRepository;
@@ -31,10 +31,14 @@ public class UserGroupRoleAssignmentService {
   }
 
   public Mono<UserGroupRoleAssignment> insert(UserGroupRoleAssignment userGroupRoleAssignment) {
-    if (Objects.nonNull(userGroupRoleAssignment.getId())) {
-      return Mono.error(new RedundantException("Id field must be empty"));
-    }
-    return userGroupRoleAssignmentRepository.save(userGroupRoleAssignment);
+    userGroupRoleAssignment.setCreatedAt(LocalDateTime.now());
+    userGroupRoleAssignment.setUpdatedAt(LocalDateTime.now());
+    return userGroupRoleAssignmentRepository.findDuplicated(
+            userGroupRoleAssignment.getNamespaceId(),
+            userGroupRoleAssignment.getUserGroupId(), userGroupRoleAssignment.getRoleId())
+        .flatMap(present -> Mono.<UserGroupRoleAssignment>error(new RedundantException("UserGroupRoleAssignment already exists")))
+        .switchIfEmpty(Mono.just(userGroupRoleAssignment))
+        .flatMap(userGroupRoleAssignmentRepository::save);
   }
 
   public Mono<Void> deleteById(Long id) {

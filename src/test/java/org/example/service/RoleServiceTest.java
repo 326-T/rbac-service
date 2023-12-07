@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import org.example.error.exception.NotExistingException;
+import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.Role;
 import org.example.persistence.repository.RoleRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +30,7 @@ class RoleServiceTest {
   class Count {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -47,18 +50,16 @@ class RoleServiceTest {
   class FindAll {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
       @DisplayName("ロールを全件取得できる")
       void findAllTheIndexes() {
         // given
-        Role role1 = Role.builder()
-            .id(1L).namespaceId(1L).name("developer").createdBy(1L).build();
-        Role role2 = Role.builder()
-            .id(2L).namespaceId(2L).name("operator").createdBy(2L).build();
-        Role role3 = Role.builder()
-            .id(3L).namespaceId(3L).name("security").createdBy(3L).build();
+        Role role1 = Role.builder().id(1L).namespaceId(1L).name("developer").createdBy(1L).build();
+        Role role2 = Role.builder().id(2L).namespaceId(2L).name("operator").createdBy(2L).build();
+        Role role3 = Role.builder().id(3L).namespaceId(3L).name("security").createdBy(3L).build();
         when(roleRepository.findAll()).thenReturn(Flux.just(role1, role2,
             role3));
         // when
@@ -66,16 +67,13 @@ class RoleServiceTest {
         // then
         StepVerifier.create(groupFlux)
             .assertNext(group -> assertThat(group)
-                .extracting(Role::getId, Role::getNamespaceId,
-                    Role::getName, Role::getCreatedBy)
+                .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
                 .containsExactly(1L, 1L, "developer", 1L))
             .assertNext(group -> assertThat(group)
-                .extracting(Role::getId, Role::getNamespaceId,
-                    Role::getName, Role::getCreatedBy)
+                .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
                 .containsExactly(2L, 2L, "operator", 2L))
             .assertNext(group -> assertThat(group)
-                .extracting(Role::getId, Role::getNamespaceId,
-                    Role::getName, Role::getCreatedBy)
+                .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
                 .containsExactly(3L, 3L, "security", 3L))
             .verifyComplete();
       }
@@ -86,6 +84,7 @@ class RoleServiceTest {
   class FindById {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -100,8 +99,7 @@ class RoleServiceTest {
         // then
         StepVerifier.create(groupMono)
             .assertNext(group -> assertThat(group)
-                .extracting(Role::getId, Role::getNamespaceId,
-                    Role::getName, Role::getCreatedBy)
+                .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
                 .containsExactly(1L, 1L, "developer", 1L))
             .verifyComplete();
       }
@@ -112,25 +110,43 @@ class RoleServiceTest {
   class insert {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
       @DisplayName("ロールを登録できる")
       void insertTheIndex() {
         // given
-        Role role1 = Role.builder()
-            .namespaceId(1L).name("developer").createdBy(1L).build();
-        when(roleRepository.save(any(Role.class))).thenReturn(
-            Mono.just(role1));
+        Role role1 = Role.builder().namespaceId(1L).name("developer").createdBy(1L).build();
+        when(roleRepository.save(any(Role.class))).thenReturn(Mono.just(role1));
+        when(roleRepository.findDuplicated(1L, "developer")).thenReturn(Mono.empty());
         // when
         Mono<Role> groupMono = roleService.insert(role1);
         // then
         StepVerifier.create(groupMono)
             .assertNext(group -> assertThat(group)
-                .extracting(Role::getId, Role::getNamespaceId,
-                    Role::getName, Role::getCreatedBy)
+                .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
                 .containsExactly(null, 1L, "developer", 1L))
             .verifyComplete();
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class irregular {
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotCreateDuplicatedEndpoint() {
+        // given
+        Role before = Role.builder().id(2L).namespaceId(2L).name("operator").createdBy(2L).build();
+        Role after = Role.builder().id(2L).namespaceId(2L).name("operator").createdBy(2L).build();
+        when(roleRepository.save(any(Role.class))).thenReturn(Mono.just(before));
+        when(roleRepository.findDuplicated(2L, "operator")).thenReturn(Mono.just(before));
+        // when
+        Mono<Role> groupMono = roleService.insert(after);
+        // then
+        StepVerifier.create(groupMono).expectError(RedundantException.class).verify();
       }
     }
   }
@@ -139,19 +155,17 @@ class RoleServiceTest {
   class update {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
       @DisplayName("ロールを更新できる")
       void updateTheIndex() {
         // given
-        Role before = Role.builder()
-            .id(2L).namespaceId(2L).name("operator").createdBy(2L).build();
-        Role after = Role.builder()
-            .id(2L).namespaceId(2L).name("developer").createdBy(2L).build();
+        Role before = Role.builder().id(2L).namespaceId(2L).name("operator").createdBy(2L).build();
+        Role after = Role.builder().id(2L).namespaceId(2L).name("developer").createdBy(2L).build();
         when(roleRepository.findById(2L)).thenReturn(Mono.just(before));
-        when(roleRepository.save(any(Role.class)))
-            .thenReturn(Mono.just(after));
+        when(roleRepository.save(any(Role.class))).thenReturn(Mono.just(after));
         // when
         Mono<Role> groupMono = roleService.update(after);
         // then
@@ -163,12 +177,31 @@ class RoleServiceTest {
             .verifyComplete();
       }
     }
+
+    @Nested
+    @DisplayName("異常系")
+    class irregular {
+
+      @Test
+      @DisplayName("存在しないロールの場合はエラーになる")
+      void notExistingRoleCauseException() {
+        // given
+        Role after = Role.builder().id(2L).namespaceId(2L).name("developer").createdBy(2L).build();
+        when(roleRepository.findById(2L)).thenReturn(Mono.empty());
+        when(roleRepository.save(any(Role.class))).thenReturn(Mono.just(after));
+        // when
+        Mono<Role> groupMono = roleService.update(after);
+        // then
+        StepVerifier.create(groupMono).expectError(NotExistingException.class).verify();
+      }
+    }
   }
 
   @Nested
   class delete {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test

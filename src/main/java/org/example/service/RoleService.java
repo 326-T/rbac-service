@@ -1,7 +1,6 @@
 package org.example.service;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.Role;
@@ -32,21 +31,23 @@ public class RoleService {
   }
 
   public Mono<Role> insert(Role role) {
-    if (Objects.nonNull(role.getId())) {
-      return Mono.error(new RedundantException("Id field must be empty"));
-    }
-    return roleRepository.save(role);
+    role.setCreatedAt(LocalDateTime.now());
+    role.setUpdatedAt(LocalDateTime.now());
+    return roleRepository.findDuplicated(role.getNamespaceId(), role.getName())
+        .flatMap(present -> Mono.<Role>error(new RedundantException("Role already exists")))
+        .switchIfEmpty(Mono.just(role))
+        .flatMap(roleRepository::save);
   }
 
   public Mono<Role> update(Role role) {
-    return roleRepository.findById(role.getId()).flatMap(present -> {
-      if (Objects.isNull(present)) {
-        return Mono.error(new NotExistingException("Role not found"));
-      }
-      role.setUpdatedAt(LocalDateTime.now());
-      role.setCreatedAt(present.getCreatedAt());
-      return roleRepository.save(role);
-    });
+    return roleRepository.findById(role.getId())
+        .switchIfEmpty(Mono.error(new NotExistingException("Role not found")))
+        .flatMap(present -> {
+          present.setName(role.getName());
+          present.setUpdatedAt(LocalDateTime.now());
+          return Mono.just(present);
+        })
+        .flatMap(roleRepository::save);
   }
 
   public Mono<Void> deleteById(Long id) {

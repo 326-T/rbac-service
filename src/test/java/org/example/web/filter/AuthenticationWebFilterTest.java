@@ -24,7 +24,6 @@ class AuthenticationWebFilterTest {
   private AuthenticationWebFilter authenticationWebFilter;
   @Mock
   private JwtService jwtService;
-
   @Mock
   private UserService userService;
 
@@ -36,23 +35,22 @@ class AuthenticationWebFilterTest {
     class regular {
 
       @Test
-      void hoge() {
+      @DisplayName("認証済みの場合、ユーザ情報をコンテキストに設定する")
+      void setUserInfoOnContext() {
         // given
         MockServerWebExchange exchange = MockServerWebExchange.from(
             MockServerHttpRequest.get("/").header("Authorization", "sample-jwt"));
-        when(jwtService.decode("sample-jwt")).thenReturn(
-            User.builder().id(1L).email("aaa@example.org").name("test").build());
-        when(userService.findByEmail("aaa@example.org")).thenReturn(
-            Mono.just(User.builder().id(1L).email("aaa@example.org").name("test").build()));
+        when(jwtService.decode("sample-jwt"))
+            .thenReturn(User.builder().id(1L).email("aaa@example.org").name("test").build());
+        when(userService.findByEmail("aaa@example.org"))
+            .thenReturn(Mono.just(User.builder().id(1L).email("aaa@example.org").name("test").build()));
         WebFilterChain chain = filter -> Mono.empty();
         // when
-        Mono<Void> result = authenticationWebFilter.filter(exchange, chain);
+        authenticationWebFilter.filter(exchange, chain).block();
         // then
-        StepVerifier.create(result)
+        StepVerifier.create(Mono.empty())
             .expectAccessibleContext()
-            .hasKey(User.class)
-            .then()
-            .verifyComplete();
+            .hasKey(User.class);
       }
     }
   }

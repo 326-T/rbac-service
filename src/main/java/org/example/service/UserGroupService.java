@@ -34,14 +34,14 @@ public class UserGroupService {
     userGroup.setCreatedAt(LocalDateTime.now());
     userGroup.setUpdatedAt(LocalDateTime.now());
     return groupRepository.findDuplicated(userGroup.getNamespaceId(), userGroup.getName())
-        .flatMap(present -> Mono.<UserGroup>error(new RedundantException("Group already exists")))
+        .flatMap(present -> Mono.<UserGroup>error(new RedundantException("UserGroup already exists")))
         .switchIfEmpty(Mono.just(userGroup))
         .flatMap(groupRepository::save);
   }
 
   public Mono<UserGroup> update(UserGroup userGroup) {
     return groupRepository.findById(userGroup.getId())
-        .switchIfEmpty(Mono.error(new NotExistingException("Group not found")))
+        .switchIfEmpty(Mono.error(new NotExistingException("UserGroup not found")))
         .flatMap(present -> {
           present.setName(userGroup.getName());
           present.setUpdatedAt(LocalDateTime.now());

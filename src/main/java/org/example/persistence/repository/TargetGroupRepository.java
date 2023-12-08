@@ -24,7 +24,7 @@ public interface TargetGroupRepository extends ReactiveCrudRepository<TargetGrou
       SELECT *
       FROM rbac_target_groups
       WHERE namespace_id = :namespaceId
-        AND object_id_regex = :objectIdRegex;
+        AND name = :name;
       """)
-  Mono<TargetGroup> findDuplicated(Long namespaceId, String objectIdRegex);
+  Mono<TargetGroup> findDuplicated(Long namespaceId, String name);
 }

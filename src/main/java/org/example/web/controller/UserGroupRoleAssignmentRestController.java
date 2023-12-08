@@ -1,7 +1,9 @@
 package org.example.web.controller;
 
 import org.example.persistence.entity.UserGroupRoleAssignment;
+import org.example.service.ReactiveContextService;
 import org.example.service.UserGroupRoleAssignmentService;
+import org.example.web.request.UserGroupRoleAssignmentInsertRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,10 +21,12 @@ import reactor.core.publisher.Mono;
 public class UserGroupRoleAssignmentRestController {
 
   private final UserGroupRoleAssignmentService userGroupRoleAssignmentService;
+  private final ReactiveContextService reactiveContextService;
 
   public UserGroupRoleAssignmentRestController(
-      UserGroupRoleAssignmentService userGroupRoleAssignmentService) {
+      UserGroupRoleAssignmentService userGroupRoleAssignmentService, ReactiveContextService reactiveContextService) {
     this.userGroupRoleAssignmentService = userGroupRoleAssignmentService;
+    this.reactiveContextService = reactiveContextService;
   }
 
   @GetMapping
@@ -42,8 +46,14 @@ public class UserGroupRoleAssignmentRestController {
 
   @PostMapping
   public Mono<UserGroupRoleAssignment> save(
-      @RequestBody UserGroupRoleAssignment userGroupRoleAssignment) {
-    return userGroupRoleAssignmentService.insert(userGroupRoleAssignment);
+      @RequestBody UserGroupRoleAssignmentInsertRequest request) {
+    return reactiveContextService.getCurrentUser()
+        .flatMap(u -> {
+          UserGroupRoleAssignment userGroupRoleAssignment = request.exportEntity();
+          userGroupRoleAssignment.setCreatedBy(u.getId());
+          return Mono.just(userGroupRoleAssignment);
+        })
+        .flatMap(userGroupRoleAssignmentService::insert);
   }
 
   @DeleteMapping("/{id}")

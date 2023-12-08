@@ -4,22 +4,43 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[add]重複チェック用のRepositoryメソッドを追加">
+    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[add]サービス層にエラーハンドリングを追加">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/RoleEndpointPermissionInsertRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/TargetGroupBelongingInsertRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/TargetGroupInsertRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/TargetGroupUpdateRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/TargetInsertRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/TargetUpdateRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/UserGroupBelongingInsertRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/UserGroupInsertRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/UserGroupRoleAssignmentInsertRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/UserGroupUpdateRequest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/RoleEndpointPermissionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/RoleEndpointPermissionService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/TargetGroupBelongingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/TargetGroupBelongingService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/TargetGroupService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/TargetGroupService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/TargetService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/TargetService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/TargetGroupRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/TargetGroupRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/UserGroupBelongingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/UserGroupBelongingService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/UserGroupRoleAssignmentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/UserGroupRoleAssignmentService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/UserGroupService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/UserGroupService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/RoleEndpointPermissionServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/RoleEndpointPermissionServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/TargetGroupBelongingServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/TargetGroupBelongingServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/TargetGroupServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/TargetGroupServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/TargetServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/TargetServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupBelongingServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupBelongingServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupRoleAssignmentServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupRoleAssignmentServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/RoleEndpointPermissionRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/RoleEndpointPermissionRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/TargetGroupBelongingRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/TargetGroupBelongingRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/TargetGroupRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/TargetGroupRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/TargetRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/TargetRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserGroupBelongingRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserGroupBelongingRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserGroupRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserGroupRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserGroupRoleAssignmentRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserGroupRoleAssignmentRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/EndpointAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/EndpointAPITest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/RoleEndpointPermissionAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/RoleEndpointPermissionAPITest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/TargetAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/TargetAPITest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/TargetGroupAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/TargetGroupAPITest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/TargetGroupBelongingAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/TargetGroupBelongingAPITest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/UserGroupAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/UserGroupAPITest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/UserGroupBelongingAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/UserGroupBelongingAPITest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/UserGroupRoleAssignmentAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/UserGroupRoleAssignmentAPITest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/RoleEndpointPermissionRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/RoleEndpointPermissionRestControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/TargetGroupBelongingRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/TargetGroupBelongingRestControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/TargetGroupRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/TargetGroupRestControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/TargetRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/TargetRestControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserGroupBelongingRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserGroupBelongingRestControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserGroupRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserGroupRestControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserGroupRoleAssignmentRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserGroupRoleAssignmentRestControllerTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -134,77 +155,78 @@
       <recent name="org.example.service" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.UserGroupRoleAssignmentServiceTest">
-    <configuration name="RoleEndpointPermissionServiceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="JUnit.UserGroupRoleAssignmentAPITest">
+    <configuration name="RoleEndpointPermissionAPITest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.service.*" />
+          <option name="PATTERN" value="org.example.it.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.service" />
-      <option name="MAIN_CLASS_NAME" value="org.example.service.RoleEndpointPermissionServiceTest" />
+      <option name="PACKAGE_NAME" value="org.example.it" />
+      <option name="MAIN_CLASS_NAME" value="org.example.it.RoleEndpointPermissionAPITest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TargetGroupBelongingServiceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="TargetGroupBelongingAPITest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.service.*" />
+          <option name="PATTERN" value="org.example.it.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.service" />
-      <option name="MAIN_CLASS_NAME" value="org.example.service.TargetGroupBelongingServiceTest" />
+      <option name="PACKAGE_NAME" value="org.example.it" />
+      <option name="MAIN_CLASS_NAME" value="org.example.it.TargetGroupBelongingAPITest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TargetServiceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="UserGroupBelongingAPITest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.service.*" />
+          <option name="PATTERN" value="org.example.it.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.service" />
-      <option name="MAIN_CLASS_NAME" value="org.example.service.TargetServiceTest" />
+      <option name="PACKAGE_NAME" value="org.example.it" />
+      <option name="MAIN_CLASS_NAME" value="org.example.it.UserGroupBelongingAPITest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="UserGroupBelongingServiceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="UserGroupBelongingRepositoryTest$FindDuplicated$regular.findDuplicatedUserGroupBelonging" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.service.*" />
+          <option name="PATTERN" value="org.example.persistence.repository.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.service" />
-      <option name="MAIN_CLASS_NAME" value="org.example.service.UserGroupBelongingServiceTest" />
-      <option name="TEST_OBJECT" value="class" />
+      <option name="PACKAGE_NAME" value="org.example.persistence.repository.UserGroupBelongingRepositoryTest.FindDuplicated" />
+      <option name="MAIN_CLASS_NAME" value="org.example.persistence.repository.UserGroupBelongingRepositoryTest$FindDuplicated$regular" />
+      <option name="METHOD_NAME" value="findDuplicatedUserGroupBelonging" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="UserGroupRoleAssignmentServiceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="UserGroupRoleAssignmentAPITest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.service.*" />
+          <option name="PATTERN" value="org.example.it.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.service" />
-      <option name="MAIN_CLASS_NAME" value="org.example.service.UserGroupRoleAssignmentServiceTest" />
+      <option name="PACKAGE_NAME" value="org.example.it" />
+      <option name="MAIN_CLASS_NAME" value="org.example.it.UserGroupRoleAssignmentAPITest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -212,11 +234,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.UserGroupRoleAssignmentServiceTest" />
-        <item itemvalue="JUnit.UserGroupBelongingServiceTest" />
-        <item itemvalue="JUnit.TargetGroupBelongingServiceTest" />
-        <item itemvalue="JUnit.RoleEndpointPermissionServiceTest" />
-        <item itemvalue="JUnit.TargetServiceTest" />
+        <item itemvalue="JUnit.UserGroupRoleAssignmentAPITest" />
+        <item itemvalue="JUnit.UserGroupBelongingAPITest" />
+        <item itemvalue="JUnit.UserGroupBelongingRepositoryTest$FindDuplicated$regular.findDuplicatedUserGroupBelonging" />
+        <item itemvalue="JUnit.TargetGroupBelongingAPITest" />
+        <item itemvalue="JUnit.RoleEndpointPermissionAPITest" />
       </list>
     </recent_temporary>
   </component>
@@ -341,7 +363,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701951449858</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="[add]サービス層にエラーハンドリングを追加">
+      <option name="closed" value="true" />
+      <created>1701970029151</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1701970029151</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -358,7 +388,8 @@
     <MESSAGE value="[fix]Pathを更新" />
     <MESSAGE value="[fix]Roleを更新" />
     <MESSAGE value="[add]重複チェック用のRepositoryメソッドを追加" />
-    <option name="LAST_COMMIT_MESSAGE" value="[add]重複チェック用のRepositoryメソッドを追加" />
+    <MESSAGE value="[add]サービス層にエラーハンドリングを追加" />
+    <option name="LAST_COMMIT_MESSAGE" value="[add]サービス層にエラーハンドリングを追加" />
   </component>
   <component name="XDebuggerManager">
     <pin-to-top-manager>

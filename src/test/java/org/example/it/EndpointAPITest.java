@@ -33,7 +33,6 @@ public class EndpointAPITest {
 
   @Autowired
   private WebTestClient webTestClient;
-
   @Autowired
   private JwtService jwtService;
 
@@ -43,7 +42,6 @@ public class EndpointAPITest {
   void beforeAll() {
     jwt = jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build());
   }
-
 
   @Nested
   @Order(1)
@@ -138,6 +136,7 @@ public class EndpointAPITest {
   class Update {
 
     @Nested
+    @DisplayName("正常系")
     class regular {
 
       @Test
@@ -180,51 +179,56 @@ public class EndpointAPITest {
                   .containsExactly(2L, 2L, 3L, "GET", 2L, 2L);
             });
       }
-
-      @Nested
-      @DisplayName("異常系")
-      class irregular {
-
-        @Test
-        @DisplayName("存在しないエンドポイントの場合はエラーになる")
-        void notExistingEndpointCauseException() {
-          // when, then
-          webTestClient.put()
-              .uri("/rbac-service/v1/endpoints/999")
-              .header(HttpHeaders.AUTHORIZATION, jwt)
-              .contentType(MediaType.APPLICATION_JSON)
-              .bodyValue("""
-                  {
-                    "pathId": 3,
-                    "method": "GET",
-                    "targetGroupId": 2
-                  }
-                  """
-              )
-              .exchange()
-              .expectStatus().isNotFound()
-              .expectBody(ErrorResponse.class)
-              .consumeWith(response ->
-                  assertThat(response.getResponseBody())
-                      .extracting(
-                          ErrorResponse::getStatus, ErrorResponse::getCode,
-                          ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
-                      .containsExactly(
-                          404, null,
-                          "idに該当するリソースが存在しない",
-                          "org.example.error.exception.NotExistingException: Endpoint not found",
-                          "指定されたリソースは存在しません。")
-              );
-        }
-      }
     }
 
-    @Order(2)
     @Nested
-    @TestExecutionListeners(
-        listeners = {FlywayTestExecutionListener.class},
-        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-    class Save {
+    @DisplayName("異常系")
+    class irregular {
+
+      @Test
+      @DisplayName("存在しないエンドポイントの場合はエラーになる")
+      void notExistingEndpointCauseException() {
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/endpoints/999")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "pathId": 3,
+                  "method": "GET",
+                  "targetGroupId": 2
+                }
+                """
+            )
+            .exchange()
+            .expectStatus().isNotFound()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        404, null,
+                        "idに該当するリソースが存在しない",
+                        "org.example.error.exception.NotExistingException: Endpoint not found",
+                        "指定されたリソースは存在しません。")
+            );
+      }
+    }
+  }
+
+  @Order(2)
+  @Nested
+  @TestExecutionListeners(
+      listeners = {FlywayTestExecutionListener.class},
+      mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+  class Save {
+
+    @Nested
+    @DisplayName("正常系")
+    class regular {
 
       @Test
       @DisplayName("エンドポイントを新規登録できる")

@@ -6,7 +6,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import org.example.persistence.entity.TargetGroup;
+import org.example.persistence.entity.User;
+import org.example.service.ReactiveContextService;
 import org.example.service.TargetGroupService;
+import org.example.web.filter.AuthenticationWebFilter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,17 +17,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@WebFluxTest(TargetGroupRestController.class)
+@WebFluxTest(
+    controllers = TargetGroupRestController.class,
+    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AuthenticationWebFilter.class)})
 @AutoConfigureWebTestClient
 class TargetGroupRestControllerTest {
 
   @MockBean
   private TargetGroupService targetGroupService;
+  @MockBean
+  private ReactiveContextService reactiveContextService;
   @Autowired
   private WebTestClient webTestClient;
 
@@ -138,9 +147,7 @@ class TargetGroupRestControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "namespaceId": 1,
-                  "name": "OBJECT-ID-2",
-                  "createdBy": 1
+                  "name": "OBJECT-ID-2"
                 }
                 """
             )
@@ -170,6 +177,7 @@ class TargetGroupRestControllerTest {
         TargetGroup targetGroup = TargetGroup.builder()
             .id(4L).namespaceId(1L).name("target-group-4").createdBy(1L).build();
         when(targetGroupService.insert(any(TargetGroup.class))).thenReturn(Mono.just(targetGroup));
+        when(reactiveContextService.getCurrentUser()).thenReturn(Mono.just(User.builder().id(1L).build()));
         // when, then
         webTestClient.post()
             .uri("/rbac-service/v1/target-groups")
@@ -177,8 +185,7 @@ class TargetGroupRestControllerTest {
             .bodyValue("""
                 {
                   "namespaceId": 1,
-                  "name": "target-group-4",
-                  "createdBy": 1
+                  "name": "target-group-4"
                 }
                 """
             )

@@ -34,7 +34,8 @@ public class UserGroupBelongingService {
     userGroupBelonging.setUpdatedAt(LocalDateTime.now());
     return userGroupBelongingRepository.findDuplicated(
             userGroupBelonging.getNamespaceId(),
-            userGroupBelonging.getUserGroupId(), userGroupBelonging.getUserId())
+            userGroupBelonging.getUserId(),
+            userGroupBelonging.getUserGroupId())
         .flatMap(present -> Mono.<UserGroupBelonging>error(new RedundantException("UserGroupBelonging already exists")))
         .switchIfEmpty(Mono.just(userGroupBelonging))
         .flatMap(userGroupBelongingRepository::save);

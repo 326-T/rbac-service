@@ -1,7 +1,9 @@
 package org.example.web.controller;
 
 import org.example.persistence.entity.RoleEndpointPermission;
+import org.example.service.ReactiveContextService;
 import org.example.service.RoleEndpointPermissionService;
+import org.example.web.request.RoleEndpointPermissionInsertRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,10 +21,12 @@ import reactor.core.publisher.Mono;
 public class RoleEndpointPermissionRestController {
 
   private final RoleEndpointPermissionService roleEndpointPermissionService;
+  private final ReactiveContextService reactiveContextService;
 
   public RoleEndpointPermissionRestController(
-      RoleEndpointPermissionService roleEndpointPermissionService) {
+      RoleEndpointPermissionService roleEndpointPermissionService, ReactiveContextService reactiveContextService) {
     this.roleEndpointPermissionService = roleEndpointPermissionService;
+    this.reactiveContextService = reactiveContextService;
   }
 
   @GetMapping
@@ -41,9 +45,14 @@ public class RoleEndpointPermissionRestController {
   }
 
   @PostMapping
-  public Mono<RoleEndpointPermission> save(
-      @RequestBody RoleEndpointPermission roleEndpointPermission) {
-    return roleEndpointPermissionService.insert(roleEndpointPermission);
+  public Mono<RoleEndpointPermission> save(@RequestBody RoleEndpointPermissionInsertRequest request) {
+    return reactiveContextService.getCurrentUser()
+        .flatMap(u -> {
+          RoleEndpointPermission roleEndpointPermission = request.exportEntity();
+          roleEndpointPermission.setCreatedBy(u.getId());
+          return Mono.just(roleEndpointPermission);
+        })
+        .flatMap(roleEndpointPermissionService::insert);
   }
 
   @DeleteMapping("/{id}")

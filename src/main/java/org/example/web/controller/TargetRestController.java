@@ -1,7 +1,10 @@
 package org.example.web.controller;
 
 import org.example.persistence.entity.Target;
+import org.example.service.ReactiveContextService;
 import org.example.service.TargetService;
+import org.example.web.request.TargetInsertRequest;
+import org.example.web.request.TargetUpdateRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,9 +23,12 @@ import reactor.core.publisher.Mono;
 public class TargetRestController {
 
   private final TargetService targetService;
+  private final ReactiveContextService reactiveContextService;
 
-  public TargetRestController(TargetService targetService) {
+
+  public TargetRestController(TargetService targetService, ReactiveContextService reactiveContextService) {
     this.targetService = targetService;
+    this.reactiveContextService = reactiveContextService;
   }
 
   @GetMapping
@@ -41,12 +47,19 @@ public class TargetRestController {
   }
 
   @PostMapping
-  public Mono<Target> save(@RequestBody Target target) {
-    return targetService.insert(target);
+  public Mono<Target> save(@RequestBody TargetInsertRequest request) {
+    return reactiveContextService.getCurrentUser()
+        .flatMap(u -> {
+          Target target = request.exportEntity();
+          target.setCreatedBy(u.getId());
+          return Mono.just(target);
+        })
+        .flatMap(targetService::insert);
   }
 
   @PutMapping("/{id}")
-  public Mono<Target> update(@PathVariable Long id, @RequestBody Target target) {
+  public Mono<Target> update(@PathVariable Long id, @RequestBody TargetUpdateRequest request) {
+    Target target = request.exportEntity();
     target.setId(id);
     return targetService.update(target);
   }

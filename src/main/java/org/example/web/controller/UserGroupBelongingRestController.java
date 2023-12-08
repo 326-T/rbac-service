@@ -1,7 +1,9 @@
 package org.example.web.controller;
 
 import org.example.persistence.entity.UserGroupBelonging;
+import org.example.service.ReactiveContextService;
 import org.example.service.UserGroupBelongingService;
+import org.example.web.request.UserGroupBelongingInsertRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,10 +21,12 @@ import reactor.core.publisher.Mono;
 public class UserGroupBelongingRestController {
 
   private final UserGroupBelongingService userGroupBelongingService;
+  private final ReactiveContextService reactiveContextService;
 
   public UserGroupBelongingRestController(
-      UserGroupBelongingService userGroupBelongingService) {
+      UserGroupBelongingService userGroupBelongingService, ReactiveContextService reactiveContextService) {
     this.userGroupBelongingService = userGroupBelongingService;
+    this.reactiveContextService = reactiveContextService;
   }
 
   @GetMapping
@@ -41,9 +45,14 @@ public class UserGroupBelongingRestController {
   }
 
   @PostMapping
-  public Mono<UserGroupBelonging> save(
-      @RequestBody UserGroupBelonging userGroupBelonging) {
-    return userGroupBelongingService.insert(userGroupBelonging);
+  public Mono<UserGroupBelonging> save(@RequestBody UserGroupBelongingInsertRequest request) {
+    return reactiveContextService.getCurrentUser()
+        .flatMap(u -> {
+          UserGroupBelonging userGroupBelonging = request.exportEntity();
+          userGroupBelonging.setCreatedBy(u.getId());
+          return Mono.just(userGroupBelonging);
+        })
+        .flatMap(userGroupBelongingService::insert);
   }
 
   @DeleteMapping("/{id}")

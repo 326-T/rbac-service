@@ -28,5 +28,5 @@ public interface EndpointRepository extends
         AND target_group_id = :targetGroupId
         AND method = :method;
       """)
-  Mono<Endpoint> findDuplicated(Long namespaceId, Long pathId, Long targetGroupId, String method);
+  Mono<Endpoint> findDuplicate(Long namespaceId, Long pathId, Long targetGroupId, String method);
 }

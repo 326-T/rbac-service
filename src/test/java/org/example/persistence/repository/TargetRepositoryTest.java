@@ -168,7 +168,7 @@ class TargetRepositoryTest {
 
   @Order(1)
   @Nested
-  class FindDuplicated {
+  class FindDuplicate {
 
     @Nested
     @DisplayName("正常系")
@@ -176,9 +176,9 @@ class TargetRepositoryTest {
 
       @Test
       @DisplayName("ターゲットの重複を検知できる")
-      void findDuplicatedTarget() {
+      void findDuplicateTarget() {
         // when
-        Mono<Target> targetMono = targetRepository.findDuplicated(1L, "object-id-1");
+        Mono<Target> targetMono = targetRepository.findDuplicate(1L, "object-id-1");
         // then
         StepVerifier.create(targetMono).assertNext(
             target -> assertThat(target).extracting(Target::getId, Target::getNamespaceId,

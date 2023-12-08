@@ -260,7 +260,7 @@ public class RoleAPITest {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
-      void cannotCreateDuplicated() {
+      void cannotCreateDuplicate() {
         webTestClient.post()
             .uri("/rbac-service/v1/roles")
             .header(HttpHeaders.AUTHORIZATION, jwt)

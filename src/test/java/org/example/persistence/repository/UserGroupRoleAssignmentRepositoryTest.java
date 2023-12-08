@@ -227,7 +227,7 @@ class UserGroupRoleAssignmentRepositoryTest {
 
   @Order(1)
   @Nested
-  class FindDuplicated {
+  class FindDuplicate {
 
     @Nested
     @DisplayName("正常系")
@@ -235,10 +235,10 @@ class UserGroupRoleAssignmentRepositoryTest {
 
       @Test
       @DisplayName("重複するグループとロールの関係情報を検知できる")
-      void findDuplicatedGroupHasRole() {
+      void findDuplicateGroupHasRole() {
         // when
         Mono<UserGroupRoleAssignment> groupHasRoleMono = userGroupRoleAssignmentRepository
-            .findDuplicated(1L, 1L, 1L);
+            .findDuplicate(1L, 1L, 1L);
         // then
         StepVerifier.create(groupHasRoleMono)
             .assertNext(

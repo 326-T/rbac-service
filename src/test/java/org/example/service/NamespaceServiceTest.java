@@ -117,7 +117,7 @@ class NamespaceServiceTest {
         // given
         Namespace namespace1 = Namespace.builder().name("namespace1").createdBy(1L).build();
         when(namespaceRepository.save(any(Namespace.class))).thenReturn(Mono.just(namespace1));
-        when(namespaceRepository.findDuplicated("namespace1")).thenReturn(Mono.empty());
+        when(namespaceRepository.findDuplicate("namespace1")).thenReturn(Mono.empty());
         // when
         Mono<Namespace> namespaceMono = namespaceService.insert(namespace1);
         // then
@@ -135,12 +135,12 @@ class NamespaceServiceTest {
 
       @Test
       @DisplayName("登録済みと重複する場合はエラーになる")
-      void cannotCreateDuplicatedNamespace() {
+      void cannotCreateDuplicateNamespace() {
         // given
         Namespace before = Namespace.builder().name("namespace1").createdBy(1L).build();
         Namespace after = Namespace.builder().name("namespace1").createdBy(2L).build();
         when(namespaceRepository.save(any(Namespace.class))).thenReturn(Mono.just(after));
-        when(namespaceRepository.findDuplicated("namespace1")).thenReturn(Mono.just(before));
+        when(namespaceRepository.findDuplicate("namespace1")).thenReturn(Mono.just(before));
         // when
         Mono<Namespace> namespaceMono = namespaceService.insert(after);
         // then

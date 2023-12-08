@@ -133,7 +133,7 @@ class TargetGroupBelongingServiceTest {
             .namespaceId(1L).targetId(1L).targetGroupId(1L).createdBy(1L).build();
         when(targetGroupBelongingRepository.save(any(TargetGroupBelonging.class)))
             .thenReturn(Mono.just(targetGroupBelonging1));
-        when(targetGroupBelongingRepository.findDuplicated(1L, 1L, 1L))
+        when(targetGroupBelongingRepository.findDuplicate(1L, 1L, 1L))
             .thenReturn(Mono.empty());
         // when
         Mono<TargetGroupBelonging> groupMono = targetGroupBelongingService.insert(
@@ -155,7 +155,7 @@ class TargetGroupBelongingServiceTest {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
-      void cannotCreateDuplicatedTargetGroupBelonging() {
+      void cannotCreateDuplicateTargetGroupBelonging() {
         // given
         TargetGroupBelonging before = TargetGroupBelonging.builder()
             .namespaceId(1L).targetId(1L).targetGroupId(1L).createdBy(1L).build();
@@ -163,7 +163,7 @@ class TargetGroupBelongingServiceTest {
             .namespaceId(1L).targetId(1L).targetGroupId(1L).createdBy(1L).build();
         when(targetGroupBelongingRepository.save(any(TargetGroupBelonging.class)))
             .thenReturn(Mono.just(after));
-        when(targetGroupBelongingRepository.findDuplicated(1L, 1L, 1L))
+        when(targetGroupBelongingRepository.findDuplicate(1L, 1L, 1L))
             .thenReturn(Mono.just(before));
         // when
         Mono<TargetGroupBelonging> groupMono = targetGroupBelongingService.insert(after);

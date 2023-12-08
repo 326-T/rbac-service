@@ -126,7 +126,7 @@ class UserGroupServiceTest {
         // given
         UserGroup userGroup1 = UserGroup.builder().namespaceId(1L).name("group1").createdBy(1L).build();
         when(userGroupRepository.save(any(UserGroup.class))).thenReturn(Mono.just(userGroup1));
-        when(userGroupRepository.findDuplicated(1L, "group1")).thenReturn(Mono.empty());
+        when(userGroupRepository.findDuplicate(1L, "group1")).thenReturn(Mono.empty());
         // when
         Mono<UserGroup> groupMono = userGroupService.insert(userGroup1);
         // then
@@ -145,11 +145,11 @@ class UserGroupServiceTest {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
-      void cannotCreateDuplicatedUserGroup() {
+      void cannotCreateDuplicateUserGroup() {
         // given
         UserGroup before = UserGroup.builder().namespaceId(1L).name("group1").createdBy(1L).build();
         UserGroup after = UserGroup.builder().namespaceId(1L).name("group1").createdBy(1L).build();
-        when(userGroupRepository.findDuplicated(1L, "group1")).thenReturn(Mono.just(before));
+        when(userGroupRepository.findDuplicate(1L, "group1")).thenReturn(Mono.just(before));
         // when
         Mono<UserGroup> groupMono = userGroupService.insert(after);
         // then

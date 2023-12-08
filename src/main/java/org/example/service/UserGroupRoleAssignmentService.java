@@ -33,7 +33,7 @@ public class UserGroupRoleAssignmentService {
   public Mono<UserGroupRoleAssignment> insert(UserGroupRoleAssignment userGroupRoleAssignment) {
     userGroupRoleAssignment.setCreatedAt(LocalDateTime.now());
     userGroupRoleAssignment.setUpdatedAt(LocalDateTime.now());
-    return userGroupRoleAssignmentRepository.findDuplicated(
+    return userGroupRoleAssignmentRepository.findDuplicate(
             userGroupRoleAssignment.getNamespaceId(),
             userGroupRoleAssignment.getUserGroupId(), userGroupRoleAssignment.getRoleId())
         .flatMap(present -> Mono.<UserGroupRoleAssignment>error(new RedundantException("UserGroupRoleAssignment already exists")))

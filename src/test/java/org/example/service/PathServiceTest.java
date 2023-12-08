@@ -120,7 +120,7 @@ class PathServiceTest {
         // given
         Path path1 = Path.builder().namespaceId(1L).regex("/user-service/v1").createdBy(1L).build();
         when(pathRepository.save(any(Path.class))).thenReturn(Mono.just(path1));
-        when(pathRepository.findDuplicated(1L, "/user-service/v1")).thenReturn(Mono.empty());
+        when(pathRepository.findDuplicate(1L, "/user-service/v1")).thenReturn(Mono.empty());
         // when
         Mono<Path> clusterMono = pathService.insert(path1);
         // then
@@ -139,12 +139,12 @@ class PathServiceTest {
 
       @Test
       @DisplayName("パスが重複している場合はエラーになる")
-      void cannotCreateDuplicatedPath() {
+      void cannotCreateDuplicatePath() {
         // given
         Path before = Path.builder().namespaceId(1L).regex("/user-service/v1").createdBy(1L).build();
         Path after = Path.builder().namespaceId(1L).regex("/user-service/v1").createdBy(1L).build();
         when(pathRepository.save(any(Path.class))).thenReturn(Mono.just(before));
-        when(pathRepository.findDuplicated(1L, "/user-service/v1")).thenReturn(Mono.just(after));
+        when(pathRepository.findDuplicate(1L, "/user-service/v1")).thenReturn(Mono.just(after));
         // when
         Mono<Path> clusterMono = pathService.insert(after);
         // then

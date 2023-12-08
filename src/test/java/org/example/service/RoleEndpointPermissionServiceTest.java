@@ -141,7 +141,7 @@ class RoleEndpointPermissionServiceTest {
             .namespaceId(1L).roleId(1L).endpointId(1L).createdBy(1L).build();
         when(roleEndpointPermissionRepository.save(any(RoleEndpointPermission.class)))
             .thenReturn(Mono.just(roleEndpointPermission1));
-        when(roleEndpointPermissionRepository.findDuplicated(1L, 1L, 1L))
+        when(roleEndpointPermissionRepository.findDuplicate(1L, 1L, 1L))
             .thenReturn(Mono.empty());
         // when
         Mono<RoleEndpointPermission> groupMono = roleEndpointPermissionService.insert(
@@ -165,7 +165,7 @@ class RoleEndpointPermissionServiceTest {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
-      void cannotCreateDuplicatedEndpoint() {
+      void cannotCreateDuplicateEndpoint() {
         // given
         RoleEndpointPermission before = RoleEndpointPermission.builder()
             .namespaceId(1L).roleId(1L).endpointId(1L).createdBy(1L).build();
@@ -173,7 +173,7 @@ class RoleEndpointPermissionServiceTest {
             .namespaceId(1L).roleId(1L).endpointId(1L).createdBy(1L).build();
         when(roleEndpointPermissionRepository.save(any(RoleEndpointPermission.class)))
             .thenReturn(Mono.just(after));
-        when(roleEndpointPermissionRepository.findDuplicated(1L, 1L, 1L))
+        when(roleEndpointPermissionRepository.findDuplicate(1L, 1L, 1L))
             .thenReturn(Mono.just(before));
         // when
         Mono<RoleEndpointPermission> groupMono = roleEndpointPermissionService.insert(after);

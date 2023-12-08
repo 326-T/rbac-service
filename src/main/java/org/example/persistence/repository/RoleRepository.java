@@ -26,5 +26,5 @@ public interface RoleRepository extends ReactiveCrudRepository<Role, Long> {
       WHERE namespace_id = :namespaceId
         AND name = :name;
       """)
-  Mono<Role> findDuplicated(Long namespaceId, String name);
+  Mono<Role> findDuplicate(Long namespaceId, String name);
 }

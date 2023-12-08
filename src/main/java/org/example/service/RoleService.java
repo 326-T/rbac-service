@@ -33,7 +33,7 @@ public class RoleService {
   public Mono<Role> insert(Role role) {
     role.setCreatedAt(LocalDateTime.now());
     role.setUpdatedAt(LocalDateTime.now());
-    return roleRepository.findDuplicated(role.getNamespaceId(), role.getName())
+    return roleRepository.findDuplicate(role.getNamespaceId(), role.getName())
         .flatMap(present -> Mono.<Role>error(new RedundantException("Role already exists")))
         .switchIfEmpty(Mono.just(role))
         .flatMap(roleRepository::save);

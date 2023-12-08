@@ -279,7 +279,7 @@ public class EndpointAPITest {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
-      void cannotCreateDuplicated() {
+      void cannotCreateDuplicate() {
         // when, then
         webTestClient.post()
             .uri("/rbac-service/v1/endpoints")

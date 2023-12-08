@@ -28,5 +28,5 @@ public interface RoleEndpointPermissionRepository extends
         AND role_id = :roleId
         AND endpoint_id = :endpointId;
       """)
-  Mono<RoleEndpointPermission> findDuplicated(Long namespaceId, Long roleId, Long endpointId);
+  Mono<RoleEndpointPermission> findDuplicate(Long namespaceId, Long roleId, Long endpointId);
 }

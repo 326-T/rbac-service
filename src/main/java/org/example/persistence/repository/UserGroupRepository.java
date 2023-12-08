@@ -26,5 +26,5 @@ public interface UserGroupRepository extends ReactiveCrudRepository<UserGroup, L
       WHERE namespace_id = :namespaceId
         AND name = :name;
       """)
-  Mono<UserGroup> findDuplicated(Long namespaceId, String name);
+  Mono<UserGroup> findDuplicate(Long namespaceId, String name);
 }

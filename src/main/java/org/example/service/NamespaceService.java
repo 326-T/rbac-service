@@ -33,7 +33,7 @@ public class NamespaceService {
   public Mono<Namespace> insert(Namespace namespace) {
     namespace.setCreatedAt(LocalDateTime.now());
     namespace.setUpdatedAt(LocalDateTime.now());
-    return namespaceRepository.findDuplicated(namespace.getName())
+    return namespaceRepository.findDuplicate(namespace.getName())
         .flatMap(present -> Mono.<Namespace>error(new RedundantException("Namespace already exists")))
         .switchIfEmpty(Mono.just(namespace))
         .flatMap(namespaceRepository::save);

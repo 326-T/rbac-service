@@ -210,7 +210,7 @@ class UserGroupBelongingRepositoryTest {
 
   @Order(1)
   @Nested
-  class FindDuplicated {
+  class FindDuplicate {
 
     @Nested
     @DisplayName("正常系")
@@ -218,9 +218,9 @@ class UserGroupBelongingRepositoryTest {
 
       @Test
       @DisplayName("重複するユーザとグループの関係情報を検知できる")
-      void findDuplicatedUserGroupBelonging() {
+      void findDuplicateUserGroupBelonging() {
         // when
-        Mono<UserGroupBelonging> userBelongsGroupMono = userGroupBelongingRepository.findDuplicated(1L, 2L, 1L);
+        Mono<UserGroupBelonging> userBelongsGroupMono = userGroupBelongingRepository.findDuplicate(1L, 2L, 1L);
         // then
         StepVerifier.create(userBelongsGroupMono)
             .assertNext(

@@ -28,5 +28,5 @@ public interface TargetGroupBelongingRepository extends
         AND target_group_id = :targetGroupId
         AND target_id = :targetId;
       """)
-  Mono<TargetGroupBelonging> findDuplicated(Long namespaceId, Long targetGroupId, Long targetId);
+  Mono<TargetGroupBelonging> findDuplicate(Long namespaceId, Long targetGroupId, Long targetId);
 }

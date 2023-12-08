@@ -211,7 +211,7 @@ class TargetGroupBelongingRepositoryTest {
 
   @Order(1)
   @Nested
-  class FindDuplicated {
+  class FindDuplicate {
 
     @Nested
     @DisplayName("正常系")
@@ -219,9 +219,9 @@ class TargetGroupBelongingRepositoryTest {
 
       @Test
       @DisplayName("ターゲットとグループの関係情報が重複しているかどうかを取得できる")
-      void findDuplicated() {
+      void findDuplicate() {
         // when
-        Mono<TargetGroupBelonging> targetBelongsGroupMono = targetGroupBelongingRepository.findDuplicated(1L, 1L, 1L);
+        Mono<TargetGroupBelonging> targetBelongsGroupMono = targetGroupBelongingRepository.findDuplicate(1L, 1L, 1L);
         // then
         StepVerifier.create(targetBelongsGroupMono)
             .assertNext(

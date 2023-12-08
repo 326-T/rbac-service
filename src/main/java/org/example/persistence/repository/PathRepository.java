@@ -26,5 +26,5 @@ public interface PathRepository extends ReactiveCrudRepository<Path, Long> {
       WHERE namespace_id = :namespaceId
         AND regex = :regex;
       """)
-  Mono<Path> findDuplicated(Long namespaceId, String regex);
+  Mono<Path> findDuplicate(Long namespaceId, String regex);
 }

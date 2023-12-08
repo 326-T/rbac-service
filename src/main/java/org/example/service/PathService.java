@@ -33,7 +33,7 @@ public class PathService {
   public Mono<Path> insert(Path path) {
     path.setCreatedAt(LocalDateTime.now());
     path.setUpdatedAt(LocalDateTime.now());
-    return pathRepository.findDuplicated(path.getNamespaceId(), path.getRegex())
+    return pathRepository.findDuplicate(path.getNamespaceId(), path.getRegex())
         .flatMap(present -> Mono.<Path>error(new RedundantException("Path already exists")))
         .switchIfEmpty(Mono.just(path))
         .flatMap(pathRepository::save);

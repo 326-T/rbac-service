@@ -32,7 +32,7 @@ public class UserGroupBelongingService {
   public Mono<UserGroupBelonging> insert(UserGroupBelonging userGroupBelonging) {
     userGroupBelonging.setCreatedAt(LocalDateTime.now());
     userGroupBelonging.setUpdatedAt(LocalDateTime.now());
-    return userGroupBelongingRepository.findDuplicated(
+    return userGroupBelongingRepository.findDuplicate(
             userGroupBelonging.getNamespaceId(),
             userGroupBelonging.getUserId(),
             userGroupBelonging.getUserGroupId())

@@ -127,7 +127,7 @@ class TargetServiceTest {
         Target target1 = Target.builder()
             .namespaceId(1L).objectIdRegex("object-id-1").createdBy(1L).build();
         when(targetRepository.save(any(Target.class))).thenReturn(Mono.just(target1));
-        when(targetRepository.findDuplicated(1L, "object-id-1")).thenReturn(Mono.empty());
+        when(targetRepository.findDuplicate(1L, "object-id-1")).thenReturn(Mono.empty());
         // when
         Mono<Target> targetMono = targetService.insert(target1);
         // then
@@ -146,11 +146,11 @@ class TargetServiceTest {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
-      void cannotCreateDuplicatedTarget() {
+      void cannotCreateDuplicateTarget() {
         // given
         Target before = Target.builder().namespaceId(1L).objectIdRegex("object-id-1").createdBy(1L).build();
         Target after = Target.builder().namespaceId(1L).objectIdRegex("object-id-1").createdBy(1L).build();
-        when(targetRepository.findDuplicated(1L, "object-id-1")).thenReturn(Mono.just(before));
+        when(targetRepository.findDuplicate(1L, "object-id-1")).thenReturn(Mono.just(before));
         // when
         Mono<Target> targetMono = targetService.insert(after);
         // then

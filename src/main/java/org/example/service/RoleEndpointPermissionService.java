@@ -33,7 +33,7 @@ public class RoleEndpointPermissionService {
   public Mono<RoleEndpointPermission> insert(RoleEndpointPermission roleEndpointPermission) {
     roleEndpointPermission.setCreatedAt(LocalDateTime.now());
     roleEndpointPermission.setUpdatedAt(LocalDateTime.now());
-    return roleEndpointPermissionRepository.findDuplicated(
+    return roleEndpointPermissionRepository.findDuplicate(
             roleEndpointPermission.getNamespaceId(),
             roleEndpointPermission.getRoleId(), roleEndpointPermission.getEndpointId())
         .flatMap(present -> Mono.<RoleEndpointPermission>error(new RedundantException("RoleEndpointPermission already exists")))

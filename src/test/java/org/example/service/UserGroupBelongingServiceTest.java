@@ -132,7 +132,7 @@ class UserGroupBelongingServiceTest {
             .namespaceId(1L).userId(1L).userGroupId(1L).createdBy(1L).build();
         when(userGroupBelongingRepository.save(any(UserGroupBelonging.class)))
             .thenReturn(Mono.just(userGroupBelonging1));
-        when(userGroupBelongingRepository.findDuplicated(1L, 1L, 1L)).thenReturn(Mono.empty());
+        when(userGroupBelongingRepository.findDuplicate(1L, 1L, 1L)).thenReturn(Mono.empty());
         // when
         Mono<UserGroupBelonging> groupMono = userGroupBelongingService.insert(userGroupBelonging1);
         // then
@@ -152,7 +152,7 @@ class UserGroupBelongingServiceTest {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
-      void cannotCreateDuplicatedUserRoleBelonging() {
+      void cannotCreateDuplicateUserRoleBelonging() {
         // given
         UserGroupBelonging before = UserGroupBelonging.builder()
             .namespaceId(1L).userId(1L).userGroupId(1L).createdBy(1L).build();
@@ -160,7 +160,7 @@ class UserGroupBelongingServiceTest {
             .namespaceId(1L).userId(1L).userGroupId(1L).createdBy(1L).build();
         when(userGroupBelongingRepository.save(any(UserGroupBelonging.class)))
             .thenReturn(Mono.just(after));
-        when(userGroupBelongingRepository.findDuplicated(1L, 1L, 1L))
+        when(userGroupBelongingRepository.findDuplicate(1L, 1L, 1L))
             .thenReturn(Mono.just(before));
         // when
         Mono<UserGroupBelonging> groupMono = userGroupBelongingService.insert(after);

@@ -234,7 +234,7 @@ class RoleEndpointPermissionRepositoryTest {
 
   @Order(1)
   @Nested
-  class FindDuplicated {
+  class FindDuplicate {
 
     @Nested
     @DisplayName("正常系")
@@ -242,10 +242,10 @@ class RoleEndpointPermissionRepositoryTest {
 
       @Test
       @DisplayName("グループとロールの関係情報を重複チェックできる")
-      void findDuplicated() {
+      void findDuplicate() {
         // when
         Mono<RoleEndpointPermission> roleEndpointPermissionMono = roleEndpointPermissionRepository
-            .findDuplicated(1L, 1L, 1L);
+            .findDuplicate(1L, 1L, 1L);
         // then
         StepVerifier.create(roleEndpointPermissionMono)
             .assertNext(

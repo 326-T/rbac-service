@@ -33,7 +33,7 @@ public class TargetGroupService {
   public Mono<TargetGroup> insert(TargetGroup targetGroup) {
     targetGroup.setCreatedAt(LocalDateTime.now());
     targetGroup.setUpdatedAt(LocalDateTime.now());
-    return targetGroupRepository.findDuplicated(
+    return targetGroupRepository.findDuplicate(
             targetGroup.getNamespaceId(), targetGroup.getName())
         .flatMap(present -> Mono.<TargetGroup>error(new RedundantException("TargetGroup already exists")))
         .switchIfEmpty(Mono.just(targetGroup))

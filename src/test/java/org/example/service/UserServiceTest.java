@@ -149,7 +149,7 @@ class UserServiceTest {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
-      void cannotCreateWithDuplicatedEmail() {
+      void cannotCreateWithDuplicateEmail() {
         // given
         User before = User.builder()
             .id(2L).name("user2").email("xxx@example.org")

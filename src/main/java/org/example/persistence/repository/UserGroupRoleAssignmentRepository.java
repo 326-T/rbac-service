@@ -27,5 +27,5 @@ public interface UserGroupRoleAssignmentRepository extends
         AND user_group_id = :userGroupId
         AND role_id = :roleId;
       """)
-  Mono<UserGroupRoleAssignment> findDuplicated(Long namespaceId, Long userGroupId, Long roleId);
+  Mono<UserGroupRoleAssignment> findDuplicate(Long namespaceId, Long userGroupId, Long roleId);
 }

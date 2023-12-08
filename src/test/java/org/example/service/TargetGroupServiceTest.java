@@ -126,7 +126,7 @@ class TargetGroupServiceTest {
         TargetGroup targetGroup1 = TargetGroup.builder()
             .namespaceId(1L).name("cluster1").createdBy(1L).build();
         when(targetGroupRepository.save(any(TargetGroup.class))).thenReturn(Mono.just(targetGroup1));
-        when(targetGroupRepository.findDuplicated(1L, "cluster1"))
+        when(targetGroupRepository.findDuplicate(1L, "cluster1"))
             .thenReturn(Mono.empty());
         // when
         Mono<TargetGroup> clusterMono = targetGroupService.insert(targetGroup1);
@@ -146,11 +146,11 @@ class TargetGroupServiceTest {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
-      void cannotCreateDuplicatedTargetGroup() {
+      void cannotCreateDuplicateTargetGroup() {
         // given
         TargetGroup before = TargetGroup.builder().namespaceId(1L).name("cluster1").createdBy(1L).build();
         TargetGroup after = TargetGroup.builder().namespaceId(1L).name("cluster1").createdBy(1L).build();
-        when(targetGroupRepository.findDuplicated(1L, "cluster1"))
+        when(targetGroupRepository.findDuplicate(1L, "cluster1"))
             .thenReturn(Mono.just(before));
         // when
         Mono<TargetGroup> clusterMono = targetGroupService.insert(after);

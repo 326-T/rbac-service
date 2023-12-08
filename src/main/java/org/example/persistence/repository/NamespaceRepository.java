@@ -21,5 +21,5 @@ public interface NamespaceRepository extends ReactiveCrudRepository<Namespace, L
   Mono<Void> deleteById(Long id);
 
   @Query("SELECT * FROM rbac_namespaces WHERE name = :name")
-  Mono<Namespace> findDuplicated(String name);
+  Mono<Namespace> findDuplicate(String name);
 }

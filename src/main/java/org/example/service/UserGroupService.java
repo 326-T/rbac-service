@@ -33,7 +33,7 @@ public class UserGroupService {
   public Mono<UserGroup> insert(UserGroup userGroup) {
     userGroup.setCreatedAt(LocalDateTime.now());
     userGroup.setUpdatedAt(LocalDateTime.now());
-    return groupRepository.findDuplicated(userGroup.getNamespaceId(), userGroup.getName())
+    return groupRepository.findDuplicate(userGroup.getNamespaceId(), userGroup.getName())
         .flatMap(present -> Mono.<UserGroup>error(new RedundantException("UserGroup already exists")))
         .switchIfEmpty(Mono.just(userGroup))
         .flatMap(groupRepository::save);

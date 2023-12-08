@@ -33,7 +33,7 @@ public class TargetService {
   public Mono<Target> insert(Target target) {
     target.setCreatedAt(LocalDateTime.now());
     target.setUpdatedAt(LocalDateTime.now());
-    return targetRepository.findDuplicated(
+    return targetRepository.findDuplicate(
             target.getNamespaceId(), target.getObjectIdRegex())
         .flatMap(present -> Mono.<Target>error(new RedundantException("Target already exists")))
         .switchIfEmpty(Mono.just(target))

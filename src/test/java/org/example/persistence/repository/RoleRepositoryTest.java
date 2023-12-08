@@ -190,7 +190,7 @@ class RoleRepositoryTest {
 
   @Order(1)
   @Nested
-  class FindDuplicated {
+  class FindDuplicate {
 
     @Nested
     @DisplayName("正常系")
@@ -198,9 +198,9 @@ class RoleRepositoryTest {
 
       @Test
       @DisplayName("ロール名が重複しているかどうかを取得できる")
-      void findDuplicated() {
+      void findDuplicate() {
         // when
-        Mono<Role> roleMono = roleRepository.findDuplicated(1L, "developers");
+        Mono<Role> roleMono = roleRepository.findDuplicate(1L, "developers");
         // then
         StepVerifier.create(roleMono)
             .assertNext(

@@ -134,7 +134,7 @@ class EndpointServiceTest {
         Endpoint endpoint1 = Endpoint.builder()
             .namespaceId(1L).pathId(1L).method("GET").targetGroupId(1L).createdBy(1L).build();
         when(endpointRepository.save(any(Endpoint.class))).thenReturn(Mono.just(endpoint1));
-        when(endpointRepository.findDuplicated(1L, 1L, 1L, "GET")).thenReturn(Mono.empty());
+        when(endpointRepository.findDuplicate(1L, 1L, 1L, "GET")).thenReturn(Mono.empty());
         // when
         Mono<Endpoint> clusterMono = endpointService.insert(endpoint1);
         // then
@@ -154,14 +154,14 @@ class EndpointServiceTest {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
-      void cannotCreateDuplicatedEndpoint() {
+      void cannotCreateDuplicateEndpoint() {
         // given
         Endpoint before = Endpoint.builder()
             .namespaceId(1L).pathId(1L).method("GET").targetGroupId(1L).createdBy(1L).build();
         Endpoint after = Endpoint.builder()
             .namespaceId(1L).pathId(1L).method("GET").targetGroupId(1L).createdBy(1L).build();
         when(endpointRepository.save(any(Endpoint.class))).thenReturn(Mono.just(after));
-        when(endpointRepository.findDuplicated(1L, 1L, 1L, "GET")).thenReturn(Mono.just(before));
+        when(endpointRepository.findDuplicate(1L, 1L, 1L, "GET")).thenReturn(Mono.just(before));
         // when
         Mono<Endpoint> clusterMono = endpointService.insert(after);
         // then

@@ -141,7 +141,7 @@ class UserGroupRoleAssignmentServiceTest {
             .namespaceId(1L).userGroupId(1L).roleId(1L).createdBy(1L).build();
         when(userGroupRoleAssignmentRepository.save(any(UserGroupRoleAssignment.class)))
             .thenReturn(Mono.just(userGroupRoleAssignment1));
-        when(userGroupRoleAssignmentRepository.findDuplicated(1L, 1L, 1L))
+        when(userGroupRoleAssignmentRepository.findDuplicate(1L, 1L, 1L))
             .thenReturn(Mono.empty());
         // when
         Mono<UserGroupRoleAssignment> groupMono = userGroupRoleAssignmentService.insert(
@@ -165,7 +165,7 @@ class UserGroupRoleAssignmentServiceTest {
 
       @Test
       @DisplayName("ユーザグループとロールの関係を登録できない")
-      void cannotCreateDuplicatedUserGroupRoleAssignment() {
+      void cannotCreateDuplicateUserGroupRoleAssignment() {
         // given
         UserGroupRoleAssignment before = UserGroupRoleAssignment.builder()
             .namespaceId(1L).userGroupId(1L).roleId(1L).createdBy(1L).build();
@@ -173,7 +173,7 @@ class UserGroupRoleAssignmentServiceTest {
             .namespaceId(1L).userGroupId(1L).roleId(1L).createdBy(1L).build();
         when(userGroupRoleAssignmentRepository.save(any(UserGroupRoleAssignment.class)))
             .thenReturn(Mono.just(after));
-        when(userGroupRoleAssignmentRepository.findDuplicated(1L, 1L, 1L))
+        when(userGroupRoleAssignmentRepository.findDuplicate(1L, 1L, 1L))
             .thenReturn(Mono.just(before));
         // when
         Mono<UserGroupRoleAssignment> groupMono = userGroupRoleAssignmentService.insert(after);

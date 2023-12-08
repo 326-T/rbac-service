@@ -26,5 +26,5 @@ public interface TargetRepository extends ReactiveCrudRepository<Target, Long> {
       WHERE namespace_id = :namespaceId
         AND object_id_regex = :objectIdRegex;
       """)
-  Mono<Target> findDuplicated(Long namespaceId, String objectIdRegex);
+  Mono<Target> findDuplicate(Long namespaceId, String objectIdRegex);
 }

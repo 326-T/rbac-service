@@ -213,7 +213,7 @@ class EndpointRepositoryTest {
 
   @Order(1)
   @Nested
-  class findDuplicated {
+  class findDuplicate {
 
     @Nested
     @DisplayName("正常系")
@@ -221,9 +221,9 @@ class EndpointRepositoryTest {
 
       @Test
       @DisplayName("エンドポイントを重複チェックできる")
-      void findDuplicated() {
+      void findDuplicate() {
         // when
-        Mono<Endpoint> booleanMono = endpointRepository.findDuplicated(1L, 1L, 1L, "GET");
+        Mono<Endpoint> booleanMono = endpointRepository.findDuplicate(1L, 1L, 1L, "GET");
         // then
         StepVerifier.create(booleanMono)
             .assertNext(

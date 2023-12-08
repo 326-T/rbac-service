@@ -33,7 +33,7 @@ public class EndpointService {
   public Mono<Endpoint> insert(Endpoint endpoint) {
     endpoint.setCreatedAt(LocalDateTime.now());
     endpoint.setUpdatedAt(LocalDateTime.now());
-    return endpointRepository.findDuplicated(
+    return endpointRepository.findDuplicate(
             endpoint.getNamespaceId(), endpoint.getPathId(),
             endpoint.getTargetGroupId(), endpoint.getMethod())
         .flatMap(present -> Mono.<Endpoint>error(new RedundantException("Endpoint already exists")))

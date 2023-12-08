@@ -33,7 +33,7 @@ public class TargetGroupBelongingService {
   public Mono<TargetGroupBelonging> insert(TargetGroupBelonging targetGroupBelonging) {
     targetGroupBelonging.setCreatedAt(LocalDateTime.now());
     targetGroupBelonging.setUpdatedAt(LocalDateTime.now());
-    return targetGroupBelongingRepository.findDuplicated(
+    return targetGroupBelongingRepository.findDuplicate(
             targetGroupBelonging.getNamespaceId(),
             targetGroupBelonging.getTargetGroupId(), targetGroupBelonging.getTargetId())
         .flatMap(present -> Mono.<TargetGroupBelonging>error(new RedundantException("TargetGroupBelonging already exists")))

@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[update]AccessPrivilegeもuserIdをJWTから抜くように変更">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/filter/AuthenticationWebFilterTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/filter/AuthenticationWebFilterTest.java" afterDir="false" />
-    </list>
+    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[fix]AuthenticationWebFilterTestの修正" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -121,7 +118,7 @@
       <recent name="org.example.service" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.AuthenticationWebFilterTest$filter$regular.hoge">
+  <component name="RunManager" selected="JUnit.java in rbac-service">
     <configuration name="AccessPrivilegeAPITest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
@@ -147,21 +144,6 @@
       </extension>
       <option name="PACKAGE_NAME" value="org.example.persistence.repository" />
       <option name="MAIN_CLASS_NAME" value="org.example.persistence.repository.AccessPrivilegeRepositoryTest" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="AccessPrivilegeServiceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="rbac-service" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.service.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.service" />
-      <option name="MAIN_CLASS_NAME" value="org.example.service.AccessPrivilegeServiceTest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -198,13 +180,21 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="java in rbac-service" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rbac-service" />
+      <option name="TEST_OBJECT" value="directory" />
+      <dir value="$PROJECT_DIR$/src/test/java" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.java in rbac-service" />
         <item itemvalue="JUnit.AuthenticationWebFilterTest$filter$regular.hoge" />
         <item itemvalue="JUnit.AuthenticationWebFilterTest" />
         <item itemvalue="JUnit.AccessPrivilegeAPITest" />
         <item itemvalue="JUnit.AccessPrivilegeRepositoryTest" />
-        <item itemvalue="JUnit.AccessPrivilegeServiceTest" />
       </list>
     </recent_temporary>
   </component>
@@ -353,7 +343,15 @@
       <option name="project" value="LOCAL" />
       <updated>1702021071617</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="[fix]AuthenticationWebFilterTestの修正">
+      <option name="closed" value="true" />
+      <created>1702021669438</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1702021669438</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -373,7 +371,8 @@
     <MESSAGE value="[add]サービス層にエラーハンドリングを追加" />
     <MESSAGE value="[fix]コントローラの更新、テストの更新" />
     <MESSAGE value="[update]AccessPrivilegeもuserIdをJWTから抜くように変更" />
-    <option name="LAST_COMMIT_MESSAGE" value="[update]AccessPrivilegeもuserIdをJWTから抜くように変更" />
+    <MESSAGE value="[fix]AuthenticationWebFilterTestの修正" />
+    <option name="LAST_COMMIT_MESSAGE" value="[fix]AuthenticationWebFilterTestの修正" />
   </component>
   <component name="XDebuggerManager">
     <pin-to-top-manager>

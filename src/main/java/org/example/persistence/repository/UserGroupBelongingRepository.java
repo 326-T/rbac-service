@@ -27,5 +27,5 @@ public interface UserGroupBelongingRepository extends
         AND user_id = :userId
         AND user_group_id = :userGroupId;
       """)
-  Mono<UserGroupBelonging> findDuplicated(Long namespaceId, Long userId, Long userGroupId);
+  Mono<UserGroupBelonging> findDuplicate(Long namespaceId, Long userId, Long userGroupId);
 }

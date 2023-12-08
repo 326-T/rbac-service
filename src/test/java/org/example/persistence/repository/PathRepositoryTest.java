@@ -165,7 +165,7 @@ class PathRepositoryTest {
 
   @Order(1)
   @Nested
-  class FindDuplicated {
+  class FindDuplicate {
 
     @Nested
     @DisplayName("正常系")
@@ -173,9 +173,9 @@ class PathRepositoryTest {
 
       @Test
       @DisplayName("重複するパスを検索できる")
-      void findDuplicated() {
+      void findDuplicate() {
         // when
-        Mono<Path> pathMono = pathRepository.findDuplicated(1L, "/user-service/v1/");
+        Mono<Path> pathMono = pathRepository.findDuplicate(1L, "/user-service/v1/");
         // then
         StepVerifier.create(pathMono).assertNext(
                 path -> assertThat(path).extracting(Path::getId, Path::getNamespaceId, Path::getRegex,

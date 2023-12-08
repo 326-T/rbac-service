@@ -188,7 +188,7 @@ class NamespaceRepositoryTest {
 
   @Order(1)
   @Nested
-  class FindDuplicated {
+  class FindDuplicate {
 
     @Nested
     @DisplayName("正常系")
@@ -196,9 +196,9 @@ class NamespaceRepositoryTest {
 
       @Test
       @DisplayName("重複するネームスペースを検索できる")
-      void findDuplicated() {
+      void findDuplicate() {
         // when
-        Mono<Namespace> namespaceMono = namespaceRepository.findDuplicated("develop");
+        Mono<Namespace> namespaceMono = namespaceRepository.findDuplicate("develop");
         // then
         StepVerifier.create(namespaceMono)
             .assertNext(

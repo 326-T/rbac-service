@@ -119,7 +119,7 @@ class RoleServiceTest {
         // given
         Role role1 = Role.builder().namespaceId(1L).name("developer").createdBy(1L).build();
         when(roleRepository.save(any(Role.class))).thenReturn(Mono.just(role1));
-        when(roleRepository.findDuplicated(1L, "developer")).thenReturn(Mono.empty());
+        when(roleRepository.findDuplicate(1L, "developer")).thenReturn(Mono.empty());
         // when
         Mono<Role> groupMono = roleService.insert(role1);
         // then
@@ -137,12 +137,12 @@ class RoleServiceTest {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
-      void cannotCreateDuplicatedEndpoint() {
+      void cannotCreateDuplicateEndpoint() {
         // given
         Role before = Role.builder().id(2L).namespaceId(2L).name("operator").createdBy(2L).build();
         Role after = Role.builder().id(2L).namespaceId(2L).name("operator").createdBy(2L).build();
         when(roleRepository.save(any(Role.class))).thenReturn(Mono.just(before));
-        when(roleRepository.findDuplicated(2L, "operator")).thenReturn(Mono.just(before));
+        when(roleRepository.findDuplicate(2L, "operator")).thenReturn(Mono.just(before));
         // when
         Mono<Role> groupMono = roleService.insert(after);
         // then

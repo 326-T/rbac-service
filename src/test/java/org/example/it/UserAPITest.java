@@ -264,7 +264,7 @@ public class UserAPITest {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
-      void cannotCreateWithDuplicatedEmail() {
+      void cannotCreateWithDuplicateEmail() {
         // when, then
         webTestClient.post()
             .uri("/rbac-service/v1/users")

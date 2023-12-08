@@ -5,27 +5,42 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import org.example.Application;
 import org.example.persistence.dto.AccessPrivilege;
+import org.example.persistence.entity.User;
+import org.example.service.JwtService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestClassOrder;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureWebClient
 public class AccessPrivilegeAPITest {
 
   @Autowired
   private WebTestClient webTestClient;
+  @Autowired
+  private JwtService jwtService;
+
+  private String jwt;
+
+  @BeforeAll
+  void beforeAll() {
+    jwt = jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build());
+  }
 
   @Nested
   @Order(1)
@@ -40,7 +55,8 @@ public class AccessPrivilegeAPITest {
       void findByNamespace() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/access-privileges?namespaceId=1")
+            .uri("/rbac-service/v1/access-privileges?namespace-id=1")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(AccessPrivilege.class)
@@ -58,8 +74,8 @@ public class AccessPrivilegeAPITest {
                         AccessPrivilege::getTargetId, AccessPrivilege::getObjectIdRegex
                     )
                     .containsExactly(
-                        tuple(1L, "user1",
-                            1L, "developers",
+                        tuple(2L, "user1",
+                            1L, "develop",
                             1L, "group1",
                             1L, "developers",
                             1L, "/user-service/v1/",
@@ -86,10 +102,11 @@ public class AccessPrivilegeAPITest {
         // when, then
         webTestClient.post()
             .uri("/rbac-service/v1/access-privileges/can-i")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "userId": 1,
+                  "userId": 2,
                   "namespaceId": 1,
                   "path": "/user-service/v1/",
                   "method": "GET",
@@ -104,11 +121,10 @@ public class AccessPrivilegeAPITest {
 
       @ParameterizedTest
       @CsvSource({
-          "1, 1, /user-service/v1/, GET, object-id-2",
-          "1, 1, /user-service/v1/, POST, object-id-1",
-          "1, 1, /user-service/v2/, GET, object-id-1",
-          "1, 2, /user-service/v1/, GET, object-id-1",
-          "2, 1, /user-service/v1/, GET, object-id-1",
+          "2, 1, /user-service/v1/, GET, object-id-2",
+          "2, 1, /user-service/v1/, POST, object-id-1",
+          "2, 1, /user-service/v2/, GET, object-id-1",
+          "2, 2, /user-service/v1/, GET, object-id-1",
       })
       @DisplayName("アクセス権限を持っていないときfalseを返す")
       void canNotAccess(Long userId, Long namespaceId, String path, String method,
@@ -116,16 +132,16 @@ public class AccessPrivilegeAPITest {
         // when, then
         webTestClient.post()
             .uri("/rbac-service/v1/access-privileges/can-i")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "userId": %d,
                   "namespaceId": %d,
                   "path": "%s",
                   "method": "%s",
                   "objectId": "%s"
                 }
-                """.formatted(userId, namespaceId, path, method, objectId)
+                """.formatted(namespaceId, path, method, objectId)
             )
             .exchange()
             .expectStatus().isOk()

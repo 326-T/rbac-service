@@ -39,7 +39,7 @@ public class UserRepositoryTest {
         // when
         Mono<Long> count = userRepository.count();
         // then
-        StepVerifier.create(count).expectNext(3L).verifyComplete();
+        StepVerifier.create(count).expectNext(4L).verifyComplete();
       }
     }
   }
@@ -63,17 +63,22 @@ public class UserRepositoryTest {
                 user -> assertThat(user)
                     .extracting(
                         User::getId, User::getName, User::getEmail, User::getPasswordDigest)
-                    .containsExactly(1L, "user1", "xxx@example.org", "password_digest1"))
+                    .containsExactly(1L, "privilege", "privilege@example.org", "password"))
             .assertNext(
                 user -> assertThat(user)
                     .extracting(
                         User::getId, User::getName, User::getEmail, User::getPasswordDigest)
-                    .containsExactly(2L, "user2", "yyy@example.org", "password_digest2"))
+                    .containsExactly(2L, "user1", "xxx@example.org", "password_digest1"))
             .assertNext(
                 user -> assertThat(user)
                     .extracting(
                         User::getId, User::getName, User::getEmail, User::getPasswordDigest)
-                    .containsExactly(3L, "user3", "zzz@example.org", "password_digest3"))
+                    .containsExactly(3L, "user2", "yyy@example.org", "password_digest2"))
+            .assertNext(
+                user -> assertThat(user)
+                    .extracting(
+                        User::getId, User::getName, User::getEmail, User::getPasswordDigest)
+                    .containsExactly(4L, "user3", "zzz@example.org", "password_digest3"))
             .verifyComplete();
       }
     }
@@ -91,13 +96,13 @@ public class UserRepositoryTest {
       @DisplayName("ユーザーをIDで取得できる")
       void findUserById() {
         // when
-        Mono<User> userMono = userRepository.findById(1L);
+        Mono<User> userMono = userRepository.findById(2L);
         // then
         StepVerifier.create(userMono)
             .assertNext(
                 user -> assertThat(user)
                     .extracting(User::getId, User::getName, User::getEmail, User::getPasswordDigest)
-                    .containsExactly(1L, "user1", "xxx@example.org", "password_digest1"))
+                    .containsExactly(2L, "user1", "xxx@example.org", "password_digest1"))
             .verifyComplete();
       }
     }
@@ -153,13 +158,13 @@ public class UserRepositoryTest {
             .assertNext(
                 user1 -> assertThat(user1)
                     .extracting(User::getId, User::getName, User::getEmail, User::getPasswordDigest)
-                    .containsExactly(4L, "user4", "aaa@example.org", "password_digest4"))
+                    .containsExactly(5L, "user4", "aaa@example.org", "password_digest4"))
             .verifyComplete();
-        userRepository.findById(4L).as(StepVerifier::create)
+        userRepository.findById(5L).as(StepVerifier::create)
             .assertNext(
                 user1 -> assertThat(user1)
                     .extracting(User::getId, User::getName, User::getEmail, User::getPasswordDigest)
-                    .containsExactly(4L, "user4", "aaa@example.org", "password_digest4"))
+                    .containsExactly(5L, "user4", "aaa@example.org", "password_digest4"))
             .verifyComplete();
 
       }

@@ -20,13 +20,12 @@ public class AccessPrivilegeService {
     return accessPrivilegeRepository.findByNamespace(namespaceId);
   }
 
-  public Mono<Boolean> canAccess(AccessPrivilegeRequest ask) {
-    return accessPrivilegeRepository.findByUser(ask.getUserId())
+  public Mono<Boolean> canAccess(Long userId, AccessPrivilegeRequest accessPrivilegeRequest) {
+    return accessPrivilegeRepository.findByUserAndNamespace(userId, accessPrivilegeRequest.getNamespaceId())
         .any(truth ->
-            ask.getNamespaceId().equals(truth.getNamespaceId())
-                && ask.getMethod().matches(truth.getMethod())
-                && ask.getPath().matches(truth.getPathRegex())
-                && ask.getObjectId().matches(truth.getObjectIdRegex())
+            accessPrivilegeRequest.getMethod().matches(truth.getMethod())
+                && accessPrivilegeRequest.getPath().matches(truth.getPathRegex())
+                && accessPrivilegeRequest.getObjectId().matches(truth.getObjectIdRegex())
         );
   }
 }

@@ -2,6 +2,7 @@ package org.example.web.controller;
 
 import org.example.persistence.dto.AccessPrivilege;
 import org.example.service.AccessPrivilegeService;
+import org.example.service.ReactiveContextService;
 import org.example.web.request.AccessPrivilegeRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,18 +18,21 @@ import reactor.core.publisher.Mono;
 public class AccessPrivilegeRestController {
 
   private final AccessPrivilegeService accessPrivilegeService;
+  private final ReactiveContextService reactiveContextService;
 
-  public AccessPrivilegeRestController(AccessPrivilegeService accessPrivilegeService) {
+  public AccessPrivilegeRestController(AccessPrivilegeService accessPrivilegeService, ReactiveContextService reactiveContextService) {
     this.accessPrivilegeService = accessPrivilegeService;
+    this.reactiveContextService = reactiveContextService;
   }
 
   @GetMapping
-  public Flux<AccessPrivilege> findByNamespace(@RequestParam Long namespaceId) {
+  public Flux<AccessPrivilege> findByNamespace(@RequestParam("namespace-id") Long namespaceId) {
     return accessPrivilegeService.findByNamespace(namespaceId);
   }
 
   @PostMapping("/can-i")
   public Mono<Boolean> canAccess(@RequestBody AccessPrivilegeRequest accessPrivilegeRequest) {
-    return accessPrivilegeService.canAccess(accessPrivilegeRequest);
+    return reactiveContextService.getCurrentUser()
+        .flatMap(u -> accessPrivilegeService.canAccess(u.getId(), accessPrivilegeRequest));
   }
 }

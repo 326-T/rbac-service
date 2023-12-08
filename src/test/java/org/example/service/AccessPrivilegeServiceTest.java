@@ -107,14 +107,13 @@ class AccessPrivilegeServiceTest {
             .method("(GET|POST)")
             .build();
         AccessPrivilegeRequest ask = new AccessPrivilegeRequest();
-        ask.setUserId(1L);
         ask.setNamespaceId(1L);
         ask.setMethod(method);
         ask.setPath(path);
         ask.setObjectId(objectId);
-        when(accessPrivilegeRepository.findByUser(1L)).thenReturn(Flux.just(accessPrivilege));
+        when(accessPrivilegeRepository.findByUserAndNamespace(1L, 1L)).thenReturn(Flux.just(accessPrivilege));
         // when
-        Mono<Boolean> canAccess = accessPrivilegeService.canAccess(ask);
+        Mono<Boolean> canAccess = accessPrivilegeService.canAccess(1L, ask);
         // then
         StepVerifier.create(canAccess)
             .expectNext(true)
@@ -123,10 +122,9 @@ class AccessPrivilegeServiceTest {
 
       @ParameterizedTest
       @CsvSource({
-          "2L, GET, '/user-service/v1/', object-id-1",
-          "1L, DELETE, '/user-service/v1/', object-id-1",
-          "1L, GET, '/user-service/v2/', object-id-1",
-          "1L, GET, '/user-service/v1/', object-id-4"
+          "DELETE, '/user-service/v1/', object-id-1",
+          "GET, '/user-service/v2/', object-id-1",
+          "GET, '/user-service/v1/', object-id-4"
       })
       @DisplayName("権限がない場合はfalseを返す")
       void cannotAccess(String method, String path, String objectId) {
@@ -142,14 +140,13 @@ class AccessPrivilegeServiceTest {
             .method("(GET|POST)")
             .build();
         AccessPrivilegeRequest ask = new AccessPrivilegeRequest();
-        ask.setUserId(1L);
         ask.setNamespaceId(1L);
         ask.setMethod(method);
         ask.setPath(path);
         ask.setObjectId(objectId);
-        when(accessPrivilegeRepository.findByUser(1L)).thenReturn(Flux.just(accessPrivilege));
+        when(accessPrivilegeRepository.findByUserAndNamespace(1L, 1L)).thenReturn(Flux.just(accessPrivilege));
         // when
-        Mono<Boolean> canAccess = accessPrivilegeService.canAccess(ask);
+        Mono<Boolean> canAccess = accessPrivilegeService.canAccess(1L, ask);
         // then
         StepVerifier.create(canAccess)
             .expectNext(false)

@@ -78,7 +78,7 @@ class JwtServiceTest {
             .withIssuer("org.example")
             .withAudience("org.example")
             .withSubject("1")
-            .withClaim("name", "test")
+            .withClaim("name", "privilege")
             .withClaim("email", "privilege@example.org")
             .withIssuedAt(now)
             .withNotBefore(now)

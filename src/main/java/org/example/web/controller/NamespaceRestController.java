@@ -2,6 +2,9 @@ package org.example.web.controller;
 
 import org.example.persistence.entity.Namespace;
 import org.example.service.NamespaceService;
+import org.example.service.ReactiveContextService;
+import org.example.web.request.NamespaceInsertRequest;
+import org.example.web.request.NamespaceUpdateRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,9 +23,11 @@ import reactor.core.publisher.Mono;
 public class NamespaceRestController {
 
   private final NamespaceService namespaceService;
+  private final ReactiveContextService reactiveContextService;
 
-  public NamespaceRestController(NamespaceService namespaceService) {
+  public NamespaceRestController(NamespaceService namespaceService, ReactiveContextService reactiveContextService) {
     this.namespaceService = namespaceService;
+    this.reactiveContextService = reactiveContextService;
   }
 
   @GetMapping
@@ -41,12 +46,19 @@ public class NamespaceRestController {
   }
 
   @PostMapping
-  public Mono<Namespace> save(@RequestBody Namespace namespace) {
-    return namespaceService.insert(namespace);
+  public Mono<Namespace> save(@RequestBody NamespaceInsertRequest request) {
+    return reactiveContextService.getCurrentUser()
+        .flatMap(u -> {
+          Namespace namespace = request.exportEntity();
+          namespace.setCreatedBy(u.getId());
+          return Mono.just(namespace);
+        })
+        .flatMap(namespaceService::insert);
   }
 
   @PutMapping("/{id}")
-  public Mono<Namespace> update(@PathVariable Long id, @RequestBody Namespace namespace) {
+  public Mono<Namespace> update(@PathVariable Long id, @RequestBody NamespaceUpdateRequest request) {
+    Namespace namespace = request.exportEntity();
     namespace.setId(id);
     return namespaceService.update(namespace);
   }

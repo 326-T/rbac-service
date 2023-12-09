@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.RoleEndpointPermission;
 import org.example.persistence.repository.RoleEndpointPermissionRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -28,7 +29,8 @@ class RoleEndpointPermissionServiceTest {
   class Count {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループの件数を取得できる")
@@ -47,7 +49,8 @@ class RoleEndpointPermissionServiceTest {
   class FindAll {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループを全件取得できる")
@@ -96,7 +99,8 @@ class RoleEndpointPermissionServiceTest {
   class FindById {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループをIDで取得できる")
@@ -123,10 +127,11 @@ class RoleEndpointPermissionServiceTest {
   }
 
   @Nested
-  class insert {
+  class Insert {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループを登録できる")
@@ -134,8 +139,10 @@ class RoleEndpointPermissionServiceTest {
         // given
         RoleEndpointPermission roleEndpointPermission1 = RoleEndpointPermission.builder()
             .namespaceId(1L).roleId(1L).endpointId(1L).createdBy(1L).build();
-        when(roleEndpointPermissionRepository.save(any(RoleEndpointPermission.class))).thenReturn(
-            Mono.just(roleEndpointPermission1));
+        when(roleEndpointPermissionRepository.save(any(RoleEndpointPermission.class)))
+            .thenReturn(Mono.just(roleEndpointPermission1));
+        when(roleEndpointPermissionRepository.findDuplicate(1L, 1L, 1L))
+            .thenReturn(Mono.empty());
         // when
         Mono<RoleEndpointPermission> groupMono = roleEndpointPermissionService.insert(
             roleEndpointPermission1);
@@ -151,13 +158,37 @@ class RoleEndpointPermissionServiceTest {
             .verifyComplete();
       }
     }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotCreateDuplicateEndpoint() {
+        // given
+        RoleEndpointPermission before = RoleEndpointPermission.builder()
+            .namespaceId(1L).roleId(1L).endpointId(1L).createdBy(1L).build();
+        RoleEndpointPermission after = RoleEndpointPermission.builder()
+            .namespaceId(1L).roleId(1L).endpointId(1L).createdBy(1L).build();
+        when(roleEndpointPermissionRepository.save(any(RoleEndpointPermission.class)))
+            .thenReturn(Mono.just(after));
+        when(roleEndpointPermissionRepository.findDuplicate(1L, 1L, 1L))
+            .thenReturn(Mono.just(before));
+        // when
+        Mono<RoleEndpointPermission> groupMono = roleEndpointPermissionService.insert(after);
+        // then
+        StepVerifier.create(groupMono).expectError(RedundantException.class).verify();
+      }
+    }
   }
 
   @Nested
-  class delete {
+  class Delete {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループを削除できる")

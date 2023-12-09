@@ -31,7 +31,7 @@ class RoleRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールの件数を取得できる")
@@ -50,7 +50,7 @@ class RoleRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールを全件取得できる")
@@ -61,19 +61,16 @@ class RoleRepositoryTest {
         StepVerifier.create(roleFlux)
             .assertNext(
                 role -> assertThat(role)
-                    .extracting(Role::getId, Role::getNamespaceId, Role::getName,
-                        Role::getCreatedBy)
+                    .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
                     .containsExactly(1L, 1L, "developers", 1L))
             .assertNext(
                 role -> assertThat(role)
-                    .extracting(Role::getId, Role::getNamespaceId, Role::getName,
-                        Role::getCreatedBy)
+                    .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
                     .containsExactly(2L, 2L, "operations", 2L))
             .assertNext(
                 role -> assertThat(role)
-                    .extracting(Role::getId, Role::getNamespaceId, Role::getName,
-                        Role::getCreatedBy)
-                    .containsExactly(3L, 3L, "security", 3L))
+                    .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
+                    .containsExactly(3L, 2L, "security", 3L))
             .verifyComplete();
       }
     }
@@ -85,7 +82,7 @@ class RoleRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールをIDで取得できる")
@@ -96,8 +93,7 @@ class RoleRepositoryTest {
         StepVerifier.create(roleMono)
             .assertNext(
                 role -> assertThat(role)
-                    .extracting(Role::getId, Role::getNamespaceId, Role::getName,
-                        Role::getCreatedBy)
+                    .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
                     .containsExactly(1L, 1L, "developers", 1L))
             .verifyComplete();
       }
@@ -111,7 +107,7 @@ class RoleRepositoryTest {
   class Save {
 
     @Nested
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールを更新できる")
@@ -131,14 +127,12 @@ class RoleRepositoryTest {
         StepVerifier.create(roleMono)
             .assertNext(
                 role1 -> assertThat(role1)
-                    .extracting(Role::getId, Role::getNamespaceId, Role::getName,
-                        Role::getCreatedBy)
+                    .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
                     .containsExactly(2L, 1L, "OPERATIONS", 1L))
             .verifyComplete();
         roleRepository.findById(2L).as(StepVerifier::create)
             .assertNext(
-                role1 -> assertThat(role1)
-                    .extracting(Role::getId, Role::getNamespaceId, Role::getName,
+                role1 -> assertThat(role1).extracting(Role::getId, Role::getNamespaceId, Role::getName,
                         Role::getCreatedBy)
                     .containsExactly(2L, 1L, "OPERATIONS", 1L))
             .verifyComplete();
@@ -159,15 +153,13 @@ class RoleRepositoryTest {
         StepVerifier.create(roleMono)
             .assertNext(
                 role1 -> assertThat(role1)
-                    .extracting(Role::getId, Role::getNamespaceId, Role::getName,
-                        Role::getCreatedBy)
+                    .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
                     .containsExactly(4L, 1L, "guest", 1L))
             .verifyComplete();
         roleRepository.findById(4L).as(StepVerifier::create)
             .assertNext(
                 role1 -> assertThat(role1)
-                    .extracting(Role::getId, Role::getNamespaceId, Role::getName,
-                        Role::getCreatedBy)
+                    .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
                     .containsExactly(4L, 1L, "guest", 1L))
             .verifyComplete();
       }
@@ -182,7 +174,7 @@ class RoleRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールをIDで削除できる")
@@ -192,6 +184,30 @@ class RoleRepositoryTest {
         // then
         StepVerifier.create(voidMono).verifyComplete();
         roleRepository.findById(3L).as(StepVerifier::create).verifyComplete();
+      }
+    }
+  }
+
+  @Order(1)
+  @Nested
+  class FindDuplicate {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ロール名が重複しているかどうかを取得できる")
+      void findDuplicate() {
+        // when
+        Mono<Role> roleMono = roleRepository.findDuplicate(1L, "developers");
+        // then
+        StepVerifier.create(roleMono)
+            .assertNext(
+                role -> assertThat(role)
+                    .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
+                    .containsExactly(1L, 1L, "developers", 1L))
+            .verifyComplete();
       }
     }
   }

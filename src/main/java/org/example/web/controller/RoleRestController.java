@@ -1,7 +1,10 @@
 package org.example.web.controller;
 
 import org.example.persistence.entity.Role;
+import org.example.service.ReactiveContextService;
 import org.example.service.RoleService;
+import org.example.web.request.RoleInsertRequest;
+import org.example.web.request.RoleUpdateRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,8 +24,11 @@ public class RoleRestController {
 
   private final RoleService roleService;
 
-  public RoleRestController(RoleService roleService) {
+  private final ReactiveContextService reactiveContextService;
+
+  public RoleRestController(RoleService roleService, ReactiveContextService reactiveContextService) {
     this.roleService = roleService;
+    this.reactiveContextService = reactiveContextService;
   }
 
   @GetMapping
@@ -41,12 +47,19 @@ public class RoleRestController {
   }
 
   @PostMapping
-  public Mono<Role> save(@RequestBody Role role) {
-    return roleService.insert(role);
+  public Mono<Role> save(@RequestBody RoleInsertRequest request) {
+    return reactiveContextService.getCurrentUser()
+        .flatMap(u -> {
+          Role role = request.exportEntity();
+          role.setCreatedBy(u.getId());
+          return Mono.just(role);
+        })
+        .flatMap(roleService::insert);
   }
 
   @PutMapping("/{id}")
-  public Mono<Role> update(@PathVariable Long id, @RequestBody Role role) {
+  public Mono<Role> update(@PathVariable Long id, @RequestBody RoleUpdateRequest request) {
+    Role role = request.exportEntity();
     role.setId(id);
     return roleService.update(role);
   }

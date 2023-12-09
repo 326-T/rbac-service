@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.TargetGroupBelonging;
 import org.example.persistence.repository.TargetGroupBelongingRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -28,7 +29,8 @@ class TargetGroupBelongingServiceTest {
   class Count {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループの件数を取得できる")
@@ -47,7 +49,8 @@ class TargetGroupBelongingServiceTest {
   class FindAll {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループを全件取得できる")
@@ -90,7 +93,8 @@ class TargetGroupBelongingServiceTest {
   class FindById {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループをIDで取得できる")
@@ -115,10 +119,11 @@ class TargetGroupBelongingServiceTest {
   }
 
   @Nested
-  class insert {
+  class Insert {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループを登録できる")
@@ -126,8 +131,10 @@ class TargetGroupBelongingServiceTest {
         // given
         TargetGroupBelonging targetGroupBelonging1 = TargetGroupBelonging.builder()
             .namespaceId(1L).targetId(1L).targetGroupId(1L).createdBy(1L).build();
-        when(targetGroupBelongingRepository.save(any(TargetGroupBelonging.class))).thenReturn(
-            Mono.just(targetGroupBelonging1));
+        when(targetGroupBelongingRepository.save(any(TargetGroupBelonging.class)))
+            .thenReturn(Mono.just(targetGroupBelonging1));
+        when(targetGroupBelongingRepository.findDuplicate(1L, 1L, 1L))
+            .thenReturn(Mono.empty());
         // when
         Mono<TargetGroupBelonging> groupMono = targetGroupBelongingService.insert(
             targetGroupBelonging1);
@@ -141,13 +148,37 @@ class TargetGroupBelongingServiceTest {
             .verifyComplete();
       }
     }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotCreateDuplicateTargetGroupBelonging() {
+        // given
+        TargetGroupBelonging before = TargetGroupBelonging.builder()
+            .namespaceId(1L).targetId(1L).targetGroupId(1L).createdBy(1L).build();
+        TargetGroupBelonging after = TargetGroupBelonging.builder()
+            .namespaceId(1L).targetId(1L).targetGroupId(1L).createdBy(1L).build();
+        when(targetGroupBelongingRepository.save(any(TargetGroupBelonging.class)))
+            .thenReturn(Mono.just(after));
+        when(targetGroupBelongingRepository.findDuplicate(1L, 1L, 1L))
+            .thenReturn(Mono.just(before));
+        // when
+        Mono<TargetGroupBelonging> groupMono = targetGroupBelongingService.insert(after);
+        // then
+        StepVerifier.create(groupMono).expectError(RedundantException.class).verify();
+      }
+    }
   }
 
   @Nested
-  class delete {
+  class Delete {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループを削除できる")

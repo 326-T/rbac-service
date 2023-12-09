@@ -31,7 +31,7 @@ class UserGroupBelongingRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザとグループの関係情報の件数を取得できる")
@@ -50,7 +50,7 @@ class UserGroupBelongingRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザとグループの関係情報を全件取得できる")
@@ -64,19 +64,19 @@ class UserGroupBelongingRepositoryTest {
                     .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
                         UserGroupBelonging::getUserGroupId, UserGroupBelonging::getUserId,
                         UserGroupBelonging::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, 1L, 1L))
+                    .containsExactly(1L, 1L, 1L, 2L, 1L))
             .assertNext(
                 userGroupBelonging -> assertThat(userGroupBelonging)
                     .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
                         UserGroupBelonging::getUserGroupId, UserGroupBelonging::getUserId,
                         UserGroupBelonging::getCreatedBy)
-                    .containsExactly(2L, 2L, 2L, 2L, 2L))
+                    .containsExactly(2L, 2L, 2L, 3L, 2L))
             .assertNext(
                 userGroupBelonging -> assertThat(userGroupBelonging)
                     .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
                         UserGroupBelonging::getUserGroupId, UserGroupBelonging::getUserId,
                         UserGroupBelonging::getCreatedBy)
-                    .containsExactly(3L, 3L, 3L, 3L, 3L))
+                    .containsExactly(3L, 3L, 3L, 4L, 3L))
             .verifyComplete();
       }
     }
@@ -88,7 +88,7 @@ class UserGroupBelongingRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザとグループの関係情報をIDで取得できる")
@@ -102,7 +102,7 @@ class UserGroupBelongingRepositoryTest {
                     .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
                         UserGroupBelonging::getUserGroupId, UserGroupBelonging::getUserId,
                         UserGroupBelonging::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, 1L, 1L))
+                    .containsExactly(1L, 1L, 1L, 2L, 1L))
             .verifyComplete();
       }
     }
@@ -115,7 +115,7 @@ class UserGroupBelongingRepositoryTest {
   class Save {
 
     @Nested
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザとグループの関係情報を更新できる")
@@ -194,7 +194,7 @@ class UserGroupBelongingRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザとグループの関係情報をIDで削除できる")
@@ -204,6 +204,32 @@ class UserGroupBelongingRepositoryTest {
         // then
         StepVerifier.create(voidMono).verifyComplete();
         userGroupBelongingRepository.findById(3L).as(StepVerifier::create).verifyComplete();
+      }
+    }
+  }
+
+  @Order(1)
+  @Nested
+  class FindDuplicate {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("重複するユーザとグループの関係情報を検知できる")
+      void findDuplicateUserGroupBelonging() {
+        // when
+        Mono<UserGroupBelonging> userBelongsGroupMono = userGroupBelongingRepository.findDuplicate(1L, 2L, 1L);
+        // then
+        StepVerifier.create(userBelongsGroupMono)
+            .assertNext(
+                userGroupBelonging -> assertThat(userGroupBelonging)
+                    .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
+                        UserGroupBelonging::getUserGroupId, UserGroupBelonging::getUserId,
+                        UserGroupBelonging::getCreatedBy)
+                    .containsExactly(1L, 1L, 1L, 2L, 1L))
+            .verifyComplete();
       }
     }
   }

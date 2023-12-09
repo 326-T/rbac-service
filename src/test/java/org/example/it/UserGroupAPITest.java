@@ -4,28 +4,44 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 
 import org.example.Application;
+import org.example.error.response.ErrorResponse;
 import org.example.listener.FlywayTestExecutionListener;
+import org.example.persistence.entity.User;
 import org.example.persistence.entity.UserGroup;
+import org.example.service.JwtService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestClassOrder;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureWebClient
 public class UserGroupAPITest {
 
   @Autowired
   private WebTestClient webTestClient;
+  @Autowired
+  private JwtService jwtService;
+
+  private String jwt;
+
+  @BeforeAll
+  void beforeAll() {
+    jwt = jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build());
+  }
 
   @Nested
   @Order(1)
@@ -33,7 +49,7 @@ public class UserGroupAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("グループの件数を取得できる")
@@ -41,6 +57,7 @@ public class UserGroupAPITest {
         // when, then
         webTestClient.get()
             .uri("/rbac-service/v1/user-groups/count")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBody(Long.class).isEqualTo(3L);
@@ -54,7 +71,7 @@ public class UserGroupAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("グループを全件取得できる")
@@ -62,6 +79,7 @@ public class UserGroupAPITest {
         // when, then
         webTestClient.get()
             .uri("/rbac-service/v1/user-groups")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(UserGroup.class)
@@ -73,7 +91,7 @@ public class UserGroupAPITest {
                   .containsExactly(
                       tuple(1L, 1L, "group1", 1L),
                       tuple(2L, 2L, "group2", 2L),
-                      tuple(3L, 3L, "group3", 3L));
+                      tuple(3L, 2L, "group3", 3L));
             });
       }
     }
@@ -85,7 +103,7 @@ public class UserGroupAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("グループをIDで取得できる")
@@ -93,6 +111,7 @@ public class UserGroupAPITest {
         // when, then
         webTestClient.get()
             .uri("/rbac-service/v1/user-groups/1")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBody(UserGroup.class)
@@ -113,20 +132,20 @@ public class UserGroupAPITest {
   class Update {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("グループを更新できる")
-      void updateTargetGroup() {
+      void updateUserGroup() {
         // when, then
         webTestClient.put()
             .uri("/rbac-service/v1/user-groups/2")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "namespaceId": 1,
-                  "name": "TARGET-GROUP-2",
-                  "createdBy": 1
+                  "name": "GROUP2"
                 }
                 """)
             .exchange()
@@ -136,10 +155,11 @@ public class UserGroupAPITest {
               assertThat(response.getResponseBody())
                   .extracting(UserGroup::getId, UserGroup::getNamespaceId,
                       UserGroup::getName, UserGroup::getCreatedBy)
-                  .containsExactly(2L, 1L, "TARGET-GROUP-2", 1L);
+                  .containsExactly(2L, 2L, "GROUP2", 2L);
             });
         webTestClient.get()
             .uri("/rbac-service/v1/user-groups/2")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBody(UserGroup.class)
@@ -147,51 +167,155 @@ public class UserGroupAPITest {
               assertThat(response.getResponseBody())
                   .extracting(UserGroup::getId, UserGroup::getNamespaceId,
                       UserGroup::getName, UserGroup::getCreatedBy)
-                  .containsExactly(2L, 1L, "TARGET-GROUP-2", 1L);
+                  .containsExactly(2L, 2L, "GROUP2", 2L);
+            });
+      }
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotUpdateWithDuplicate() {
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/user-groups/2")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "name": "group3"
+                }
+                """)
+            .exchange()
+            .expectStatus().is4xxClientError()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        409, null,
+                        "Unique制約に違反している",
+                        "org.example.error.exception.RedundantException: UserGroup already exists",
+                        "作成済みのリソースと重複しています。")
+            );
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @Test
+      @DisplayName("存在しないユーザグループの場合はエラーになる")
+      void notExistingUserGroupCauseException() {
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/user-groups/999")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "name": "GROUP2"
+                }
+                """)
+            .exchange()
+            .expectStatus().isNotFound()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        404, null,
+                        "idに該当するリソースが存在しない",
+                        "org.example.error.exception.NotExistingException: UserGroup not found",
+                        "指定されたリソースは存在しません。")
+            );
+      }
+    }
+  }
+
+  @Order(2)
+  @Nested
+  @TestExecutionListeners(listeners = {
+      FlywayTestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+  class Save {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("グループを新規登録できる")
+      void insertUserGroup() {
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/user-groups")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "namespaceId": 1,
+                  "name": "group4"
+                }
+                """)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(UserGroup.class)
+            .consumeWith(response -> {
+              assertThat(response.getResponseBody())
+                  .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                      UserGroup::getName, UserGroup::getCreatedBy)
+                  .containsExactly(4L, 1L, "group4", 2L);
+            });
+        webTestClient.get()
+            .uri("/rbac-service/v1/user-groups/4")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(UserGroup.class)
+            .consumeWith(response -> {
+              assertThat(response.getResponseBody())
+                  .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                      UserGroup::getName, UserGroup::getCreatedBy)
+                  .containsExactly(4L, 1L, "group4", 2L);
             });
       }
     }
 
-    @Order(2)
     @Nested
-    @TestExecutionListeners(listeners = {
-        FlywayTestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-    class Save {
+    @DisplayName("異常系")
+    class Error {
 
       @Test
-      @DisplayName("グループを新規登録できる")
-      void insertTargetGroup() {
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotCreateDuplicate() {
         // when, then
         webTestClient.post()
             .uri("/rbac-service/v1/user-groups")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
                   "namespaceId": 1,
-                  "name": "target-userGroup-4",
-                  "createdBy": 1
+                  "name": "group1"
                 }
                 """)
             .exchange()
-            .expectStatus().isOk()
-            .expectBody(UserGroup.class)
-            .consumeWith(response -> {
-              assertThat(response.getResponseBody())
-                  .extracting(UserGroup::getId, UserGroup::getNamespaceId,
-                      UserGroup::getName, UserGroup::getCreatedBy)
-                  .containsExactly(4L, 1L, "target-userGroup-4", 1L);
-            });
-        webTestClient.get()
-            .uri("/rbac-service/v1/user-groups/4")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(UserGroup.class)
-            .consumeWith(response -> {
-              assertThat(response.getResponseBody())
-                  .extracting(UserGroup::getId, UserGroup::getNamespaceId,
-                      UserGroup::getName, UserGroup::getCreatedBy)
-                  .containsExactly(4L, 1L, "target-userGroup-4", 1L);
-            });
+            .expectStatus().is4xxClientError()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        409, null,
+                        "Unique制約に違反している",
+                        "org.example.error.exception.RedundantException: UserGroup already exists",
+                        "作成済みのリソースと重複しています。")
+            );
       }
     }
   }
@@ -204,19 +328,21 @@ public class UserGroupAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("グループをIDで削除できる")
-      void deleteTargetGroupById() {
+      void deleteUserGroupById() {
         // when, then
         webTestClient.delete()
             .uri("/rbac-service/v1/user-groups/3")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isNoContent()
             .expectBody(Void.class);
         webTestClient.get()
             .uri("/rbac-service/v1/user-groups/3")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBody(Void.class);

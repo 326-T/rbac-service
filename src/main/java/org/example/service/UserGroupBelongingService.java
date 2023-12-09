@@ -1,6 +1,6 @@
 package org.example.service;
 
-import java.util.Objects;
+import java.time.LocalDateTime;
 import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.UserGroupBelonging;
 import org.example.persistence.repository.UserGroupBelongingRepository;
@@ -29,11 +29,26 @@ public class UserGroupBelongingService {
     return userGroupBelongingRepository.findById(id);
   }
 
+  /**
+   * 1. 重複がないか確認する
+   * 2. 保存する
+   *
+   * @param userGroupBelonging 保存するUserGroupBelonging
+   *
+   * @return 保存されたUserGroupBelonging
+   *
+   * @throws RedundantException 重複した場合
+   */
   public Mono<UserGroupBelonging> insert(UserGroupBelonging userGroupBelonging) {
-    if (Objects.nonNull(userGroupBelonging.getId())) {
-      return Mono.error(new RedundantException("Id field must be empty"));
-    }
-    return userGroupBelongingRepository.save(userGroupBelonging);
+    userGroupBelonging.setCreatedAt(LocalDateTime.now());
+    userGroupBelonging.setUpdatedAt(LocalDateTime.now());
+    return userGroupBelongingRepository.findDuplicate(
+            userGroupBelonging.getNamespaceId(),
+            userGroupBelonging.getUserId(),
+            userGroupBelonging.getUserGroupId())
+        .flatMap(present -> Mono.<UserGroupBelonging>error(new RedundantException("UserGroupBelonging already exists")))
+        .switchIfEmpty(Mono.just(userGroupBelonging))
+        .flatMap(userGroupBelongingRepository::save);
   }
 
   public Mono<Void> deleteById(Long id) {

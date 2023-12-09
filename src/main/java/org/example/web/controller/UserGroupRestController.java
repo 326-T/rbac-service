@@ -1,7 +1,10 @@
 package org.example.web.controller;
 
 import org.example.persistence.entity.UserGroup;
+import org.example.service.ReactiveContextService;
 import org.example.service.UserGroupService;
+import org.example.web.request.UserGroupInsertRequest;
+import org.example.web.request.UserGroupUpdateRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,9 +23,11 @@ import reactor.core.publisher.Mono;
 public class UserGroupRestController {
 
   private final UserGroupService userGroupService;
+  private final ReactiveContextService reactiveContextService;
 
-  public UserGroupRestController(UserGroupService userGroupService) {
+  public UserGroupRestController(UserGroupService userGroupService, ReactiveContextService reactiveContextService) {
     this.userGroupService = userGroupService;
+    this.reactiveContextService = reactiveContextService;
   }
 
   @GetMapping
@@ -41,12 +46,19 @@ public class UserGroupRestController {
   }
 
   @PostMapping
-  public Mono<UserGroup> save(@RequestBody UserGroup userGroup) {
-    return userGroupService.insert(userGroup);
+  public Mono<UserGroup> save(@RequestBody UserGroupInsertRequest request) {
+    return reactiveContextService.getCurrentUser()
+        .flatMap(u -> {
+          UserGroup userGroup = request.exportEntity();
+          userGroup.setCreatedBy(u.getId());
+          return Mono.just(userGroup);
+        })
+        .flatMap(userGroupService::insert);
   }
 
   @PutMapping("/{id}")
-  public Mono<UserGroup> update(@PathVariable Long id, @RequestBody UserGroup userGroup) {
+  public Mono<UserGroup> update(@PathVariable Long id, @RequestBody UserGroupUpdateRequest request) {
+    UserGroup userGroup = request.exportEntity();
     userGroup.setId(id);
     return userGroupService.update(userGroup);
   }

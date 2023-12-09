@@ -31,7 +31,7 @@ class PathRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("パスの件数を取得できる")
@@ -50,7 +50,7 @@ class PathRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("パスを全件取得できる")
@@ -64,7 +64,7 @@ class PathRepositoryTest {
                 path -> assertThat(path).extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
                     Path::getCreatedBy).containsExactly(2L, 2L, "/billing-service/v1/", 2L)).assertNext(
                 path -> assertThat(path).extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
-                    Path::getCreatedBy).containsExactly(3L, 3L, "/inventory-service/v2/", 3L))
+                    Path::getCreatedBy).containsExactly(3L, 2L, "/inventory-service/v2/", 3L))
             .verifyComplete();
       }
     }
@@ -76,7 +76,7 @@ class PathRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("パスをIDで取得できる")
@@ -99,7 +99,7 @@ class PathRepositoryTest {
   class Save {
 
     @Nested
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("パスを更新できる")
@@ -149,7 +149,7 @@ class PathRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("パスをIDで削除できる")
@@ -159,6 +159,28 @@ class PathRepositoryTest {
         // then
         StepVerifier.create(voidMono).verifyComplete();
         pathRepository.findById(3L).as(StepVerifier::create).verifyComplete();
+      }
+    }
+  }
+
+  @Order(1)
+  @Nested
+  class FindDuplicate {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("重複するパスを検索できる")
+      void findDuplicate() {
+        // when
+        Mono<Path> pathMono = pathRepository.findDuplicate(1L, "/user-service/v1/");
+        // then
+        StepVerifier.create(pathMono).assertNext(
+                path -> assertThat(path).extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
+                    Path::getCreatedBy).containsExactly(1L, 1L, "/user-service/v1/", 1L))
+            .verifyComplete();
       }
     }
   }

@@ -31,7 +31,7 @@ class TargetRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットの件数を取得できる")
@@ -50,7 +50,7 @@ class TargetRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットを全件取得できる")
@@ -67,7 +67,7 @@ class TargetRepositoryTest {
                 .containsExactly(2L, 2L, "object-id-2", 2L)).assertNext(
             target -> assertThat(target).extracting(Target::getId, Target::getNamespaceId,
                     Target::getObjectIdRegex, Target::getCreatedBy)
-                .containsExactly(3L, 3L, "object-id-3", 3L)).verifyComplete();
+                .containsExactly(3L, 2L, "object-id-3", 3L)).verifyComplete();
       }
     }
   }
@@ -78,7 +78,7 @@ class TargetRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットをIDで取得できる")
@@ -101,7 +101,7 @@ class TargetRepositoryTest {
   class Save {
 
     @Nested
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットを更新できる")
@@ -152,7 +152,7 @@ class TargetRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットをIDで削除できる")
@@ -162,6 +162,28 @@ class TargetRepositoryTest {
         // then
         StepVerifier.create(voidMono).verifyComplete();
         targetRepository.findById(3L).as(StepVerifier::create).verifyComplete();
+      }
+    }
+  }
+
+  @Order(1)
+  @Nested
+  class FindDuplicate {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ターゲットの重複を検知できる")
+      void findDuplicateTarget() {
+        // when
+        Mono<Target> targetMono = targetRepository.findDuplicate(1L, "object-id-1");
+        // then
+        StepVerifier.create(targetMono).assertNext(
+            target -> assertThat(target).extracting(Target::getId, Target::getNamespaceId,
+                    Target::getObjectIdRegex, Target::getCreatedBy)
+                .containsExactly(1L, 1L, "object-id-1", 1L)).verifyComplete();
       }
     }
   }

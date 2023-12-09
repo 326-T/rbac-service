@@ -1,5 +1,5 @@
 INSERT INTO rbac_namespaces (name, created_by)
 VALUES
-    ('developers', 1),
-    ('operations', 2),
-    ('security', 3);
+    ('develop', 1),
+    ('staging', 2),
+    ('production', 3);

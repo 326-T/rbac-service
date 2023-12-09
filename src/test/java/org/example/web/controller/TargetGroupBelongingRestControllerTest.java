@@ -6,7 +6,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import org.example.persistence.entity.TargetGroupBelonging;
+import org.example.persistence.entity.User;
+import org.example.service.ReactiveContextService;
 import org.example.service.TargetGroupBelongingService;
+import org.example.web.filter.AuthenticationWebFilter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,17 +17,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@WebFluxTest(TargetGroupBelongingRestController.class)
+@WebFluxTest(
+    controllers = TargetGroupBelongingRestController.class,
+    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AuthenticationWebFilter.class)})
 @AutoConfigureWebTestClient
 class TargetGroupBelongingRestControllerTest {
 
   @MockBean
   private TargetGroupBelongingService targetGroupBelongingService;
+  @MockBean
+  private ReactiveContextService reactiveContextService;
   @Autowired
   private WebTestClient webTestClient;
 
@@ -33,7 +42,7 @@ class TargetGroupBelongingRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットとグループの関係の件数を取得できる")
@@ -55,7 +64,7 @@ class TargetGroupBelongingRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットとグループの関係を全件取得できる")
@@ -95,7 +104,7 @@ class TargetGroupBelongingRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットとグループの関係をIDで取得できる")
@@ -124,7 +133,7 @@ class TargetGroupBelongingRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットとグループの関係を登録できる")
@@ -133,6 +142,7 @@ class TargetGroupBelongingRestControllerTest {
         TargetGroupBelonging targetGroupBelonging = TargetGroupBelonging.builder()
             .id(4L).namespaceId(1L).targetId(1L).targetGroupId(3L).createdBy(1L).build();
         when(targetGroupBelongingService.insert(any(TargetGroupBelonging.class))).thenReturn(Mono.just(targetGroupBelonging));
+        when(reactiveContextService.getCurrentUser()).thenReturn(Mono.just(User.builder().id(1L).build()));
         // when, then
         webTestClient.post()
             .uri("/rbac-service/v1/target-group-belongings")
@@ -141,8 +151,7 @@ class TargetGroupBelongingRestControllerTest {
                 {
                   "namespaceId": 1,
                   "targetId": 1,
-                  "targetGroupId": 3,
-                  "createdBy": 1
+                  "targetGroupId": 3
                 }
                 """
             )
@@ -159,11 +168,11 @@ class TargetGroupBelongingRestControllerTest {
   }
 
   @Nested
-  class deleteById {
+  class DeleteById {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットとグループの関係を削除できる")

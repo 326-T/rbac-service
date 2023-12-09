@@ -2,6 +2,9 @@ package org.example.web.controller;
 
 import org.example.persistence.entity.User;
 import org.example.service.UserService;
+import org.example.web.request.UserInsertRequest;
+import org.example.web.request.UserUpdateRequest;
+import org.example.web.response.UserResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,8 +29,8 @@ public class UserRestController {
   }
 
   @GetMapping
-  public Flux<User> index() {
-    return userService.findAll();
+  public Flux<UserResponse> index() {
+    return userService.findAll().map(UserResponse::new);
   }
 
   @GetMapping("/count")
@@ -36,19 +39,20 @@ public class UserRestController {
   }
 
   @GetMapping("/{id}")
-  public Mono<User> findById(@PathVariable Long id) {
-    return userService.findById(id);
+  public Mono<UserResponse> findById(@PathVariable Long id) {
+    return userService.findById(id).map(UserResponse::new);
   }
 
   @PostMapping
-  public Mono<User> save(@RequestBody User user) {
-    return userService.insert(user);
+  public Mono<UserResponse> save(@RequestBody UserInsertRequest request) {
+    return userService.insert(request.exportEntity()).map(UserResponse::new);
   }
 
   @PutMapping("/{id}")
-  public Mono<User> update(@PathVariable Long id, @RequestBody User user) {
+  public Mono<UserResponse> update(@PathVariable Long id, @RequestBody UserUpdateRequest request) {
+    User user = request.exportEntity();
     user.setId(id);
-    return userService.update(user);
+    return userService.update(user).map(UserResponse::new);
   }
 
   @DeleteMapping("/{id}")

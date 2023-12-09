@@ -1,7 +1,6 @@
 package org.example.service;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.UserGroup;
@@ -31,22 +30,51 @@ public class UserGroupService {
     return groupRepository.findById(id);
   }
 
+  /**
+   * 1. 重複がないか確認する
+   * 2. 保存する
+   *
+   * @param userGroup 保存するUserGroup
+   *
+   * @return 保存されたUserGroup
+   *
+   * @throws RedundantException 重複した場合
+   */
   public Mono<UserGroup> insert(UserGroup userGroup) {
-    if (Objects.nonNull(userGroup.getId())) {
-      return Mono.error(new RedundantException("Id field must be empty"));
-    }
-    return groupRepository.save(userGroup);
+    userGroup.setCreatedAt(LocalDateTime.now());
+    userGroup.setUpdatedAt(LocalDateTime.now());
+    return groupRepository.findDuplicate(userGroup.getNamespaceId(), userGroup.getName())
+        .flatMap(present -> Mono.<UserGroup>error(new RedundantException("UserGroup already exists")))
+        .switchIfEmpty(Mono.just(userGroup))
+        .flatMap(groupRepository::save);
   }
 
+  /**
+   * 1. IDが存在してるか確認する
+   * 2. 変更内容をセットする
+   * 3. 重複がないか確認する
+   * 4. 保存する
+   *
+   * @param userGroup nameのみ変更可能
+   *
+   * @return 更新されたUserGroup
+   *
+   * @throws NotExistingException IDが存在しない場合
+   * @throws RedundantException   重複した場合
+   */
   public Mono<UserGroup> update(UserGroup userGroup) {
-    return groupRepository.findById(userGroup.getId()).flatMap(present -> {
-      if (Objects.isNull(present)) {
-        return Mono.error(new NotExistingException("Group not found"));
-      }
-      userGroup.setUpdatedAt(LocalDateTime.now());
-      userGroup.setCreatedAt(present.getCreatedAt());
-      return groupRepository.save(userGroup);
-    });
+    Mono<UserGroup> userGroupMono = groupRepository.findById(userGroup.getId())
+        .switchIfEmpty(Mono.error(new NotExistingException("UserGroup not found")))
+        .flatMap(present -> {
+          present.setName(userGroup.getName());
+          present.setUpdatedAt(LocalDateTime.now());
+          return Mono.just(present);
+        });
+    return userGroupMono
+        .flatMap(g -> groupRepository.findDuplicate(g.getNamespaceId(), g.getName()))
+        .flatMap(present -> Mono.<UserGroup>error(new RedundantException("UserGroup already exists")))
+        .switchIfEmpty(userGroupMono)
+        .flatMap(groupRepository::save);
   }
 
   public Mono<Void> deleteById(Long id) {

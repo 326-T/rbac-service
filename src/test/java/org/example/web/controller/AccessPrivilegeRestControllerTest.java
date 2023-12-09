@@ -3,10 +3,14 @@ package org.example.web.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import org.example.persistence.dto.AccessPrivilege;
+import org.example.persistence.entity.User;
 import org.example.service.AccessPrivilegeService;
+import org.example.service.ReactiveContextService;
+import org.example.web.filter.AuthenticationWebFilter;
 import org.example.web.request.AccessPrivilegeRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -15,17 +19,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@WebFluxTest(AccessPrivilegeRestController.class)
+@WebFluxTest(
+    controllers = AccessPrivilegeRestController.class,
+    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AuthenticationWebFilter.class)})
 @AutoConfigureWebTestClient
 class AccessPrivilegeRestControllerTest {
 
   @MockBean
   private AccessPrivilegeService accessPrivilegeService;
+  @MockBean
+  private ReactiveContextService reactiveContextService;
   @Autowired
   private WebTestClient webTestClient;
 
@@ -34,7 +44,7 @@ class AccessPrivilegeRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ネームスペース内の権限の一覧を全件取得できる")
@@ -53,7 +63,7 @@ class AccessPrivilegeRestControllerTest {
         when(accessPrivilegeService.findByNamespace(1L)).thenReturn(Flux.just(accessPrivilege));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/access-privileges?namespaceId=1")
+            .uri("/rbac-service/v1/access-privileges?namespace-id=1")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(AccessPrivilege.class)
@@ -90,18 +100,18 @@ class AccessPrivilegeRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザーが指定したパスにアクセスできるか判定できる")
       void canAccessThePath() {
         // given
         AccessPrivilegeRequest accessPrivilegeRequest = new AccessPrivilegeRequest();
-        accessPrivilegeRequest.setUserId(1L);
         accessPrivilegeRequest.setPath("/user-service/v1/");
         accessPrivilegeRequest.setMethod("GET");
-        when(accessPrivilegeService.canAccess(any(AccessPrivilegeRequest.class)))
+        when(accessPrivilegeService.canAccess(eq(1L), any(AccessPrivilegeRequest.class)))
             .thenReturn(Mono.just(true));
+        when(reactiveContextService.getCurrentUser()).thenReturn(Mono.just(User.builder().id(1L).build()));
         // when, then
         webTestClient.post()
             .uri("/rbac-service/v1/access-privileges/can-i")

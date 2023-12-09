@@ -6,7 +6,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import org.example.persistence.entity.RoleEndpointPermission;
+import org.example.persistence.entity.User;
+import org.example.service.ReactiveContextService;
 import org.example.service.RoleEndpointPermissionService;
+import org.example.web.filter.AuthenticationWebFilter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,17 +17,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@WebFluxTest(RoleEndpointPermissionRestController.class)
+@WebFluxTest(
+    controllers = RoleEndpointPermissionRestController.class,
+    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AuthenticationWebFilter.class)})
 @AutoConfigureWebTestClient
 class RoleEndpointPermissionRestControllerTest {
 
   @MockBean
   private RoleEndpointPermissionService roleEndpointPermissionService;
+  @MockBean
+  private ReactiveContextService reactiveContextService;
   @Autowired
   private WebTestClient webTestClient;
 
@@ -33,7 +42,7 @@ class RoleEndpointPermissionRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループの件数を取得できる")
@@ -55,7 +64,7 @@ class RoleEndpointPermissionRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループを全件取得できる")
@@ -95,7 +104,7 @@ class RoleEndpointPermissionRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループをIDで取得できる")
@@ -124,7 +133,7 @@ class RoleEndpointPermissionRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループを登録できる")
@@ -133,6 +142,7 @@ class RoleEndpointPermissionRestControllerTest {
         RoleEndpointPermission roleEndpointPermission = RoleEndpointPermission.builder()
             .id(4L).namespaceId(1L).roleId(1L).endpointId(3L).createdBy(1L).build();
         when(roleEndpointPermissionService.insert(any(RoleEndpointPermission.class))).thenReturn(Mono.just(roleEndpointPermission));
+        when(reactiveContextService.getCurrentUser()).thenReturn(Mono.just(User.builder().id(1L).build()));
         // when, then
         webTestClient.post()
             .uri("/rbac-service/v1/role-endpoint-permissions")
@@ -141,8 +151,7 @@ class RoleEndpointPermissionRestControllerTest {
                 {
                   "namespaceId": 1,
                   "roleId": 1,
-                  "endpointId": 3,
-                  "createdBy": 1
+                  "endpointId": 3
                 }
                 """
             )
@@ -159,11 +168,11 @@ class RoleEndpointPermissionRestControllerTest {
   }
 
   @Nested
-  class deleteById {
+  class DeleteById {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループを削除できる")

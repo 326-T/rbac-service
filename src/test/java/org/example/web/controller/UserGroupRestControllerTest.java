@@ -5,8 +5,11 @@ import static org.assertj.core.groups.Tuple.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import org.example.persistence.entity.User;
 import org.example.persistence.entity.UserGroup;
+import org.example.service.ReactiveContextService;
 import org.example.service.UserGroupService;
+import org.example.web.filter.AuthenticationWebFilter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,17 +17,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@WebFluxTest(UserGroupRestController.class)
+@WebFluxTest(
+    controllers = UserGroupRestController.class,
+    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AuthenticationWebFilter.class)})
 @AutoConfigureWebTestClient
 class UserGroupRestControllerTest {
 
   @MockBean
   private UserGroupService userGroupService;
+  @MockBean
+  private ReactiveContextService reactiveContextService;
   @Autowired
   private WebTestClient webTestClient;
 
@@ -33,7 +42,7 @@ class UserGroupRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループの件数を取得できる")
@@ -55,7 +64,7 @@ class UserGroupRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループを全件取得できる")
@@ -94,7 +103,7 @@ class UserGroupRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループをIDで取得できる")
@@ -123,7 +132,7 @@ class UserGroupRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループを更新できる")
@@ -138,9 +147,7 @@ class UserGroupRestControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "namespaceId": 1,
-                  "name": "OBJECT-ID-2",
-                  "createdBy": 1
+                  "name": "OBJECT-ID-2"
                 }
                 """
             )
@@ -161,7 +168,7 @@ class UserGroupRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループを登録できる")
@@ -170,6 +177,7 @@ class UserGroupRestControllerTest {
         UserGroup userGroup = UserGroup.builder()
             .id(4L).namespaceId(1L).name("group-4").createdBy(1L).build();
         when(userGroupService.insert(any(UserGroup.class))).thenReturn(Mono.just(userGroup));
+        when(reactiveContextService.getCurrentUser()).thenReturn(Mono.just(User.builder().id(1L).build()));
         // when, then
         webTestClient.post()
             .uri("/rbac-service/v1/user-groups")
@@ -177,8 +185,7 @@ class UserGroupRestControllerTest {
             .bodyValue("""
                 {
                   "namespaceId": 1,
-                  "name": "group-4",
-                  "createdBy": 1
+                  "name": "group-4"
                 }
                 """
             )
@@ -195,11 +202,11 @@ class UserGroupRestControllerTest {
   }
 
   @Nested
-  class deleteById {
+  class DeleteById {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループを削除できる")

@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import org.example.error.exception.NotExistingException;
+import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.Target;
 import org.example.persistence.repository.TargetRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -28,7 +30,8 @@ class TargetServiceTest {
   class Count {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ターゲットの件数を取得できる")
@@ -47,7 +50,8 @@ class TargetServiceTest {
   class FindAll {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ターゲットを全件取得できる")
@@ -86,7 +90,8 @@ class TargetServiceTest {
   class FindById {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ターゲットをIDで取得できる")
@@ -96,9 +101,9 @@ class TargetServiceTest {
             .id(1L).namespaceId(1L).objectIdRegex("object-id-1").createdBy(1L).build();
         when(targetRepository.findById(1L)).thenReturn(Mono.just(target1));
         // when
-        Mono<Target> clusterMono = targetService.findById(1L);
+        Mono<Target> targetMono = targetService.findById(1L);
         // then
-        StepVerifier.create(clusterMono)
+        StepVerifier.create(targetMono)
             .assertNext(cluster -> assertThat(cluster)
                 .extracting(Target::getId, Target::getNamespaceId,
                     Target::getObjectIdRegex, Target::getCreatedBy)
@@ -109,10 +114,11 @@ class TargetServiceTest {
   }
 
   @Nested
-  class insert {
+  class Insert {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ターゲットを登録できる")
@@ -120,12 +126,12 @@ class TargetServiceTest {
         // given
         Target target1 = Target.builder()
             .namespaceId(1L).objectIdRegex("object-id-1").createdBy(1L).build();
-        when(targetRepository.save(any(Target.class))).thenReturn(
-            Mono.just(target1));
+        when(targetRepository.save(any(Target.class))).thenReturn(Mono.just(target1));
+        when(targetRepository.findDuplicate(1L, "object-id-1")).thenReturn(Mono.empty());
         // when
-        Mono<Target> clusterMono = targetService.insert(target1);
+        Mono<Target> targetMono = targetService.insert(target1);
         // then
-        StepVerifier.create(clusterMono)
+        StepVerifier.create(targetMono)
             .assertNext(cluster -> assertThat(cluster)
                 .extracting(Target::getId, Target::getNamespaceId,
                     Target::getObjectIdRegex, Target::getCreatedBy)
@@ -133,13 +139,32 @@ class TargetServiceTest {
             .verifyComplete();
       }
     }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotCreateDuplicateTarget() {
+        // given
+        Target before = Target.builder().namespaceId(1L).objectIdRegex("object-id-1").createdBy(1L).build();
+        Target after = Target.builder().namespaceId(1L).objectIdRegex("object-id-1").createdBy(1L).build();
+        when(targetRepository.findDuplicate(1L, "object-id-1")).thenReturn(Mono.just(before));
+        // when
+        Mono<Target> targetMono = targetService.insert(after);
+        // then
+        StepVerifier.create(targetMono).expectError(RedundantException.class).verify();
+      }
+    }
   }
 
   @Nested
-  class update {
+  class Update {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ターゲットを更新できる")
@@ -148,27 +173,67 @@ class TargetServiceTest {
         Target before = Target.builder()
             .id(2L).namespaceId(2L).objectIdRegex("object-id-2").createdBy(2L).build();
         Target after = Target.builder()
-            .id(2L).namespaceId(2L).objectIdRegex("object-id-1").createdBy(2L).build();
+            .id(2L).namespaceId(2L).objectIdRegex("OBJECT_ID_2").createdBy(2L).build();
         when(targetRepository.findById(2L)).thenReturn(Mono.just(before));
+        when(targetRepository.findDuplicate(2L, "OBJECT_ID_2")).thenReturn(Mono.empty());
         when(targetRepository.save(any(Target.class))).thenReturn(Mono.just(after));
         // when
-        Mono<Target> clusterMono = targetService.update(after);
+        Mono<Target> targetMono = targetService.update(after);
         // then
-        StepVerifier.create(clusterMono)
+        StepVerifier.create(targetMono)
             .assertNext(cluster -> assertThat(cluster)
                 .extracting(Target::getId, Target::getNamespaceId,
                     Target::getObjectIdRegex, Target::getCreatedBy)
-                .containsExactly(2L, 2L, "object-id-1", 2L))
+                .containsExactly(2L, 2L, "OBJECT_ID_2", 2L))
             .verifyComplete();
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @Test
+      @DisplayName("存在しないターゲットの場合はエラーになる")
+      void notExistingTargetCauseException() {
+        // given
+        Target after = Target.builder().id(2L).namespaceId(2L).objectIdRegex("OBJECT_ID_2").createdBy(2L).build();
+        when(targetRepository.findById(2L)).thenReturn(Mono.empty());
+        when(targetRepository.findDuplicate(2L, "OBJECT_ID_2")).thenReturn(Mono.empty());
+        when(targetRepository.save(any(Target.class))).thenReturn(Mono.just(after));
+        // when
+        Mono<Target> targetMono = targetService.update(after);
+        // then
+        StepVerifier.create(targetMono).expectError(NotExistingException.class).verify();
+      }
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotUpdateWithDuplicate() {
+        // given
+        Target before = Target.builder()
+            .id(2L).namespaceId(2L).objectIdRegex("object-id-2").createdBy(2L).build();
+        Target after = Target.builder()
+            .id(2L).namespaceId(2L).objectIdRegex("OBJECT_ID_2").createdBy(2L).build();
+        Target duplicate = Target.builder()
+            .id(3L).namespaceId(2L).objectIdRegex("OBJECT_ID_2").createdBy(2L).build();
+        when(targetRepository.findById(2L)).thenReturn(Mono.just(before));
+        when(targetRepository.findDuplicate(2L, "OBJECT_ID_2")).thenReturn(Mono.just(duplicate));
+        when(targetRepository.save(any(Target.class))).thenReturn(Mono.just(after));
+        // when
+        Mono<Target> targetMono = targetService.update(after);
+        // then
+        StepVerifier.create(targetMono).expectError(RedundantException.class).verify();
       }
     }
   }
 
   @Nested
-  class delete {
+  class Delete {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ターゲットを削除できる")
@@ -176,9 +241,9 @@ class TargetServiceTest {
         // given
         when(targetRepository.deleteById(1L)).thenReturn(Mono.empty());
         // when
-        Mono<Void> clusterMono = targetService.deleteById(1L);
+        Mono<Void> targetMono = targetService.deleteById(1L);
         // then
-        StepVerifier.create(clusterMono).verifyComplete();
+        StepVerifier.create(targetMono).verifyComplete();
       }
     }
   }

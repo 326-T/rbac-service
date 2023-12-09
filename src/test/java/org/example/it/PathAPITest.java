@@ -4,28 +4,45 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 
 import org.example.Application;
+import org.example.error.response.ErrorResponse;
 import org.example.listener.FlywayTestExecutionListener;
 import org.example.persistence.entity.Path;
+import org.example.persistence.entity.User;
+import org.example.service.JwtService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestClassOrder;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureWebClient
 public class PathAPITest {
 
   @Autowired
   private WebTestClient webTestClient;
+
+  @Autowired
+  private JwtService jwtService;
+
+  private String jwt;
+
+  @BeforeAll
+  void beforeAll() {
+    jwt = jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build());
+  }
 
   @Nested
   @Order(1)
@@ -33,7 +50,7 @@ public class PathAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("パスの件数を取得できる")
@@ -41,6 +58,7 @@ public class PathAPITest {
         // when, then
         webTestClient.get()
             .uri("/rbac-service/v1/paths/count")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBody(Long.class).isEqualTo(3L);
@@ -54,7 +72,7 @@ public class PathAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("パスを全件取得できる")
@@ -62,6 +80,7 @@ public class PathAPITest {
         // when, then
         webTestClient.get()
             .uri("/rbac-service/v1/paths")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(Path.class)
@@ -70,10 +89,9 @@ public class PathAPITest {
               assertThat(response.getResponseBody())
                   .extracting(Path::getId, Path::getNamespaceId, Path::getRegex, Path::getCreatedBy)
                   .containsExactly(
-
                       tuple(1L, 1L, "/user-service/v1/", 1L),
                       tuple(2L, 2L, "/billing-service/v1/", 2L),
-                      tuple(3L, 3L, "/inventory-service/v2/", 3L));
+                      tuple(3L, 2L, "/inventory-service/v2/", 3L));
             });
       }
     }
@@ -85,7 +103,7 @@ public class PathAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("パスをIDで取得できる")
@@ -93,6 +111,7 @@ public class PathAPITest {
         // when, then
         webTestClient.get()
             .uri("/rbac-service/v1/paths/1")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBody(Path.class)
@@ -112,7 +131,8 @@ public class PathAPITest {
   class Update {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("パスを更新できる")
@@ -120,12 +140,11 @@ public class PathAPITest {
         // when, then
         webTestClient.put()
             .uri("/rbac-service/v1/paths/2")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "namespaceId": 1,
-                  "regex": "/replace-service/v1/",
-                  "createdBy": 1
+                  "regex": "/replace-service/v1/"
                 }
                 """
             )
@@ -136,10 +155,11 @@ public class PathAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
                         Path::getCreatedBy)
-                    .containsExactly(2L, 1L, "/replace-service/v1/", 1L)
+                    .containsExactly(2L, 2L, "/replace-service/v1/", 2L)
             );
         webTestClient.get()
             .uri("/rbac-service/v1/paths/2")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBody(Path.class)
@@ -147,16 +167,86 @@ public class PathAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
                         Path::getCreatedBy)
-                    .containsExactly(2L, 1L, "/replace-service/v1/", 1L)
+                    .containsExactly(2L, 2L, "/replace-service/v1/", 2L)
             );
       }
     }
 
-    @Order(2)
     @Nested
-    @TestExecutionListeners(listeners = {
-        FlywayTestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-    class Save {
+    @DisplayName("異常系")
+    class Error {
+
+      @Test
+      @DisplayName("存在しないパスの場合はエラーになる")
+      void notExistingPathCauseException() {
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/paths/999")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "regex": "/replace-service/v1/"
+                }
+                """
+            )
+            .exchange()
+            .expectStatus().isNotFound()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        404, null,
+                        "idに該当するリソースが存在しない",
+                        "org.example.error.exception.NotExistingException: Path not found",
+                        "指定されたリソースは存在しません。")
+            );
+      }
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotUpdateWithDuplicate() {
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/paths/2")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "regex": "/inventory-service/v2/"
+                }
+                """
+            )
+            .exchange()
+            .expectStatus().is4xxClientError()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        409, null,
+                        "Unique制約に違反している",
+                        "org.example.error.exception.RedundantException: Path already exists",
+                        "作成済みのリソースと重複しています。")
+            );
+      }
+    }
+  }
+
+  @Order(2)
+  @Nested
+  @TestExecutionListeners(listeners = {
+      FlywayTestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+  class Save {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("パスを新規登録できる")
@@ -164,12 +254,12 @@ public class PathAPITest {
         // when, then
         webTestClient.post()
             .uri("/rbac-service/v1/paths")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
                   "namespaceId": 1,
-                  "regex": "/next-service/v1/",
-                  "createdBy": 1
+                  "regex": "/next-service/v1/"
                 }
                 """
             )
@@ -180,10 +270,11 @@ public class PathAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
                         Path::getCreatedBy)
-                    .containsExactly(4L, 1L, "/next-service/v1/", 1L)
+                    .containsExactly(4L, 1L, "/next-service/v1/", 2L)
             );
         webTestClient.get()
             .uri("/rbac-service/v1/paths/4")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBody(Path.class)
@@ -191,7 +282,43 @@ public class PathAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
                         Path::getCreatedBy)
-                    .containsExactly(4L, 1L, "/next-service/v1/", 1L)
+                    .containsExactly(4L, 1L, "/next-service/v1/", 2L)
+            );
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotCreateDuplicate() {
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/paths")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "namespaceId": 1,
+                  "regex": "/user-service/v1/"
+                }
+                """
+            )
+            .exchange()
+            .expectStatus().is4xxClientError()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        409, null,
+                        "Unique制約に違反している",
+                        "org.example.error.exception.RedundantException: Path already exists",
+                        "作成済みのリソースと重複しています。")
             );
       }
     }
@@ -205,7 +332,7 @@ public class PathAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("パスをIDで削除できる")
@@ -213,11 +340,13 @@ public class PathAPITest {
         // when, then
         webTestClient.delete()
             .uri("/rbac-service/v1/paths/3")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isNoContent()
             .expectBody(Void.class);
         webTestClient.get()
             .uri("/rbac-service/v1/paths/3")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBody(Void.class);

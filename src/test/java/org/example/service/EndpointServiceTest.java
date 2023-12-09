@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import org.example.error.exception.NotExistingException;
+import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.Endpoint;
 import org.example.persistence.repository.EndpointRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -28,7 +30,8 @@ class EndpointServiceTest {
   class Count {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("エンドポイントの件数を取得できる")
@@ -47,7 +50,8 @@ class EndpointServiceTest {
   class FindAll {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("エンドポイントを全件取得できる")
@@ -91,7 +95,8 @@ class EndpointServiceTest {
   class FindById {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("エンドポイントをIDで取得できる")
@@ -116,10 +121,11 @@ class EndpointServiceTest {
   }
 
   @Nested
-  class insert {
+  class Insert {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("エンドポイントを登録できる")
@@ -127,8 +133,8 @@ class EndpointServiceTest {
         // given
         Endpoint endpoint1 = Endpoint.builder()
             .namespaceId(1L).pathId(1L).method("GET").targetGroupId(1L).createdBy(1L).build();
-        when(endpointRepository.save(any(Endpoint.class))).thenReturn(
-            Mono.just(endpoint1));
+        when(endpointRepository.save(any(Endpoint.class))).thenReturn(Mono.just(endpoint1));
+        when(endpointRepository.findDuplicate(1L, 1L, 1L, "GET")).thenReturn(Mono.empty());
         // when
         Mono<Endpoint> clusterMono = endpointService.insert(endpoint1);
         // then
@@ -141,13 +147,35 @@ class EndpointServiceTest {
             .verifyComplete();
       }
     }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotCreateDuplicateEndpoint() {
+        // given
+        Endpoint before = Endpoint.builder()
+            .namespaceId(1L).pathId(1L).method("GET").targetGroupId(1L).createdBy(1L).build();
+        Endpoint after = Endpoint.builder()
+            .namespaceId(1L).pathId(1L).method("GET").targetGroupId(1L).createdBy(1L).build();
+        when(endpointRepository.save(any(Endpoint.class))).thenReturn(Mono.just(after));
+        when(endpointRepository.findDuplicate(1L, 1L, 1L, "GET")).thenReturn(Mono.just(before));
+        // when
+        Mono<Endpoint> clusterMono = endpointService.insert(after);
+        // then
+        StepVerifier.create(clusterMono).expectError(RedundantException.class).verify();
+      }
+    }
   }
 
   @Nested
-  class update {
+  class Update {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("エンドポイントを更新できる")
@@ -159,7 +187,8 @@ class EndpointServiceTest {
         Endpoint after = Endpoint.builder()
             .id(2L).namespaceId(2L).pathId(3L).method("GET")
             .targetGroupId(3L).createdBy(2L).build();
-        when(endpointRepository.findById(2L)).thenReturn(Mono.just(after));
+        when(endpointRepository.findById(2L)).thenReturn(Mono.just(before));
+        when(endpointRepository.findDuplicate(2L, 3L, 3L, "GET")).thenReturn(Mono.empty());
         when(endpointRepository.save(any(Endpoint.class))).thenReturn(Mono.just(after));
         // when
         Mono<Endpoint> clusterMono = endpointService.update(after);
@@ -173,13 +202,57 @@ class EndpointServiceTest {
             .verifyComplete();
       }
     }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @Test
+      @DisplayName("存在しないエンドポイントの場合はエラーになる")
+      void notExistingEndpointCauseException() {
+        // given
+        Endpoint after = Endpoint.builder()
+            .id(2L).namespaceId(2L).pathId(3L).method("GET")
+            .targetGroupId(3L).createdBy(2L).build();
+        when(endpointRepository.findById(2L)).thenReturn(Mono.empty());
+        when(endpointRepository.findDuplicate(2L, 3L, 3L, "GET")).thenReturn(Mono.empty());
+        when(endpointRepository.save(any(Endpoint.class))).thenReturn(Mono.just(after));
+        // when
+        Mono<Endpoint> clusterMono = endpointService.update(after);
+        // then
+        StepVerifier.create(clusterMono).expectError(NotExistingException.class).verify();
+      }
+    }
+
+    @Test
+    @DisplayName("すでに登録済みの場合はエラーになる")
+    void cannotUpdateWithDuplicateEndpoint() {
+      // given
+      Endpoint before = Endpoint.builder()
+          .id(2L).namespaceId(2L).pathId(2L).method("POST")
+          .targetGroupId(2L).createdBy(2L).build();
+      Endpoint after = Endpoint.builder()
+          .id(2L).namespaceId(3L).pathId(3L).method("PUT")
+          .targetGroupId(3L).createdBy(3L).build();
+      Endpoint duplicate = Endpoint.builder()
+          .id(2L).namespaceId(3L).pathId(3L).method("PUT")
+          .targetGroupId(3L).createdBy(3L).build();
+      when(endpointRepository.findById(2L)).thenReturn(Mono.just(before));
+      when(endpointRepository.findDuplicate(2L, 3L, 3L, "PUT")).thenReturn(Mono.just(duplicate));
+      when(endpointRepository.save(any(Endpoint.class))).thenReturn(Mono.just(after));
+      // when
+      Mono<Endpoint> clusterMono = endpointService.update(after);
+      // then
+      StepVerifier.create(clusterMono).expectError(RedundantException.class).verify();
+    }
   }
 
   @Nested
-  class delete {
+  class Delete {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("エンドポイントを削除できる")

@@ -31,7 +31,7 @@ class EndpointRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("エンドポイントの件数を取得できる")
@@ -50,7 +50,7 @@ class EndpointRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("エンドポイントを全件取得できる")
@@ -76,7 +76,7 @@ class EndpointRepositoryTest {
                     .extracting(Endpoint::getId, Endpoint::getNamespaceId,
                         Endpoint::getPathId, Endpoint::getMethod,
                         Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                    .containsExactly(3L, 3L, 3L, "PUT", 3L, 3L))
+                    .containsExactly(3L, 2L, 3L, "PUT", 3L, 3L))
             .verifyComplete();
       }
     }
@@ -88,7 +88,7 @@ class EndpointRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("エンドポイントをIDで取得できる")
@@ -116,7 +116,7 @@ class EndpointRepositoryTest {
   class Save {
 
     @Nested
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("エンドポイントを更新できる")
@@ -197,7 +197,7 @@ class EndpointRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("エンドポイントをIDで削除できる")
@@ -207,6 +207,32 @@ class EndpointRepositoryTest {
         // then
         StepVerifier.create(voidMono).verifyComplete();
         endpointRepository.findById(3L).as(StepVerifier::create).verifyComplete();
+      }
+    }
+  }
+
+  @Order(1)
+  @Nested
+  class findDuplicate {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("エンドポイントを重複チェックできる")
+      void findDuplicate() {
+        // when
+        Mono<Endpoint> booleanMono = endpointRepository.findDuplicate(1L, 1L, 1L, "GET");
+        // then
+        StepVerifier.create(booleanMono)
+            .assertNext(
+                endpoint -> assertThat(endpoint)
+                    .extracting(Endpoint::getId, Endpoint::getNamespaceId,
+                        Endpoint::getPathId, Endpoint::getMethod,
+                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
+                    .containsExactly(1L, 1L, 1L, "GET", 1L, 1L))
+            .verifyComplete();
       }
     }
   }

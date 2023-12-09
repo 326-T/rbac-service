@@ -31,7 +31,7 @@ class TargetGroupBelongingRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットとグループの関係情報の件数を取得できる")
@@ -50,7 +50,7 @@ class TargetGroupBelongingRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットとグループの関係情報を全件取得できる")
@@ -88,7 +88,7 @@ class TargetGroupBelongingRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットとグループの関係情報をIDで取得できる")
@@ -116,7 +116,7 @@ class TargetGroupBelongingRepositoryTest {
   class Save {
 
     @Nested
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットとグループの関係情報を更新できる")
@@ -195,7 +195,7 @@ class TargetGroupBelongingRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットとグループの関係情報をIDで削除できる")
@@ -205,6 +205,32 @@ class TargetGroupBelongingRepositoryTest {
         // then
         StepVerifier.create(voidMono).verifyComplete();
         targetGroupBelongingRepository.findById(3L).as(StepVerifier::create).verifyComplete();
+      }
+    }
+  }
+
+  @Order(1)
+  @Nested
+  class FindDuplicate {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ターゲットとグループの関係情報が重複しているかどうかを取得できる")
+      void findDuplicate() {
+        // when
+        Mono<TargetGroupBelonging> targetBelongsGroupMono = targetGroupBelongingRepository.findDuplicate(1L, 1L, 1L);
+        // then
+        StepVerifier.create(targetBelongsGroupMono)
+            .assertNext(
+                targetClusterBelonging -> assertThat(targetClusterBelonging)
+                    .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
+                        TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
+                        TargetGroupBelonging::getCreatedBy)
+                    .containsExactly(1L, 1L, 1L, 1L, 1L))
+            .verifyComplete();
       }
     }
   }

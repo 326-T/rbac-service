@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class AccessPrivilegeRequest {
 
-  private Long userId;
   private Long namespaceId;
   private String path;
   private String method;

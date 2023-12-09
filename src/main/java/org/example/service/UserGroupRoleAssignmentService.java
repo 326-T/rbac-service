@@ -1,6 +1,6 @@
 package org.example.service;
 
-import java.util.Objects;
+import java.time.LocalDateTime;
 import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.UserGroupRoleAssignment;
 import org.example.persistence.repository.UserGroupRoleAssignmentRepository;
@@ -30,11 +30,25 @@ public class UserGroupRoleAssignmentService {
     return userGroupRoleAssignmentRepository.findById(id);
   }
 
+  /**
+   * 1. 重複がないか確認する
+   * 2. 保存する
+   *
+   * @param userGroupRoleAssignment 保存するUserGroupRoleAssignment
+   *
+   * @return 保存されたUserGroupRoleAssignment
+   *
+   * @throws RedundantException 重複した場合
+   */
   public Mono<UserGroupRoleAssignment> insert(UserGroupRoleAssignment userGroupRoleAssignment) {
-    if (Objects.nonNull(userGroupRoleAssignment.getId())) {
-      return Mono.error(new RedundantException("Id field must be empty"));
-    }
-    return userGroupRoleAssignmentRepository.save(userGroupRoleAssignment);
+    userGroupRoleAssignment.setCreatedAt(LocalDateTime.now());
+    userGroupRoleAssignment.setUpdatedAt(LocalDateTime.now());
+    return userGroupRoleAssignmentRepository.findDuplicate(
+            userGroupRoleAssignment.getNamespaceId(),
+            userGroupRoleAssignment.getUserGroupId(), userGroupRoleAssignment.getRoleId())
+        .flatMap(present -> Mono.<UserGroupRoleAssignment>error(new RedundantException("UserGroupRoleAssignment already exists")))
+        .switchIfEmpty(Mono.just(userGroupRoleAssignment))
+        .flatMap(userGroupRoleAssignmentRepository::save);
   }
 
   public Mono<Void> deleteById(Long id) {

@@ -2,6 +2,9 @@ package org.example.web.controller;
 
 import org.example.persistence.entity.Path;
 import org.example.service.PathService;
+import org.example.service.ReactiveContextService;
+import org.example.web.request.PathInsertRequest;
+import org.example.web.request.PathUpdateRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,9 +23,11 @@ import reactor.core.publisher.Mono;
 public class PathRestController {
 
   private final PathService pathService;
+  private final ReactiveContextService reactiveContextService;
 
-  public PathRestController(PathService pathService) {
+  public PathRestController(PathService pathService, ReactiveContextService reactiveContextService) {
     this.pathService = pathService;
+    this.reactiveContextService = reactiveContextService;
   }
 
   @GetMapping
@@ -41,12 +46,19 @@ public class PathRestController {
   }
 
   @PostMapping
-  public Mono<Path> save(@RequestBody Path path) {
-    return pathService.insert(path);
+  public Mono<Path> save(@RequestBody PathInsertRequest request) {
+    return reactiveContextService.getCurrentUser()
+        .flatMap(u -> {
+          Path path = request.exportEntity();
+          path.setCreatedBy(u.getId());
+          return Mono.just(path);
+        })
+        .flatMap(pathService::insert);
   }
 
   @PutMapping("/{id}")
-  public Mono<Path> update(@PathVariable Long id, @RequestBody Path path) {
+  public Mono<Path> update(@PathVariable Long id, @RequestBody PathUpdateRequest request) {
+    Path path = request.exportEntity();
     path.setId(id);
     return pathService.update(path);
   }

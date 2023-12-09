@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import org.example.error.exception.NotExistingException;
+import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.Path;
 import org.example.persistence.repository.PathRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -28,7 +30,8 @@ class PathServiceTest {
   class Count {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("パスの件数を取得できる")
@@ -47,20 +50,17 @@ class PathServiceTest {
   class FindAll {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("パスを全件取得できる")
       void findAllTheIndexes() {
         // given
-        Path path1 = Path.builder()
-            .id(1L).namespaceId(1L).regex("/user-service/v1").createdBy(1L).build();
-        Path path2 = Path.builder()
-            .id(2L).namespaceId(2L).regex("/billing-service/v1").createdBy(2L).build();
-        Path path3 = Path.builder()
-            .id(3L).namespaceId(3L).regex("/movie-service/v1").createdBy(3L).build();
-        when(pathRepository.findAll()).thenReturn(Flux.just(path1, path2,
-            path3));
+        Path path1 = Path.builder().id(1L).namespaceId(1L).regex("/user-service/v1").createdBy(1L).build();
+        Path path2 = Path.builder().id(2L).namespaceId(2L).regex("/billing-service/v1").createdBy(2L).build();
+        Path path3 = Path.builder().id(3L).namespaceId(3L).regex("/movie-service/v1").createdBy(3L).build();
+        when(pathRepository.findAll()).thenReturn(Flux.just(path1, path2, path3));
         // when
         Flux<Path> clusterFlux = pathService.findAll();
         // then
@@ -86,22 +86,21 @@ class PathServiceTest {
   class FindById {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("パスをIDで取得できる")
       void findByIdTheIndex() {
         // given
-        Path path1 = Path.builder()
-            .id(1L).namespaceId(1L).regex("/user-service/v1").createdBy(1L).build();
+        Path path1 = Path.builder().id(1L).namespaceId(1L).regex("/user-service/v1").createdBy(1L).build();
         when(pathRepository.findById(1L)).thenReturn(Mono.just(path1));
         // when
         Mono<Path> clusterMono = pathService.findById(1L);
         // then
         StepVerifier.create(clusterMono)
             .assertNext(cluster -> assertThat(cluster)
-                .extracting(Path::getId, Path::getNamespaceId,
-                    Path::getRegex, Path::getCreatedBy)
+                .extracting(Path::getId, Path::getNamespaceId, Path::getRegex, Path::getCreatedBy)
                 .containsExactly(1L, 1L, "/user-service/v1", 1L))
             .verifyComplete();
       }
@@ -109,19 +108,19 @@ class PathServiceTest {
   }
 
   @Nested
-  class insert {
+  class Insert {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("パスを登録できる")
       void insertTheIndex() {
         // given
-        Path path1 = Path.builder()
-            .namespaceId(1L).regex("/user-service/v1").createdBy(1L).build();
-        when(pathRepository.save(any(Path.class))).thenReturn(
-            Mono.just(path1));
+        Path path1 = Path.builder().namespaceId(1L).regex("/user-service/v1").createdBy(1L).build();
+        when(pathRepository.save(any(Path.class))).thenReturn(Mono.just(path1));
+        when(pathRepository.findDuplicate(1L, "/user-service/v1")).thenReturn(Mono.empty());
         // when
         Mono<Path> clusterMono = pathService.insert(path1);
         // then
@@ -133,23 +132,42 @@ class PathServiceTest {
             .verifyComplete();
       }
     }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @Test
+      @DisplayName("パスが重複している場合はエラーになる")
+      void cannotCreateDuplicatePath() {
+        // given
+        Path before = Path.builder().namespaceId(1L).regex("/user-service/v1").createdBy(1L).build();
+        Path after = Path.builder().namespaceId(1L).regex("/user-service/v1").createdBy(1L).build();
+        when(pathRepository.save(any(Path.class))).thenReturn(Mono.just(before));
+        when(pathRepository.findDuplicate(1L, "/user-service/v1")).thenReturn(Mono.just(after));
+        // when
+        Mono<Path> clusterMono = pathService.insert(after);
+        // then
+        StepVerifier.create(clusterMono).expectError(RedundantException.class).verify();
+      }
+    }
   }
 
   @Nested
-  class update {
+  class Update {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("パスを更新できる")
       void updateTheIndex() {
         // given
-        Path before = Path.builder()
-            .id(2L).namespaceId(2L).regex("/billing-service/v1").createdBy(2L).build();
-        Path after = Path.builder()
-            .id(2L).namespaceId(2L).regex("/user-service/v1").createdBy(2L).build();
+        Path before = Path.builder().id(2L).namespaceId(2L).regex("/billing-service/v1").createdBy(2L).build();
+        Path after = Path.builder().id(2L).namespaceId(2L).regex("/user-service/v1").createdBy(2L).build();
         when(pathRepository.findById(2L)).thenReturn(Mono.just(before));
+        when(pathRepository.findDuplicate(2L, "/user-service/v1")).thenReturn(Mono.empty());
         when(pathRepository.save(any(Path.class))).thenReturn(Mono.just(after));
         // when
         Mono<Path> clusterMono = pathService.update(after);
@@ -162,13 +180,49 @@ class PathServiceTest {
             .verifyComplete();
       }
     }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @Test
+      @DisplayName("存在しないパスの場合はエラーになる")
+      void notExistingPathCauseException() {
+        // given
+        Path after = Path.builder().id(2L).namespaceId(2L).regex("/user-service/v1").createdBy(2L).build();
+        when(pathRepository.findById(2L)).thenReturn(Mono.empty());
+        when(pathRepository.findDuplicate(2L, "/user-service/v1")).thenReturn(Mono.empty());
+        when(pathRepository.save(any(Path.class))).thenReturn(Mono.just(after));
+        // when
+        Mono<Path> clusterMono = pathService.update(after);
+        // then
+        StepVerifier.create(clusterMono).expectError(NotExistingException.class).verify();
+      }
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotUpdateWithDuplicate() {
+        // given
+        Path before = Path.builder().id(2L).namespaceId(2L).regex("/billing-service/v1").createdBy(2L).build();
+        Path after = Path.builder().id(2L).namespaceId(2L).regex("/user-service/v1").createdBy(2L).build();
+        Path duplicate = Path.builder().id(3L).namespaceId(2L).regex("/user-service/v1").createdBy(2L).build();
+        when(pathRepository.findById(2L)).thenReturn(Mono.just(before));
+        when(pathRepository.findDuplicate(2L, "/user-service/v1")).thenReturn(Mono.just(duplicate));
+        when(pathRepository.save(any(Path.class))).thenReturn(Mono.just(after));
+        // when
+        Mono<Path> clusterMono = pathService.update(after);
+        // then
+        StepVerifier.create(clusterMono).expectError(RedundantException.class).verify();
+      }
+    }
   }
 
   @Nested
-  class delete {
+  class Delete {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("パスを削除できる")

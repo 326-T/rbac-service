@@ -23,7 +23,7 @@ public interface AccessPrivilegeRepository extends ReactiveCrudRepository<Access
       INNER JOIN rbac_user_group_belongings AS ugb ON u.id = ugb.user_id
       INNER JOIN rbac_namespaces AS n ON ugb.namespace_id = n.id
       INNER JOIN rbac_user_groups AS ug ON ugb.user_group_id = ug.id
-      INNER JOIN rbac_group_role_assignments AS gra ON ug.id = gra.user_group_id
+      INNER JOIN rbac_user_group_role_assignments AS gra ON ug.id = gra.user_group_id
       INNER JOIN rbac_roles AS r ON gra.role_id = r.id
       INNER JOIN rbac_role_endpoint_permissions AS rep ON r.id = rep.role_id
       INNER JOIN rbac_endpoints AS e ON rep.endpoint_id = e.id
@@ -48,7 +48,7 @@ public interface AccessPrivilegeRepository extends ReactiveCrudRepository<Access
       INNER JOIN rbac_user_group_belongings AS ugb ON u.id = ugb.user_id
       INNER JOIN rbac_namespaces AS n ON ugb.namespace_id = n.id
       INNER JOIN rbac_user_groups AS ug ON ugb.user_group_id = ug.id
-      INNER JOIN rbac_group_role_assignments AS gra ON ug.id = gra.user_group_id
+      INNER JOIN rbac_user_group_role_assignments AS gra ON ug.id = gra.user_group_id
       INNER JOIN rbac_roles AS r ON gra.role_id = r.id
       INNER JOIN rbac_role_endpoint_permissions AS rep ON r.id = rep.role_id
       INNER JOIN rbac_endpoints AS e ON rep.endpoint_id = e.id
@@ -56,7 +56,8 @@ public interface AccessPrivilegeRepository extends ReactiveCrudRepository<Access
       INNER JOIN rbac_target_groups AS tg ON tg.id = e.target_group_id
       INNER JOIN rbac_target_group_belongings AS tgb ON tg.id = tgb.target_group_id
       INNER JOIN rbac_targets AS t ON tgb.target_id = t.id
-      WHERE u.id = :userId;
+      WHERE u.id = :userId
+        AND n.id = :namespaceId;
       """)
-  Flux<AccessPrivilege> findByUser(Long userId);
+  Flux<AccessPrivilege> findByUserAndNamespace(Long userId, Long namespaceId);
 }

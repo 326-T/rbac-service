@@ -5,8 +5,11 @@ import static org.assertj.core.groups.Tuple.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import org.example.persistence.entity.User;
 import org.example.persistence.entity.UserGroupRoleAssignment;
+import org.example.service.ReactiveContextService;
 import org.example.service.UserGroupRoleAssignmentService;
+import org.example.web.filter.AuthenticationWebFilter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,17 +17,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@WebFluxTest(UserGroupRoleAssignmentRestController.class)
+@WebFluxTest(
+    controllers = UserGroupRoleAssignmentRestController.class,
+    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AuthenticationWebFilter.class)})
 @AutoConfigureWebTestClient
 class UserGroupRoleAssignmentRestControllerTest {
 
   @MockBean
   private UserGroupRoleAssignmentService userGroupRoleAssignmentService;
+  @MockBean
+  private ReactiveContextService reactiveContextService;
   @Autowired
   private WebTestClient webTestClient;
 
@@ -33,7 +42,7 @@ class UserGroupRoleAssignmentRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループとロールの関係の件数を取得できる")
@@ -55,7 +64,7 @@ class UserGroupRoleAssignmentRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループとロールの関係を全件取得できる")
@@ -95,7 +104,7 @@ class UserGroupRoleAssignmentRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループとロールの関係をIDで取得できる")
@@ -124,7 +133,7 @@ class UserGroupRoleAssignmentRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループとロールの関係を登録できる")
@@ -133,6 +142,7 @@ class UserGroupRoleAssignmentRestControllerTest {
         UserGroupRoleAssignment userGroupRoleAssignment = UserGroupRoleAssignment.builder()
             .id(4L).namespaceId(1L).userGroupId(1L).roleId(3L).createdBy(1L).build();
         when(userGroupRoleAssignmentService.insert(any(UserGroupRoleAssignment.class))).thenReturn(Mono.just(userGroupRoleAssignment));
+        when(reactiveContextService.getCurrentUser()).thenReturn(Mono.just(User.builder().id(1L).build()));
         // when, then
         webTestClient.post()
             .uri("/rbac-service/v1/group-role-assignments")
@@ -141,8 +151,7 @@ class UserGroupRoleAssignmentRestControllerTest {
                 {
                   "namespaceId": 1,
                   "userGroupId": 1,
-                  "roleId": 3,
-                  "createdBy": 1
+                  "roleId": 3
                 }
                 """
             )
@@ -159,11 +168,11 @@ class UserGroupRoleAssignmentRestControllerTest {
   }
 
   @Nested
-  class deleteById {
+  class DeleteById {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループとロールの関係を削除できる")

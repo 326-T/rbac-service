@@ -27,7 +27,7 @@ class AccessPrivilegeRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ネームスペース内の権限の一覧を全件取得できる")
@@ -49,8 +49,8 @@ class AccessPrivilegeRepositoryTest {
                         AccessPrivilege::getTargetId, AccessPrivilege::getObjectIdRegex
                     )
                     .containsExactly(
-                        1L, "user1",
-                        1L, "developers",
+                        2L, "user1",
+                        1L, "develop",
                         1L, "group1",
                         1L, "developers",
                         1L, "/user-service/v1/",
@@ -65,17 +65,17 @@ class AccessPrivilegeRepositoryTest {
 
   @Order(1)
   @Nested
-  class findByUser {
+  class findByUserAndNamespace {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
-      @DisplayName("ユーザーの権限の一覧を全件取得できる")
+      @DisplayName("ユーザーが持つネームスペース内の権限の一覧を全件取得できる")
       void findByUser() {
         // when
-        Flux<AccessPrivilege> accessPrivilegeFlux = accessPrivilegeRepository.findByUser(1L);
+        Flux<AccessPrivilege> accessPrivilegeFlux = accessPrivilegeRepository.findByUserAndNamespace(2L, 1L);
         // then
         StepVerifier.create(accessPrivilegeFlux)
             .assertNext(
@@ -91,8 +91,8 @@ class AccessPrivilegeRepositoryTest {
                         AccessPrivilege::getTargetId, AccessPrivilege::getObjectIdRegex
                     )
                     .containsExactly(
-                        1L, "user1",
-                        1L, "developers",
+                        2L, "user1",
+                        1L, "develop",
                         1L, "group1",
                         1L, "developers",
                         1L, "/user-service/v1/",

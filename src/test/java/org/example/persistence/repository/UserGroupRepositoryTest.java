@@ -31,7 +31,7 @@ class UserGroupRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループの件数を取得できる")
@@ -50,7 +50,7 @@ class UserGroupRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループを全件取得できる")
@@ -73,7 +73,7 @@ class UserGroupRepositoryTest {
                 group -> assertThat(group)
                     .extracting(UserGroup::getId, UserGroup::getNamespaceId,
                         UserGroup::getName, UserGroup::getCreatedBy)
-                    .containsExactly(3L, 3L, "group3", 3L))
+                    .containsExactly(3L, 2L, "group3", 3L))
             .verifyComplete();
       }
     }
@@ -85,7 +85,7 @@ class UserGroupRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループをIDで取得できる")
@@ -111,7 +111,7 @@ class UserGroupRepositoryTest {
   class Save {
 
     @Nested
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループを更新できる")
@@ -182,7 +182,7 @@ class UserGroupRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループをIDで削除できる")
@@ -192,6 +192,31 @@ class UserGroupRepositoryTest {
         // then
         StepVerifier.create(voidMono).verifyComplete();
         groupRepository.findById(3L).as(StepVerifier::create).verifyComplete();
+      }
+    }
+  }
+
+  @Order(1)
+  @Nested
+  class FindDuplicate {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ユーザグループの重複を検知できる")
+      void findDuplicateUserGroup() {
+        // when
+        Mono<UserGroup> userGroupMono = groupRepository.findDuplicate(1L, "group1");
+        // then
+        StepVerifier.create(userGroupMono)
+            .assertNext(
+                group -> assertThat(group)
+                    .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                        UserGroup::getName, UserGroup::getCreatedBy)
+                    .containsExactly(1L, 1L, "group1", 1L))
+            .verifyComplete();
       }
     }
   }

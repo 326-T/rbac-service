@@ -1,7 +1,6 @@
 package org.example.service;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.Role;
@@ -31,22 +30,51 @@ public class RoleService {
     return roleRepository.findById(id);
   }
 
+  /**
+   * 1. 重複がないか確認する
+   * 2. 保存する
+   *
+   * @param role 保存するRole
+   *
+   * @return 保存されたRole
+   *
+   * @throws RedundantException 重複した場合
+   */
   public Mono<Role> insert(Role role) {
-    if (Objects.nonNull(role.getId())) {
-      return Mono.error(new RedundantException("Id field must be empty"));
-    }
-    return roleRepository.save(role);
+    role.setCreatedAt(LocalDateTime.now());
+    role.setUpdatedAt(LocalDateTime.now());
+    return roleRepository.findDuplicate(role.getNamespaceId(), role.getName())
+        .flatMap(present -> Mono.<Role>error(new RedundantException("Role already exists")))
+        .switchIfEmpty(Mono.just(role))
+        .flatMap(roleRepository::save);
   }
 
+  /**
+   * 1. IDが存在してるか確認する
+   * 2. 変更内容をセットする
+   * 3. 重複がないか確認する
+   * 4. 保存する
+   *
+   * @param role nameのみ変更可能
+   *
+   * @return 更新されたRole
+   *
+   * @throws NotExistingException IDが存在しない場合
+   * @throws RedundantException   重複した場合
+   */
   public Mono<Role> update(Role role) {
-    return roleRepository.findById(role.getId()).flatMap(present -> {
-      if (Objects.isNull(present)) {
-        return Mono.error(new NotExistingException("Role not found"));
-      }
-      role.setUpdatedAt(LocalDateTime.now());
-      role.setCreatedAt(present.getCreatedAt());
-      return roleRepository.save(role);
-    });
+    Mono<Role> roleMono = roleRepository.findById(role.getId())
+        .switchIfEmpty(Mono.error(new NotExistingException("Role not found")))
+        .flatMap(present -> {
+          present.setName(role.getName());
+          present.setUpdatedAt(LocalDateTime.now());
+          return Mono.just(present);
+        });
+    return roleMono
+        .flatMap(r -> roleRepository.findDuplicate(r.getNamespaceId(), r.getName()))
+        .flatMap(present -> Mono.<Role>error(new RedundantException("Role already exists")))
+        .switchIfEmpty(roleMono)
+        .flatMap(roleRepository::save);
   }
 
   public Mono<Void> deleteById(Long id) {

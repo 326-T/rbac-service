@@ -3,6 +3,7 @@ package org.example.service;
 import java.time.LocalDateTime;
 import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
+import org.example.error.exception.UnAuthenticatedException;
 import org.example.persistence.entity.User;
 import org.example.persistence.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -85,6 +86,12 @@ public class UserService {
         .flatMap(present -> Mono.<User>error(new RedundantException("User already exists")))
         .switchIfEmpty(userMono)
         .flatMap(userRepository::save);
+  }
+
+  public Mono<User> login(String email, String password) {
+    return userRepository.findByEmail(email)
+        .filter(user -> passwordEncoder.matches(password, user.getPasswordDigest()))
+        .switchIfEmpty(Mono.error(new UnAuthenticatedException("name or password is incorrect")));
   }
 
   public Mono<Void> deleteById(Long id) {

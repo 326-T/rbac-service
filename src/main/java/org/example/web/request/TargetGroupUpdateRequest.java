@@ -1,5 +1,6 @@
 package org.example.web.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.persistence.entity.TargetGroup;
@@ -8,6 +9,7 @@ import org.example.persistence.entity.TargetGroup;
 @Data
 public class TargetGroupUpdateRequest {
 
+  @NotBlank
   private String name;
 
   public TargetGroup exportEntity() {

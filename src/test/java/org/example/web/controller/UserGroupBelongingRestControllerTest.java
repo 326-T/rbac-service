@@ -10,9 +10,12 @@ import org.example.persistence.entity.UserGroupBelonging;
 import org.example.service.ReactiveContextService;
 import org.example.service.UserGroupBelongingService;
 import org.example.web.filter.AuthenticationWebFilter;
+import org.example.web.request.UserGroupBelongingInsertRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
@@ -163,6 +166,36 @@ class UserGroupBelongingRestControllerTest {
                     .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
                         UserGroupBelonging::getUserId, UserGroupBelonging::getUserGroupId, UserGroupBelonging::getCreatedBy)
                     .containsExactly(4L, 1L, 1L, 3L, 1L));
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @DisplayName("バリデーションエラーが発生する")
+      @ParameterizedTest
+      @CsvSource({
+          ", 1, 1",
+          "0, 1, 1",
+          "1, , 1",
+          "1, 0, 1",
+          "1, 1, ",
+          "1, 1, 0",
+      })
+      void validationErrorOccurs(Long namespaceId, Long userId, Long userGroupId) {
+        // given
+        UserGroupBelongingInsertRequest userGroupBelongingInsertRequest = new UserGroupBelongingInsertRequest();
+        userGroupBelongingInsertRequest.setNamespaceId(namespaceId);
+        userGroupBelongingInsertRequest.setUserId(userId);
+        userGroupBelongingInsertRequest.setUserGroupId(userGroupId);
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/user-group-belongings")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(userGroupBelongingInsertRequest)
+            .exchange()
+            .expectStatus().isBadRequest();
       }
     }
   }

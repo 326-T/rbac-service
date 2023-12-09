@@ -1,5 +1,6 @@
 package org.example.web.controller;
 
+import jakarta.validation.Valid;
 import org.example.persistence.entity.UserGroupRoleAssignment;
 import org.example.service.ReactiveContextService;
 import org.example.service.UserGroupRoleAssignmentService;
@@ -46,7 +47,7 @@ public class UserGroupRoleAssignmentRestController {
 
   @PostMapping
   public Mono<UserGroupRoleAssignment> save(
-      @RequestBody UserGroupRoleAssignmentInsertRequest request) {
+      @Valid @RequestBody UserGroupRoleAssignmentInsertRequest request) {
     return reactiveContextService.getCurrentUser()
         .flatMap(u -> {
           UserGroupRoleAssignment userGroupRoleAssignment = request.exportEntity();

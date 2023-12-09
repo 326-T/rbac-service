@@ -1,5 +1,6 @@
 package org.example.web.controller;
 
+import jakarta.validation.Valid;
 import org.example.persistence.entity.TargetGroupBelonging;
 import org.example.service.ReactiveContextService;
 import org.example.service.TargetGroupBelongingService;
@@ -46,7 +47,7 @@ public class TargetGroupBelongingRestController {
 
   @PostMapping
   public Mono<TargetGroupBelonging> save(
-      @RequestBody TargetGroupBelongingInsertRequest request) {
+      @Valid @RequestBody TargetGroupBelongingInsertRequest request) {
     return reactiveContextService.getCurrentUser()
         .flatMap(u -> {
           TargetGroupBelonging targetGroupBelonging = request.exportEntity();

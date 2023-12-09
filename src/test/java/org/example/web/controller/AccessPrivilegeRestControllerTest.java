@@ -15,6 +15,8 @@ import org.example.web.request.AccessPrivilegeRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
@@ -107,8 +109,10 @@ class AccessPrivilegeRestControllerTest {
       void canAccessThePath() {
         // given
         AccessPrivilegeRequest accessPrivilegeRequest = new AccessPrivilegeRequest();
+        accessPrivilegeRequest.setNamespaceId(1L);
         accessPrivilegeRequest.setPath("/user-service/v1/");
         accessPrivilegeRequest.setMethod("GET");
+        accessPrivilegeRequest.setObjectId("object-id-1");
         when(accessPrivilegeService.canAccess(eq(1L), any(AccessPrivilegeRequest.class)))
             .thenReturn(Mono.just(true));
         when(reactiveContextService.getCurrentUser()).thenReturn(Mono.just(User.builder().id(1L).build()));
@@ -121,6 +125,42 @@ class AccessPrivilegeRestControllerTest {
             .expectStatus().isOk()
             .expectBody(Boolean.class)
             .isEqualTo(true);
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @DisplayName("バリデーションエラーが発生する")
+      @ParameterizedTest
+      @CsvSource({
+          ", /user-service/v1/, GET, object-id-1",
+          "0, /user-service/v1/, GET, object-id-1",
+          "1, , GET, object-id-1",
+          "1, '', GET, object-id-1",
+          "1, ' ', GET, object-id-1",
+          "1, /user-service/v1/, , object-id-1",
+          "1, /user-service/v1/, '', object-id-1",
+          "1, /user-service/v1/, ' ', object-id-1",
+          "1, /user-service/v1/, GET, ",
+          "1, /user-service/v1/, GET, ''",
+          "1, /user-service/v1/, GET, ' '",
+      })
+      void validationErrorOccurs(Long namespaceId, String path, String method, String objectId) {
+        // given
+        AccessPrivilegeRequest accessPrivilegeRequest = new AccessPrivilegeRequest();
+        accessPrivilegeRequest.setNamespaceId(namespaceId);
+        accessPrivilegeRequest.setPath(path);
+        accessPrivilegeRequest.setMethod(method);
+        accessPrivilegeRequest.setObjectId(objectId);
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/access-privileges/can-i")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(accessPrivilegeRequest)
+            .exchange()
+            .expectStatus().isBadRequest();
       }
     }
   }

@@ -1,5 +1,6 @@
 package org.example.web.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.persistence.entity.Role;
@@ -8,6 +9,7 @@ import org.example.persistence.entity.Role;
 @Data
 public class RoleUpdateRequest {
 
+  @NotBlank
   private String name;
 
   public Role exportEntity() {

@@ -1,5 +1,6 @@
 package org.example.web.controller;
 
+import jakarta.validation.Valid;
 import org.example.persistence.entity.Role;
 import org.example.service.ReactiveContextService;
 import org.example.service.RoleService;
@@ -47,7 +48,7 @@ public class RoleRestController {
   }
 
   @PostMapping
-  public Mono<Role> save(@RequestBody RoleInsertRequest request) {
+  public Mono<Role> save(@Valid @RequestBody RoleInsertRequest request) {
     return reactiveContextService.getCurrentUser()
         .flatMap(u -> {
           Role role = request.exportEntity();
@@ -58,7 +59,7 @@ public class RoleRestController {
   }
 
   @PutMapping("/{id}")
-  public Mono<Role> update(@PathVariable Long id, @RequestBody RoleUpdateRequest request) {
+  public Mono<Role> update(@PathVariable Long id, @Valid @RequestBody RoleUpdateRequest request) {
     Role role = request.exportEntity();
     role.setId(id);
     return roleService.update(role);

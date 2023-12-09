@@ -10,9 +10,12 @@ import org.example.persistence.entity.User;
 import org.example.service.NamespaceService;
 import org.example.service.ReactiveContextService;
 import org.example.web.filter.AuthenticationWebFilter;
+import org.example.web.request.NamespaceUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
@@ -158,6 +161,27 @@ class NamespaceRestControllerTest {
                     .containsExactly(2L, "kvs", 1L));
       }
     }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @DisplayName("バリデーションエラーが発生する")
+      @ParameterizedTest
+      @ValueSource(strings = {"", " "})
+      void validationErrorOccurs(String name) {
+        // given
+        NamespaceUpdateRequest namespaceUpdateRequest = new NamespaceUpdateRequest();
+        namespaceUpdateRequest.setName(name);
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/namespaces/2")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(namespaceUpdateRequest)
+            .exchange()
+            .expectStatus().isBadRequest();
+      }
+    }
   }
 
   @Nested
@@ -192,6 +216,27 @@ class NamespaceRestControllerTest {
                 assertThat(response.getResponseBody())
                     .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
                     .containsExactly(4L, "vault", 1L));
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @DisplayName("バリデーションエラーが発生する")
+      @ParameterizedTest
+      @ValueSource(strings = {"", " "})
+      void validationErrorOccurs(String name) {
+        // given
+        NamespaceUpdateRequest namespaceUpdateRequest = new NamespaceUpdateRequest();
+        namespaceUpdateRequest.setName(name);
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/namespaces")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(namespaceUpdateRequest)
+            .exchange()
+            .expectStatus().isBadRequest();
       }
     }
   }

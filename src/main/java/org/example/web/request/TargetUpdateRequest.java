@@ -1,5 +1,6 @@
 package org.example.web.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.persistence.entity.Target;
@@ -8,12 +9,11 @@ import org.example.persistence.entity.Target;
 @Data
 public class TargetUpdateRequest {
 
-  private Long namespaceId;
+  @NotBlank
   private String objectIdRegex;
 
   public Target exportEntity() {
     return Target.builder()
-        .namespaceId(namespaceId)
         .objectIdRegex(objectIdRegex)
         .build();
   }

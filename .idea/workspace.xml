@@ -4,61 +4,43 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[update]タイポの修正">
+    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[add]更新時にも重複チェックを追加">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/AccessPrivilegeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/AccessPrivilegeService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/EndpointService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/EndpointService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/NamespaceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/NamespaceService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/PathService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/PathService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/RoleEndpointPermissionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/RoleEndpointPermissionService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/RoleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/RoleService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/TargetGroupBelongingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/TargetGroupBelongingService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/TargetGroupService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/TargetGroupService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/TargetService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/TargetService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/UserGroupBelongingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/UserGroupBelongingService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/UserGroupRoleAssignmentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/UserGroupRoleAssignmentService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/UserGroupService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/UserGroupService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/AccessPrivilegeAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/AccessPrivilegeAPITest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/EndpointAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/EndpointAPITest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/NamespaceAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/NamespaceAPITest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/PathAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/PathAPITest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/RoleAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/RoleAPITest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/RoleEndpointPermissionAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/RoleEndpointPermissionAPITest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/TargetAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/TargetAPITest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/TargetGroupAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/TargetGroupAPITest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/TargetGroupBelongingAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/TargetGroupBelongingAPITest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/UserAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/UserAPITest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/UserGroupAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/UserGroupAPITest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/UserGroupBelongingAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/UserGroupBelongingAPITest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/UserGroupRoleAssignmentAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/UserGroupRoleAssignmentAPITest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/AccessPrivilegeRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/AccessPrivilegeRepositoryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/EndpointRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/EndpointRepositoryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/NamespaceRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/NamespaceRepositoryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/PathRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/PathRepositoryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/RoleEndpointPermissionRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/RoleEndpointPermissionRepositoryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/RoleRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/RoleRepositoryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/TargetGroupBelongingRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/TargetGroupBelongingRepositoryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/TargetGroupRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/TargetGroupRepositoryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/TargetRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/TargetRepositoryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/UserGroupBelongingRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/UserGroupBelongingRepositoryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/UserGroupRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/UserGroupRepositoryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/UserGroupRoleAssignmentRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/UserGroupRoleAssignmentRepositoryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/UserRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/UserRepositoryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/AccessPrivilegeServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/AccessPrivilegeServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/EndpointServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/EndpointServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/JwtServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/JwtServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/NamespaceServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/NamespaceServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/PathServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/PathServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/RoleEndpointPermissionServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/RoleEndpointPermissionServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/RoleServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/RoleServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/TargetGroupBelongingServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/TargetGroupBelongingServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/TargetGroupServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/TargetGroupServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/TargetServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/TargetServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupBelongingServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupBelongingServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupRoleAssignmentServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupRoleAssignmentServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/UserServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/UserServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/AccessPrivilegeRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/AccessPrivilegeRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/EndpointRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/EndpointRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/NamespaceRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/NamespaceRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/PathRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/PathRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/RoleEndpointPermissionRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/RoleEndpointPermissionRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/RoleRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/RoleRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/TargetGroupBelongingRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/TargetGroupBelongingRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/TargetGroupRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/TargetGroupRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/TargetRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/TargetRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserGroupBelongingRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserGroupBelongingRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserGroupRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserGroupRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserGroupRoleAssignmentRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserGroupRoleAssignmentRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/AccessPrivilegeRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/AccessPrivilegeRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/EndpointInsertRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/EndpointInsertRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/EndpointUpdateRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/EndpointUpdateRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/NamespaceInsertRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/NamespaceInsertRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/NamespaceUpdateRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/NamespaceUpdateRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/PathInsertRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/PathInsertRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/PathUpdateRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/PathUpdateRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/RoleEndpointPermissionInsertRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/RoleEndpointPermissionInsertRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/RoleInsertRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/RoleInsertRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/RoleUpdateRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/RoleUpdateRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/TargetGroupBelongingInsertRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/TargetGroupBelongingInsertRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/TargetGroupInsertRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/TargetGroupInsertRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/TargetGroupUpdateRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/TargetGroupUpdateRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/TargetInsertRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/TargetInsertRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/TargetUpdateRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/TargetUpdateRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/UserGroupBelongingInsertRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/UserGroupBelongingInsertRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/UserGroupInsertRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/UserGroupInsertRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/UserGroupRoleAssignmentInsertRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/UserGroupRoleAssignmentInsertRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/UserGroupUpdateRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/UserGroupUpdateRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/UserInsertRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/UserInsertRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/UserUpdateRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/UserUpdateRequest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/AccessPrivilegeRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/AccessPrivilegeRestControllerTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/EndpointRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/EndpointRestControllerTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/NamespaceRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/NamespaceRestControllerTest.java" afterDir="false" />
@@ -72,13 +54,6 @@
       <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserGroupRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserGroupRestControllerTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserGroupRoleAssignmentRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserGroupRoleAssignmentRestControllerTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserRestControllerTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/filter/AuthenticationWebFilterTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/filter/AuthenticationWebFilterTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.103__user_groups_data.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.103__user_groups_data.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.105__roles_data.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.105__roles_data.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.107__paths_data.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.107__paths_data.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.108__targets_data.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.108__targets_data.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.109__target_groups_data.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.109__target_groups_data.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.111__endpoints_data.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.111__endpoints_data.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,8 +90,8 @@
               <option name="branches">
                 <list>
                   <RecentBranch>
-                    <option name="branchName" value="feature/authorization" />
-                    <option name="lastUsedInstant" value="1701691742" />
+                    <option name="branchName" value="feature/validation" />
+                    <option name="lastUsedInstant" value="1702115360" />
                   </RecentBranch>
                   <RecentBranch>
                     <option name="branchName" value="main" />
@@ -193,82 +168,83 @@
       <recent name="org.example.service" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.example in rbac-service">
-    <configuration name="TargetAPITest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="JUnit.java in rbac-service">
+    <configuration name="UserGroupRestControllerTest$Save$Error" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.it.*" />
+          <option name="PATTERN" value="org.example.web.controller.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.it" />
-      <option name="MAIN_CLASS_NAME" value="org.example.it.TargetAPITest" />
+      <option name="PACKAGE_NAME" value="org.example.web.controller.UserGroupRestControllerTest.Save" />
+      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.UserGroupRestControllerTest$Save$Error" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TargetGroupAPITest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="UserGroupRestControllerTest$Update$Error" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.it.*" />
+          <option name="PATTERN" value="org.example.web.controller.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.it" />
-      <option name="MAIN_CLASS_NAME" value="org.example.it.TargetGroupAPITest" />
+      <option name="PACKAGE_NAME" value="org.example.web.controller.UserGroupRestControllerTest.Update" />
+      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.UserGroupRestControllerTest$Update$Error" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="UserAPITest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="UserRestControllerTest$Save.validationErrorOccurs" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.it.*" />
+          <option name="PATTERN" value="org.example.web.controller.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.it" />
-      <option name="MAIN_CLASS_NAME" value="org.example.it.UserAPITest" />
+      <option name="PACKAGE_NAME" value="org.example.web.controller.UserRestControllerTest" />
+      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.UserRestControllerTest$Save" />
+      <option name="METHOD_NAME" value="validationErrorOccurs(java.lang.String,java.lang.String,java.lang.String)" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UserRestControllerTest$Update$Error" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rbac-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.web.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.web.controller.UserRestControllerTest.Update" />
+      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.UserRestControllerTest$Update$Error" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="UserGroupAPITest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="rbac-service" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.it.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.it" />
-      <option name="MAIN_CLASS_NAME" value="org.example.it.UserGroupAPITest" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="example in rbac-service" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="java in rbac-service" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <option name="TEST_OBJECT" value="directory" />
-      <dir value="$PROJECT_DIR$/src/test/java/org/example" />
+      <dir value="$PROJECT_DIR$/src/test/java" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.example in rbac-service" />
-        <item itemvalue="JUnit.UserAPITest" />
-        <item itemvalue="JUnit.UserGroupAPITest" />
-        <item itemvalue="JUnit.TargetAPITest" />
-        <item itemvalue="JUnit.TargetGroupAPITest" />
+        <item itemvalue="JUnit.java in rbac-service" />
+        <item itemvalue="JUnit.UserRestControllerTest$Update$Error" />
+        <item itemvalue="JUnit.UserRestControllerTest$Save.validationErrorOccurs" />
+        <item itemvalue="JUnit.UserGroupRestControllerTest$Update$Error" />
+        <item itemvalue="JUnit.UserGroupRestControllerTest$Save$Error" />
       </list>
     </recent_temporary>
   </component>

@@ -1,5 +1,6 @@
 package org.example.web.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.persistence.entity.Namespace;
@@ -8,6 +9,7 @@ import org.example.persistence.entity.Namespace;
 @Data
 public class NamespaceUpdateRequest {
 
+  @NotBlank
   private String name;
 
   public Namespace exportEntity() {

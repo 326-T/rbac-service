@@ -1,5 +1,6 @@
 package org.example.web.controller;
 
+import jakarta.validation.Valid;
 import org.example.persistence.entity.UserGroup;
 import org.example.service.ReactiveContextService;
 import org.example.service.UserGroupService;
@@ -46,7 +47,7 @@ public class UserGroupRestController {
   }
 
   @PostMapping
-  public Mono<UserGroup> save(@RequestBody UserGroupInsertRequest request) {
+  public Mono<UserGroup> save(@Valid @RequestBody UserGroupInsertRequest request) {
     return reactiveContextService.getCurrentUser()
         .flatMap(u -> {
           UserGroup userGroup = request.exportEntity();
@@ -57,7 +58,7 @@ public class UserGroupRestController {
   }
 
   @PutMapping("/{id}")
-  public Mono<UserGroup> update(@PathVariable Long id, @RequestBody UserGroupUpdateRequest request) {
+  public Mono<UserGroup> update(@PathVariable Long id, @Valid @RequestBody UserGroupUpdateRequest request) {
     UserGroup userGroup = request.exportEntity();
     userGroup.setId(id);
     return userGroupService.update(userGroup);

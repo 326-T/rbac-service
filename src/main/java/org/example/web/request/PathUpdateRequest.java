@@ -1,5 +1,6 @@
 package org.example.web.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.persistence.entity.Path;
@@ -8,6 +9,7 @@ import org.example.persistence.entity.Path;
 @Data
 public class PathUpdateRequest {
 
+  @NotBlank
   private String regex;
 
   public Path exportEntity() {

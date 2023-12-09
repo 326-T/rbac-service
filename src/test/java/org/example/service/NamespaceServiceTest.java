@@ -30,7 +30,8 @@ class NamespaceServiceTest {
   class Count {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ネームスペースの件数を取得できる")
@@ -49,7 +50,8 @@ class NamespaceServiceTest {
   class FindAll {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ネームスペースを全件取得できる")
@@ -84,7 +86,8 @@ class NamespaceServiceTest {
   class FindById {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ネームスペースをIDで取得できる")
@@ -106,10 +109,11 @@ class NamespaceServiceTest {
   }
 
   @Nested
-  class insert {
+  class Insert {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ネームスペースを登録できる")
@@ -131,7 +135,7 @@ class NamespaceServiceTest {
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("登録済みと重複する場合はエラーになる")
@@ -150,10 +154,11 @@ class NamespaceServiceTest {
   }
 
   @Nested
-  class update {
+  class Update {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ネームスペースを更新できる")
@@ -164,6 +169,7 @@ class NamespaceServiceTest {
         Namespace after = Namespace.builder()
             .id(1L).name("namespace1").createdBy(1L).build();
         when(namespaceRepository.findById(1L)).thenReturn(Mono.just(before));
+        when(namespaceRepository.findDuplicate("namespace1")).thenReturn(Mono.empty());
         when(namespaceRepository.save(any(Namespace.class))).thenReturn(Mono.just(after));
         // when
         Mono<Namespace> namespaceMono = namespaceService.update(after);
@@ -178,7 +184,7 @@ class NamespaceServiceTest {
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("存在しないNamespaceの場合はエラーになる")
@@ -193,14 +199,34 @@ class NamespaceServiceTest {
         // then
         StepVerifier.create(namespaceMono).expectError(NotExistingException.class).verify();
       }
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotUpdateWithDuplicate() {
+        // given
+        Namespace before = Namespace.builder()
+            .id(2L).name("namespace2").createdBy(2L).build();
+        Namespace after = Namespace.builder()
+            .id(2L).name("namespace1").createdBy(1L).build();
+        Namespace duplicate = Namespace.builder()
+            .id(1L).name("namespace1").createdBy(1L).build();
+        when(namespaceRepository.findById(2L)).thenReturn(Mono.just(before));
+        when(namespaceRepository.findDuplicate("namespace1")).thenReturn(Mono.just(duplicate));
+        when(namespaceRepository.save(any(Namespace.class))).thenReturn(Mono.just(after));
+        // when
+        Mono<Namespace> namespaceMono = namespaceService.update(after);
+        // then
+        StepVerifier.create(namespaceMono).expectError(RedundantException.class).verify();
+      }
     }
   }
 
   @Nested
-  class delete {
+  class Delete {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ネームスペースを削除できる")

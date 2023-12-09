@@ -2,4 +2,4 @@ INSERT INTO rbac_endpoints (namespace_id, path_id, target_group_id, method, crea
 VALUES
     (1, 1, 1, 'GET', 1),
     (2, 2, 2, 'POST', 2),
-    (3, 3, 3, 'PUT', 3);
+    (2, 3, 3, 'PUT', 3);

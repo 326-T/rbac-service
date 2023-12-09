@@ -31,7 +31,7 @@ class RoleServiceTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールの件数を取得できる")
@@ -51,7 +51,7 @@ class RoleServiceTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールを全件取得できる")
@@ -85,7 +85,7 @@ class RoleServiceTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールをIDで取得できる")
@@ -107,11 +107,11 @@ class RoleServiceTest {
   }
 
   @Nested
-  class insert {
+  class Insert {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールを登録できる")
@@ -133,7 +133,7 @@ class RoleServiceTest {
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
@@ -152,11 +152,11 @@ class RoleServiceTest {
   }
 
   @Nested
-  class update {
+  class Update {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールを更新できる")
@@ -165,6 +165,7 @@ class RoleServiceTest {
         Role before = Role.builder().id(2L).namespaceId(2L).name("operator").createdBy(2L).build();
         Role after = Role.builder().id(2L).namespaceId(2L).name("developer").createdBy(2L).build();
         when(roleRepository.findById(2L)).thenReturn(Mono.just(before));
+        when(roleRepository.findDuplicate(2L, "developer")).thenReturn(Mono.empty());
         when(roleRepository.save(any(Role.class))).thenReturn(Mono.just(after));
         // when
         Mono<Role> groupMono = roleService.update(after);
@@ -180,7 +181,7 @@ class RoleServiceTest {
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("存在しないロールの場合はエラーになる")
@@ -188,21 +189,38 @@ class RoleServiceTest {
         // given
         Role after = Role.builder().id(2L).namespaceId(2L).name("developer").createdBy(2L).build();
         when(roleRepository.findById(2L)).thenReturn(Mono.empty());
+        when(roleRepository.findDuplicate(2L, "developer")).thenReturn(Mono.empty());
         when(roleRepository.save(any(Role.class))).thenReturn(Mono.just(after));
         // when
         Mono<Role> groupMono = roleService.update(after);
         // then
         StepVerifier.create(groupMono).expectError(NotExistingException.class).verify();
       }
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotUpdateWithDuplicate() {
+        // given
+        Role before = Role.builder().id(2L).namespaceId(2L).name("operator").createdBy(2L).build();
+        Role after = Role.builder().id(2L).namespaceId(2L).name("developer").createdBy(2L).build();
+        Role duplicate = Role.builder().id(3L).namespaceId(2L).name("developer").createdBy(2L).build();
+        when(roleRepository.findById(2L)).thenReturn(Mono.just(before));
+        when(roleRepository.findDuplicate(2L, "developer")).thenReturn(Mono.just(duplicate));
+        when(roleRepository.save(any(Role.class))).thenReturn(Mono.just(after));
+        // when
+        Mono<Role> groupMono = roleService.update(after);
+        // then
+        StepVerifier.create(groupMono).expectError(RedundantException.class).verify();
+      }
     }
   }
 
   @Nested
-  class delete {
+  class Delete {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールを削除できる")

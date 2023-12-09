@@ -31,7 +31,7 @@ class TargetGroupRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループの件数を取得できる")
@@ -50,7 +50,7 @@ class TargetGroupRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループを全件取得できる")
@@ -73,7 +73,7 @@ class TargetGroupRepositoryTest {
                 cluster -> assertThat(cluster)
                     .extracting(TargetGroup::getId, TargetGroup::getNamespaceId,
                         TargetGroup::getName, TargetGroup::getCreatedBy)
-                    .containsExactly(3L, 3L, "target-group-3", 3L))
+                    .containsExactly(3L, 2L, "target-group-3", 3L))
             .verifyComplete();
       }
     }
@@ -85,7 +85,7 @@ class TargetGroupRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループをIDで取得できる")
@@ -111,7 +111,7 @@ class TargetGroupRepositoryTest {
   class Save {
 
     @Nested
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループを更新できる")
@@ -182,7 +182,7 @@ class TargetGroupRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループをIDで削除できる")
@@ -202,7 +202,7 @@ class TargetGroupRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("重複するターゲットグループを検索できる")

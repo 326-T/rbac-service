@@ -49,7 +49,7 @@ public class UserGroupRoleAssignmentAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("グループとロールの関係情報の件数を取得できる")
@@ -71,7 +71,7 @@ public class UserGroupRoleAssignmentAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("グループとロールの関係情報を全件取得できる")
@@ -105,7 +105,7 @@ public class UserGroupRoleAssignmentAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("グループとロールの関係情報をIDで取得できる")
@@ -136,7 +136,7 @@ public class UserGroupRoleAssignmentAPITest {
   class Save {
 
     @Nested
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("グループとロールの関係情報を新規登録できる")
@@ -177,7 +177,7 @@ public class UserGroupRoleAssignmentAPITest {
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
@@ -220,7 +220,7 @@ public class UserGroupRoleAssignmentAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("グループとロールの関係情報をIDで削除できる")

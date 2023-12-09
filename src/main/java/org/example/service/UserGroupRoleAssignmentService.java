@@ -30,6 +30,16 @@ public class UserGroupRoleAssignmentService {
     return userGroupRoleAssignmentRepository.findById(id);
   }
 
+  /**
+   * 1. 重複がないか確認する
+   * 2. 保存する
+   *
+   * @param userGroupRoleAssignment 保存するUserGroupRoleAssignment
+   *
+   * @return 保存されたUserGroupRoleAssignment
+   *
+   * @throws RedundantException 重複した場合
+   */
   public Mono<UserGroupRoleAssignment> insert(UserGroupRoleAssignment userGroupRoleAssignment) {
     userGroupRoleAssignment.setCreatedAt(LocalDateTime.now());
     userGroupRoleAssignment.setUpdatedAt(LocalDateTime.now());

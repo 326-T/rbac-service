@@ -42,7 +42,7 @@ class NamespaceRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ネームスペースの件数を取得できる")
@@ -64,7 +64,7 @@ class NamespaceRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ネームスペースを全件取得できる")
@@ -102,7 +102,7 @@ class NamespaceRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ネームスペースをIDで取得できる")
@@ -130,7 +130,7 @@ class NamespaceRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ネームスペースを更新できる")
@@ -165,7 +165,7 @@ class NamespaceRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ネームスペースを登録できる")
@@ -197,11 +197,11 @@ class NamespaceRestControllerTest {
   }
 
   @Nested
-  class deleteById {
+  class DeleteById {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ネームスペースを削除できる")

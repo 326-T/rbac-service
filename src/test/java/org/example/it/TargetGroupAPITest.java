@@ -49,7 +49,7 @@ public class TargetGroupAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループの件数を取得できる")
@@ -71,7 +71,7 @@ public class TargetGroupAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループを全件取得できる")
@@ -91,7 +91,7 @@ public class TargetGroupAPITest {
                   .containsExactly(
                       tuple(1L, 1L, "target-group-1", 1L),
                       tuple(2L, 2L, "target-group-2", 2L),
-                      tuple(3L, 3L, "target-group-3", 3L));
+                      tuple(3L, 2L, "target-group-3", 3L));
             });
       }
     }
@@ -103,7 +103,7 @@ public class TargetGroupAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループをIDで取得できる")
@@ -133,7 +133,7 @@ public class TargetGroupAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループを更新できる")
@@ -174,7 +174,7 @@ public class TargetGroupAPITest {
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("存在しないターゲットグループの場合はエラーになる")
@@ -206,6 +206,35 @@ public class TargetGroupAPITest {
                         "指定されたリソースは存在しません。")
             );
       }
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotUpdateWithDuplicate() {
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/target-groups/2")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "name": "target-group-2"
+                }
+                """)
+            .exchange()
+            .expectStatus().is4xxClientError()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        409, null,
+                        "Unique制約に違反している",
+                        "org.example.error.exception.RedundantException: TargetGroup already exists",
+                        "作成済みのリソースと重複しています。")
+            );
+      }
     }
   }
 
@@ -217,7 +246,7 @@ public class TargetGroupAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループを新規登録できる")
@@ -259,7 +288,7 @@ public class TargetGroupAPITest {
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
@@ -301,7 +330,7 @@ public class TargetGroupAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループをIDで削除できる")

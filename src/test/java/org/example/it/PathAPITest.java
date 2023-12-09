@@ -50,7 +50,7 @@ public class PathAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("パスの件数を取得できる")
@@ -72,7 +72,7 @@ public class PathAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("パスを全件取得できる")
@@ -91,7 +91,7 @@ public class PathAPITest {
                   .containsExactly(
                       tuple(1L, 1L, "/user-service/v1/", 1L),
                       tuple(2L, 2L, "/billing-service/v1/", 2L),
-                      tuple(3L, 3L, "/inventory-service/v2/", 3L));
+                      tuple(3L, 2L, "/inventory-service/v2/", 3L));
             });
       }
     }
@@ -103,7 +103,7 @@ public class PathAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("パスをIDで取得できる")
@@ -132,7 +132,7 @@ public class PathAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("パスを更新できる")
@@ -174,7 +174,7 @@ public class PathAPITest {
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("存在しないパスの場合はエラーになる")
@@ -205,6 +205,36 @@ public class PathAPITest {
                         "指定されたリソースは存在しません。")
             );
       }
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotUpdateWithDuplicate() {
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/paths/2")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "regex": "/inventory-service/v2/"
+                }
+                """
+            )
+            .exchange()
+            .expectStatus().is4xxClientError()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        409, null,
+                        "Unique制約に違反している",
+                        "org.example.error.exception.RedundantException: Path already exists",
+                        "作成済みのリソースと重複しています。")
+            );
+      }
     }
   }
 
@@ -216,7 +246,7 @@ public class PathAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("パスを新規登録できる")
@@ -259,7 +289,7 @@ public class PathAPITest {
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
@@ -302,7 +332,7 @@ public class PathAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("パスをIDで削除できる")

@@ -51,7 +51,7 @@ public class RoleAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールの件数を取得できる")
@@ -73,7 +73,7 @@ public class RoleAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールを全件取得できる")
@@ -92,7 +92,7 @@ public class RoleAPITest {
                   .containsExactly(
                       tuple(1L, 1L, "developers", 1L),
                       tuple(2L, 2L, "operations", 2L),
-                      tuple(3L, 3L, "security", 3L)
+                      tuple(3L, 2L, "security", 3L)
                   );
             });
       }
@@ -105,7 +105,7 @@ public class RoleAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールをIDで取得できる")
@@ -134,7 +134,7 @@ public class RoleAPITest {
   class Update {
 
     @Nested
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールを更新できる")
@@ -174,7 +174,7 @@ public class RoleAPITest {
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("存在しないロールの場合はエラーになる")
@@ -204,6 +204,36 @@ public class RoleAPITest {
                         "org.example.error.exception.NotExistingException: Role not found",
                         "指定されたリソースは存在しません。"));
       }
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotUpdateWithDuplicate() {
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/roles/2")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "name": "security"
+                }
+                """
+            )
+            .exchange()
+            .expectStatus().is4xxClientError()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        409, null,
+                        "Unique制約に違反している",
+                        "org.example.error.exception.RedundantException: Role already exists",
+                        "作成済みのリソースと重複しています。")
+            );
+      }
     }
   }
 
@@ -215,7 +245,7 @@ public class RoleAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールを新規登録できる")
@@ -256,7 +286,7 @@ public class RoleAPITest {
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
@@ -297,7 +327,7 @@ public class RoleAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールをIDで削除できる")

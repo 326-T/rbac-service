@@ -32,7 +32,7 @@ class AuthenticationWebFilterTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("認証済みの場合、ユーザ情報をコンテキストに設定する")

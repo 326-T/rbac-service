@@ -30,6 +30,16 @@ public class PathService {
     return pathRepository.findById(id);
   }
 
+  /**
+   * 1. 重複がないか確認する
+   * 2. 保存する
+   *
+   * @param path 保存するPath
+   *
+   * @return 保存されたPath
+   *
+   * @throws RedundantException 重複した場合
+   */
   public Mono<Path> insert(Path path) {
     path.setCreatedAt(LocalDateTime.now());
     path.setUpdatedAt(LocalDateTime.now());
@@ -39,14 +49,30 @@ public class PathService {
         .flatMap(pathRepository::save);
   }
 
+  /**
+   * 1. IDが存在してるか確認する
+   * 2. 変更内容をセットする
+   * 3. 重複がないか確認する
+   * 4. 保存する
+   *
+   * @param path regexのみ変更可能
+   *
+   * @return 更新されたPath
+   *
+   * @throws NotExistingException IDが存在しない場合
+   * @throws RedundantException   重複した場合
+   */
   public Mono<Path> update(Path path) {
-    return pathRepository.findById(path.getId())
+    Mono<Path> pathMono = pathRepository.findById(path.getId())
         .switchIfEmpty(Mono.error(new NotExistingException("Path not found")))
         .flatMap(present -> {
           present.setRegex(path.getRegex());
           present.setUpdatedAt(LocalDateTime.now());
           return Mono.just(present);
-        })
+        });
+    return pathMono.flatMap(e -> pathRepository.findDuplicate(e.getNamespaceId(), e.getRegex()))
+        .flatMap(present -> Mono.<Path>error(new RedundantException("Path already exists")))
+        .switchIfEmpty(pathMono)
         .flatMap(pathRepository::save);
   }
 

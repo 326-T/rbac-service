@@ -41,8 +41,18 @@ public class EndpointService {
         .flatMap(endpointRepository::save);
   }
 
+  /**
+   * 1. IDが存在してるか確認する
+   * 2. 変更内容をセットする
+   * 3. 重複がないか確認する
+   * 4. 保存する
+   *
+   * @param endpoint パスID
+   *
+   * @return
+   */
   public Mono<Endpoint> update(Endpoint endpoint) {
-    return endpointRepository.findById(endpoint.getId())
+    Mono<Endpoint> endpointMono = endpointRepository.findById(endpoint.getId())
         .switchIfEmpty(Mono.error(new NotExistingException("Endpoint not found")))
         .flatMap(present -> {
           present.setPathId(endpoint.getPathId());
@@ -50,7 +60,11 @@ public class EndpointService {
           present.setMethod(endpoint.getMethod());
           present.setUpdatedAt(LocalDateTime.now());
           return Mono.just(present);
-        })
+        });
+    return endpointMono.flatMap(e -> endpointRepository.findDuplicate(
+            e.getNamespaceId(), e.getPathId(), e.getTargetGroupId(), e.getMethod()))
+        .flatMap(present -> Mono.<Endpoint>error(new RedundantException("Endpoint already exists")))
+        .switchIfEmpty(endpointMono)
         .flatMap(endpointRepository::save);
   }
 

@@ -31,7 +31,7 @@ class UserGroupBelongingRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザとグループの関係情報の件数を取得できる")
@@ -50,7 +50,7 @@ class UserGroupBelongingRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザとグループの関係情報を全件取得できる")
@@ -88,7 +88,7 @@ class UserGroupBelongingRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザとグループの関係情報をIDで取得できる")
@@ -115,7 +115,7 @@ class UserGroupBelongingRepositoryTest {
   class Save {
 
     @Nested
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザとグループの関係情報を更新できる")
@@ -194,7 +194,7 @@ class UserGroupBelongingRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザとグループの関係情報をIDで削除できる")
@@ -214,7 +214,7 @@ class UserGroupBelongingRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("重複するユーザとグループの関係情報を検知できる")

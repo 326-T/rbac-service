@@ -20,6 +20,15 @@ public class AccessPrivilegeService {
     return accessPrivilegeRepository.findByNamespace(namespaceId);
   }
 
+  /**
+   * 1. userIdとnamespaceIdから、アクセス権限の一覧を取得する
+   * 2. method, path, objectIdの正規表現に全てマッチするものがあるか確認する
+   *
+   * @param userId                 認証情報
+   * @param accessPrivilegeRequest 権限を確認したいリソース
+   *
+   * @return 権限があるかどうか
+   */
   public Mono<Boolean> canAccess(Long userId, AccessPrivilegeRequest accessPrivilegeRequest) {
     return accessPrivilegeRepository.findByUserAndNamespace(userId, accessPrivilegeRequest.getNamespaceId())
         .any(truth ->

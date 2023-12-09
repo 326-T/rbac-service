@@ -29,6 +29,16 @@ public class UserGroupBelongingService {
     return userGroupBelongingRepository.findById(id);
   }
 
+  /**
+   * 1. 重複がないか確認する
+   * 2. 保存する
+   *
+   * @param userGroupBelonging 保存するUserGroupBelonging
+   *
+   * @return 保存されたUserGroupBelonging
+   *
+   * @throws RedundantException 重複した場合
+   */
   public Mono<UserGroupBelonging> insert(UserGroupBelonging userGroupBelonging) {
     userGroupBelonging.setCreatedAt(LocalDateTime.now());
     userGroupBelonging.setUpdatedAt(LocalDateTime.now());

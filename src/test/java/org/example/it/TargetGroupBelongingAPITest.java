@@ -49,7 +49,7 @@ public class TargetGroupBelongingAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットとグループの関係情報の件数を取得できる")
@@ -71,7 +71,7 @@ public class TargetGroupBelongingAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットとグループの関係情報を全件取得できる")
@@ -104,7 +104,7 @@ public class TargetGroupBelongingAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットとグループの関係情報をIDで取得できる")
@@ -135,7 +135,7 @@ public class TargetGroupBelongingAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットとグループの関係情報を新規登録できる")
@@ -176,7 +176,7 @@ public class TargetGroupBelongingAPITest {
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
@@ -219,7 +219,7 @@ public class TargetGroupBelongingAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットとグループの関係情報をIDで削除できる")

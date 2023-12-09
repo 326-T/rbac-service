@@ -42,7 +42,7 @@ class EndpointRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("エンドポイントの件数を取得できる")
@@ -64,7 +64,7 @@ class EndpointRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("エンドポイントを全件取得できる")
@@ -107,7 +107,7 @@ class EndpointRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("エンドポイントをIDで取得できる")
@@ -139,7 +139,7 @@ class EndpointRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("エンドポイントを更新できる")
@@ -180,7 +180,7 @@ class EndpointRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("エンドポイントを登録できる")
@@ -218,11 +218,11 @@ class EndpointRestControllerTest {
   }
 
   @Nested
-  class deleteById {
+  class DeleteById {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("エンドポイントを削除できる")

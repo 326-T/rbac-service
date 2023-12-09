@@ -30,7 +30,7 @@ class UserGroupBelongingServiceTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループの件数を取得できる")
@@ -50,7 +50,7 @@ class UserGroupBelongingServiceTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループを全件取得できる")
@@ -94,7 +94,7 @@ class UserGroupBelongingServiceTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループをIDで取得できる")
@@ -118,11 +118,11 @@ class UserGroupBelongingServiceTest {
   }
 
   @Nested
-  class insert {
+  class Insert {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループを登録できる")
@@ -148,7 +148,7 @@ class UserGroupBelongingServiceTest {
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
@@ -171,11 +171,11 @@ class UserGroupBelongingServiceTest {
   }
 
   @Nested
-  class delete {
+  class Delete {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループを削除できる")

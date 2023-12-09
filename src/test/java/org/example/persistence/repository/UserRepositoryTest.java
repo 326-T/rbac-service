@@ -31,7 +31,7 @@ public class UserRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザーの件数を取得できる")
@@ -50,7 +50,7 @@ public class UserRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザーを全件取得できる")
@@ -90,7 +90,7 @@ public class UserRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザーをIDで取得できる")
@@ -116,7 +116,7 @@ public class UserRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザーをIDで更新できる")
@@ -180,7 +180,7 @@ public class UserRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザーをIDで削除できる")
@@ -200,7 +200,7 @@ public class UserRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザーをメールアドレスで取得できる")

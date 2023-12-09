@@ -48,7 +48,7 @@ public class AccessPrivilegeAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ネームスペース内の権限の一覧を全件取得できる")
@@ -94,7 +94,7 @@ public class AccessPrivilegeAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("アクセス権限を持っているとときtrueを返す")

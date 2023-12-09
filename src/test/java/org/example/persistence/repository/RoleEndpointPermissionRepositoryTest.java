@@ -31,7 +31,7 @@ class RoleEndpointPermissionRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("グループとロールの関係情報の件数を取得できる")
@@ -50,7 +50,7 @@ class RoleEndpointPermissionRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("グループとロールの関係情報を全件取得できる")
@@ -97,7 +97,7 @@ class RoleEndpointPermissionRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("グループとロールの関係情報をIDで取得できる")
@@ -128,7 +128,7 @@ class RoleEndpointPermissionRepositoryTest {
   class Save {
 
     @Nested
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("グループとロールの関係情報を更新できる")
@@ -218,7 +218,7 @@ class RoleEndpointPermissionRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("グループとロールの関係情報をIDで削除できる")
@@ -238,7 +238,7 @@ class RoleEndpointPermissionRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("グループとロールの関係情報を重複チェックできる")

@@ -30,7 +30,7 @@ class TargetGroupBelongingServiceTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループの件数を取得できる")
@@ -50,7 +50,7 @@ class TargetGroupBelongingServiceTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループを全件取得できる")
@@ -94,7 +94,7 @@ class TargetGroupBelongingServiceTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループをIDで取得できる")
@@ -119,11 +119,11 @@ class TargetGroupBelongingServiceTest {
   }
 
   @Nested
-  class insert {
+  class Insert {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループを登録できる")
@@ -151,7 +151,7 @@ class TargetGroupBelongingServiceTest {
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
@@ -174,11 +174,11 @@ class TargetGroupBelongingServiceTest {
   }
 
   @Nested
-  class delete {
+  class Delete {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットグループを削除できる")

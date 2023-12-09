@@ -42,7 +42,7 @@ class PathRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("パスの件数を取得できる")
@@ -64,7 +64,7 @@ class PathRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("パスを全件取得できる")
@@ -103,7 +103,7 @@ class PathRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("パスをIDで取得できる")
@@ -132,7 +132,7 @@ class PathRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("パスを更新できる")
@@ -168,7 +168,7 @@ class PathRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("パスを登録できる")
@@ -202,11 +202,11 @@ class PathRestControllerTest {
   }
 
   @Nested
-  class deleteById {
+  class DeleteById {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("パスを削除できる")

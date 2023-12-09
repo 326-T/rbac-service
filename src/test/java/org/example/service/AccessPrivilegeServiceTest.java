@@ -31,7 +31,7 @@ class AccessPrivilegeServiceTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("指定した名前空間のアクセス権を全件取得できる")
@@ -83,7 +83,7 @@ class AccessPrivilegeServiceTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @ParameterizedTest
       @CsvSource({

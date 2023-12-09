@@ -50,7 +50,7 @@ public class NamespaceAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ネームスペースの件数を取得できる")
@@ -72,7 +72,7 @@ public class NamespaceAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ネームスペースを全件取得できる")
@@ -103,7 +103,7 @@ public class NamespaceAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ネームスペースをIDで取得できる")
@@ -132,7 +132,7 @@ public class NamespaceAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ネームスペースを更新できる")
@@ -172,7 +172,7 @@ public class NamespaceAPITest {
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("存在しないネームスペースの場合はエラーになる")
@@ -203,6 +203,36 @@ public class NamespaceAPITest {
                         "指定されたリソースは存在しません。")
             );
       }
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotUpdateWithDuplicate() {
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/namespaces/2")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "name": "production"
+                }
+                """
+            )
+            .exchange()
+            .expectStatus().is4xxClientError()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        409, null,
+                        "Unique制約に違反している",
+                        "org.example.error.exception.RedundantException: Namespace already exists",
+                        "作成済みのリソースと重複しています。")
+            );
+      }
     }
   }
 
@@ -214,7 +244,7 @@ public class NamespaceAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ネームスペースを新規登録できる")
@@ -254,7 +284,7 @@ public class NamespaceAPITest {
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
@@ -296,7 +326,7 @@ public class NamespaceAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ネームスペースをIDで削除できる")

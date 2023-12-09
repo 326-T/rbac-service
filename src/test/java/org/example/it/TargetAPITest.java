@@ -49,7 +49,7 @@ public class TargetAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットの件数を取得できる")
@@ -71,7 +71,7 @@ public class TargetAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットを全件取得できる")
@@ -92,7 +92,7 @@ public class TargetAPITest {
 
                       tuple(1L, 1L, "object-id-1", 1L),
                       tuple(2L, 2L, "object-id-2", 2L),
-                      tuple(3L, 3L, "object-id-3", 3L));
+                      tuple(3L, 2L, "object-id-3", 3L));
             });
       }
     }
@@ -104,7 +104,7 @@ public class TargetAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットをIDで取得できる")
@@ -134,7 +134,7 @@ public class TargetAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットを更新できる")
@@ -176,7 +176,7 @@ public class TargetAPITest {
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("存在しないターゲットの場合はエラーになる")
@@ -207,6 +207,36 @@ public class TargetAPITest {
                         "指定されたリソースは存在しません。")
             );
       }
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotUpdateWithDuplicate() {
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/targets/2")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "objectIdRegex": "object-id-3"
+                }
+                """
+            )
+            .exchange()
+            .expectStatus().is4xxClientError()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        409, null,
+                        "Unique制約に違反している",
+                        "org.example.error.exception.RedundantException: Target already exists",
+                        "作成済みのリソースと重複しています。")
+            );
+      }
     }
   }
 
@@ -218,7 +248,7 @@ public class TargetAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットを新規登録できる")
@@ -261,7 +291,7 @@ public class TargetAPITest {
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
@@ -304,7 +334,7 @@ public class TargetAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットをIDで削除できる")

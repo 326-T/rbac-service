@@ -31,7 +31,7 @@ class RoleRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールの件数を取得できる")
@@ -50,7 +50,7 @@ class RoleRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールを全件取得できる")
@@ -70,7 +70,7 @@ class RoleRepositoryTest {
             .assertNext(
                 role -> assertThat(role)
                     .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
-                    .containsExactly(3L, 3L, "security", 3L))
+                    .containsExactly(3L, 2L, "security", 3L))
             .verifyComplete();
       }
     }
@@ -82,7 +82,7 @@ class RoleRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールをIDで取得できる")
@@ -107,7 +107,7 @@ class RoleRepositoryTest {
   class Save {
 
     @Nested
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールを更新できる")
@@ -174,7 +174,7 @@ class RoleRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールをIDで削除できる")
@@ -194,7 +194,7 @@ class RoleRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロール名が重複しているかどうかを取得できる")

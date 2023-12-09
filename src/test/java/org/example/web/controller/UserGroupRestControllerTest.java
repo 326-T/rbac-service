@@ -42,7 +42,7 @@ class UserGroupRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループの件数を取得できる")
@@ -64,7 +64,7 @@ class UserGroupRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループを全件取得できる")
@@ -103,7 +103,7 @@ class UserGroupRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループをIDで取得できる")
@@ -132,7 +132,7 @@ class UserGroupRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループを更新できる")
@@ -168,7 +168,7 @@ class UserGroupRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループを登録できる")
@@ -202,11 +202,11 @@ class UserGroupRestControllerTest {
   }
 
   @Nested
-  class deleteById {
+  class DeleteById {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザグループを削除できる")

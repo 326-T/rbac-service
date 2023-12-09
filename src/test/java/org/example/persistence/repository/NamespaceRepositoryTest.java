@@ -31,7 +31,7 @@ class NamespaceRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ネームスペースの件数を取得できる")
@@ -50,7 +50,7 @@ class NamespaceRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ネームスペースを全件取得できる")
@@ -82,7 +82,7 @@ class NamespaceRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ネームスペースをIDで取得できる")
@@ -107,7 +107,7 @@ class NamespaceRepositoryTest {
   class Save {
 
     @Nested
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ネームスペースを更新できる")
@@ -172,7 +172,7 @@ class NamespaceRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ネームスペースをIDで削除できる")
@@ -192,7 +192,7 @@ class NamespaceRepositoryTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("重複するネームスペースを検索できる")

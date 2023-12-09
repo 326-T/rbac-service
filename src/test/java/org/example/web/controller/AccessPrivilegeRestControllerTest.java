@@ -44,7 +44,7 @@ class AccessPrivilegeRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ネームスペース内の権限の一覧を全件取得できる")
@@ -100,7 +100,7 @@ class AccessPrivilegeRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザーが指定したパスにアクセスできるか判定できる")

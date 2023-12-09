@@ -37,6 +37,17 @@ public class UserService {
     return userRepository.findByEmail(email);
   }
 
+  /**
+   * 1. 重複がないか確認する
+   * 2. パスワードをハッシュ化する
+   * 3. 保存する
+   *
+   * @param user パスワードが平文の状態で渡される
+   *
+   * @return 保存されたユーザー
+   *
+   * @throws RedundantException 重複した場合
+   */
   public Mono<User> insert(User user) {
     user.setPasswordDigest(passwordEncoder.encode(user.getPasswordDigest()));
     user.setCreatedAt(LocalDateTime.now());
@@ -47,8 +58,21 @@ public class UserService {
         .flatMap(userRepository::save);
   }
 
+  /**
+   * 1. IDが存在してるか確認する
+   * 2. 変更内容をセットする
+   * 3. 重複がないか確認する
+   * 4. 保存する
+   *
+   * @param user name, emailのみ更新可能
+   *
+   * @return 保存されたユーザー
+   *
+   * @throws NotExistingException IDが存在しない場合
+   * @throws RedundantException   重複した場合
+   */
   public Mono<User> update(User user) {
-    return userRepository.findById(user.getId())
+    Mono<User> userMono = userRepository.findById(user.getId())
         .switchIfEmpty(Mono.error(new NotExistingException("User not found")))
         .flatMap(present -> {
           present.setName(user.getName());
@@ -56,7 +80,10 @@ public class UserService {
           present.setPasswordDigest(passwordEncoder.encode(user.getPasswordDigest()));
           present.setUpdatedAt(LocalDateTime.now());
           return Mono.just(present);
-        })
+        });
+    return userMono.flatMap(u -> userRepository.findByEmail(u.getEmail()))
+        .flatMap(present -> Mono.<User>error(new RedundantException("User already exists")))
+        .switchIfEmpty(userMono)
         .flatMap(userRepository::save);
   }
 

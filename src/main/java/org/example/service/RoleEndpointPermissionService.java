@@ -30,6 +30,16 @@ public class RoleEndpointPermissionService {
     return roleEndpointPermissionRepository.findById(id);
   }
 
+  /**
+   * 1. 重複がないか確認する
+   * 2. 保存する
+   *
+   * @param roleEndpointPermission 保存するRoleEndpointPermission
+   *
+   * @return 保存されたRoleEndpointPermission
+   *
+   * @throws RedundantException 重複した場合
+   */
   public Mono<RoleEndpointPermission> insert(RoleEndpointPermission roleEndpointPermission) {
     roleEndpointPermission.setCreatedAt(LocalDateTime.now());
     roleEndpointPermission.setUpdatedAt(LocalDateTime.now());

@@ -50,7 +50,7 @@ public class UserAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザの件数を取得できる")
@@ -72,7 +72,7 @@ public class UserAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザを全件取得できる")
@@ -104,7 +104,7 @@ public class UserAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザをIDで取得できる")
@@ -132,7 +132,7 @@ public class UserAPITest {
   class Update {
 
     @Nested
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザを更新できる")
@@ -170,11 +170,43 @@ public class UserAPITest {
                     .containsExactly(3L, "USER2", "bbb@example.org")
             );
       }
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotUpdateWithDuplicate() {
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/users/3")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "name": "user2",
+                  "email": "xxx@example.org",
+                  "password": "new_password"
+                }
+                """
+            )
+            .exchange()
+            .expectStatus().is4xxClientError()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        409, null,
+                        "Unique制約に違反している",
+                        "org.example.error.exception.RedundantException: User already exists",
+                        "作成済みのリソースと重複しています。")
+            );
+      }
     }
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("存在しないユーザの場合はエラーになる")
@@ -218,7 +250,7 @@ public class UserAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザを新規登録できる")
@@ -260,7 +292,7 @@ public class UserAPITest {
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
@@ -304,7 +336,7 @@ public class UserAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ユーザをIDで削除できる")

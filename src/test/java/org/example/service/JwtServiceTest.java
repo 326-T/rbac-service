@@ -40,7 +40,7 @@ class JwtServiceTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("JWTを生成できる")
@@ -66,7 +66,7 @@ class JwtServiceTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("JWTをデコードできる")
@@ -96,7 +96,7 @@ class JwtServiceTest {
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("JWTの署名が不正な場合は例外が発生する")

@@ -42,7 +42,7 @@ class RoleRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールの件数を取得できる")
@@ -64,7 +64,7 @@ class RoleRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールを全件取得できる")
@@ -103,7 +103,7 @@ class RoleRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールをIDで取得できる")
@@ -132,7 +132,7 @@ class RoleRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールを更新できる")
@@ -170,7 +170,7 @@ class RoleRestControllerTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールを登録できる")
@@ -205,11 +205,11 @@ class RoleRestControllerTest {
   }
 
   @Nested
-  class deleteById {
+  class DeleteById {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ロールを削除できる")

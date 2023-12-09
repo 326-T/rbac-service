@@ -49,7 +49,7 @@ public class EndpointAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("エンドポイントの件数を取得できる")
@@ -71,7 +71,7 @@ public class EndpointAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("エンドポイントを全件取得できる")
@@ -92,7 +92,7 @@ public class EndpointAPITest {
                   .containsExactly(
                       tuple(1L, 1L, 1L, "GET", 1L, 1L),
                       tuple(2L, 2L, 2L, "POST", 2L, 2L),
-                      tuple(3L, 3L, 3L, "PUT", 3L, 3L)
+                      tuple(3L, 2L, 3L, "PUT", 3L, 3L)
                   );
             });
       }
@@ -105,7 +105,7 @@ public class EndpointAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("エンドポイントをIDで取得できる")
@@ -137,7 +137,7 @@ public class EndpointAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("エンドポイントを更新できる")
@@ -183,7 +183,7 @@ public class EndpointAPITest {
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("存在しないエンドポイントの場合はエラーになる")
@@ -216,6 +216,38 @@ public class EndpointAPITest {
                         "指定されたリソースは存在しません。")
             );
       }
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotUpdateWithDuplicate() {
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/endpoints/2")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "pathId": 3,
+                  "method": "PUT",
+                  "targetGroupId": 3
+                }
+                """
+            )
+            .exchange()
+            .expectStatus().is4xxClientError()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        409, null,
+                        "Unique制約に違反している",
+                        "org.example.error.exception.RedundantException: Endpoint already exists",
+                        "作成済みのリソースと重複しています。")
+            );
+      }
     }
   }
 
@@ -228,7 +260,7 @@ public class EndpointAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("エンドポイントを新規登録できる")
@@ -275,7 +307,7 @@ public class EndpointAPITest {
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
@@ -321,7 +353,7 @@ public class EndpointAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("エンドポイントをIDで削除できる")

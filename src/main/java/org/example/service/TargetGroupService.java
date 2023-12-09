@@ -30,6 +30,16 @@ public class TargetGroupService {
     return targetGroupRepository.findById(id);
   }
 
+  /**
+   * 1. 重複がないか確認する
+   * 2. 保存する
+   *
+   * @param targetGroup 保存するTargetGroup
+   *
+   * @return 保存されたTargetGroup
+   *
+   * @throws RedundantException 重複した場合
+   */
   public Mono<TargetGroup> insert(TargetGroup targetGroup) {
     targetGroup.setCreatedAt(LocalDateTime.now());
     targetGroup.setUpdatedAt(LocalDateTime.now());
@@ -40,14 +50,31 @@ public class TargetGroupService {
         .flatMap(targetGroupRepository::save);
   }
 
+  /**
+   * 1. IDが存在してるか確認する
+   * 2. 変更内容をセットする
+   * 3. 重複がないか確認する
+   * 4. 保存する
+   *
+   * @param targetGroup nameのみ変更可能
+   *
+   * @return 更新されたTargetGroup
+   *
+   * @throws NotExistingException IDが存在しない場合
+   * @throws RedundantException   重複した場合
+   */
   public Mono<TargetGroup> update(TargetGroup targetGroup) {
-    return targetGroupRepository.findById(targetGroup.getId())
+    Mono<TargetGroup> targetGroupMono = targetGroupRepository.findById(targetGroup.getId())
         .switchIfEmpty(Mono.error(new NotExistingException("TargetGroup not found")))
         .flatMap(present -> {
           present.setName(targetGroup.getName());
           present.setUpdatedAt(LocalDateTime.now());
           return Mono.just(present);
-        })
+        });
+    return targetGroupMono
+        .flatMap(tg -> targetGroupRepository.findDuplicate(tg.getNamespaceId(), tg.getName()))
+        .flatMap(present -> Mono.<TargetGroup>error(new RedundantException("TargetGroup already exists")))
+        .switchIfEmpty(targetGroupMono)
         .flatMap(targetGroupRepository::save);
   }
 

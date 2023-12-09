@@ -49,7 +49,7 @@ public class UserGroupAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("グループの件数を取得できる")
@@ -71,7 +71,7 @@ public class UserGroupAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("グループを全件取得できる")
@@ -91,7 +91,7 @@ public class UserGroupAPITest {
                   .containsExactly(
                       tuple(1L, 1L, "group1", 1L),
                       tuple(2L, 2L, "group2", 2L),
-                      tuple(3L, 3L, "group3", 3L));
+                      tuple(3L, 2L, "group3", 3L));
             });
       }
     }
@@ -103,7 +103,7 @@ public class UserGroupAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("グループをIDで取得できる")
@@ -133,7 +133,7 @@ public class UserGroupAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("グループを更新できる")
@@ -170,11 +170,40 @@ public class UserGroupAPITest {
                   .containsExactly(2L, 2L, "GROUP2", 2L);
             });
       }
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotUpdateWithDuplicate() {
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/user-groups/2")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "name": "group3"
+                }
+                """)
+            .exchange()
+            .expectStatus().is4xxClientError()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        409, null,
+                        "Unique制約に違反している",
+                        "org.example.error.exception.RedundantException: UserGroup already exists",
+                        "作成済みのリソースと重複しています。")
+            );
+      }
     }
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("存在しないユーザグループの場合はエラーになる")
@@ -215,7 +244,7 @@ public class UserGroupAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("グループを新規登録できる")
@@ -257,7 +286,7 @@ public class UserGroupAPITest {
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
@@ -299,7 +328,7 @@ public class UserGroupAPITest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("グループをIDで削除できる")

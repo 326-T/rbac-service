@@ -30,6 +30,16 @@ public class TargetGroupBelongingService {
     return targetGroupBelongingRepository.findById(id);
   }
 
+  /**
+   * 1. 重複がないか確認する
+   * 2. 保存する
+   *
+   * @param targetGroupBelonging 保存するTargetGroupBelonging
+   *
+   * @return 保存されたTargetGroupBelonging
+   *
+   * @throws RedundantException 重複した場合
+   */
   public Mono<TargetGroupBelonging> insert(TargetGroupBelonging targetGroupBelonging) {
     targetGroupBelonging.setCreatedAt(LocalDateTime.now());
     targetGroupBelonging.setUpdatedAt(LocalDateTime.now());

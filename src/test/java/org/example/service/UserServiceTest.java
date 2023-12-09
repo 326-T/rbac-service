@@ -33,7 +33,8 @@ class UserServiceTest {
   class Count {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ユーザの件数を取得できる")
@@ -52,7 +53,8 @@ class UserServiceTest {
   class FindAll {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ユーザを全件取得できる")
@@ -60,16 +62,13 @@ class UserServiceTest {
         // given
         User user1 = User.builder()
             .id(1L).name("user1").email("xxx@example.org")
-            .passwordDigest("password_digest1")
-            .build();
+            .passwordDigest("password_digest1").build();
         User user2 = User.builder()
             .id(2L).name("user2").email("yyy@example.org")
-            .passwordDigest("password_digest2")
-            .build();
+            .passwordDigest("password_digest2").build();
         User user3 = User.builder()
             .id(3L).name("user3").email("zzz@example.org")
-            .passwordDigest("password_digest3")
-            .build();
+            .passwordDigest("password_digest3").build();
         when(userRepository.findAll()).thenReturn(Flux.just(user1, user2, user3));
         // when
         Flux<User> groupFlux = userService.findAll();
@@ -93,7 +92,8 @@ class UserServiceTest {
   class FindById {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ユーザをIDで取得できる")
@@ -101,8 +101,7 @@ class UserServiceTest {
         // given
         User user1 = User.builder()
             .id(1L).name("user1").email("xxx@example.org")
-            .passwordDigest("password_digest1")
-            .build();
+            .passwordDigest("password_digest1").build();
         when(userRepository.findById(1L)).thenReturn(Mono.just(user1));
         // when
         Mono<User> userMono = userService.findById(1L);
@@ -117,10 +116,11 @@ class UserServiceTest {
   }
 
   @Nested
-  class insert {
+  class Insert {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ユーザを登録できる")
@@ -128,8 +128,7 @@ class UserServiceTest {
         // given
         User user = User.builder()
             .name("user4").email("aaa@example.org")
-            .passwordDigest("password_digest4")
-            .build();
+            .passwordDigest("password_digest4").build();
         when(userRepository.findByEmail("aaa@example.org")).thenReturn(Mono.empty());
         when(userRepository.save(any(User.class))).thenReturn(Mono.just(user));
         when(passwordEncoder.encode("password_digest4")).thenReturn("password_digest4");
@@ -145,7 +144,8 @@ class UserServiceTest {
     }
 
     @Nested
-    class irregular {
+    @DisplayName("異常系")
+    class Error {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
@@ -153,12 +153,10 @@ class UserServiceTest {
         // given
         User before = User.builder()
             .id(2L).name("user2").email("xxx@example.org")
-            .passwordDigest("password_digest2")
-            .build();
+            .passwordDigest("password_digest2").build();
         User after = User.builder()
             .id(2L).name("user4").email("xxx@example.org")
-            .passwordDigest("password_digest4")
-            .build();
+            .passwordDigest("password_digest4").build();
         when(userRepository.findByEmail("xxx@example.org")).thenReturn(Mono.just(before));
         when(userRepository.save(any(User.class))).thenReturn(Mono.just(after));
         when(passwordEncoder.encode("password_digest4")).thenReturn("password_digest4");
@@ -171,10 +169,11 @@ class UserServiceTest {
   }
 
   @Nested
-  class update {
+  class Update {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ユーザを更新できる")
@@ -182,13 +181,12 @@ class UserServiceTest {
         // given
         User before = User.builder()
             .id(2L).name("user2").email("xxx@example.org")
-            .passwordDigest("password_digest2")
-            .build();
+            .passwordDigest("password_digest2").build();
         User after = User.builder()
             .id(2L).name("USER2").email("bbb@example.org")
-            .passwordDigest("PASSWORD_DIGEST2")
-            .build();
+            .passwordDigest("PASSWORD_DIGEST2").build();
         when(userRepository.findById(2L)).thenReturn(Mono.just(before));
+        when(userRepository.findByEmail("bbb@example.org")).thenReturn(Mono.empty());
         when(userRepository.save(any(User.class))).thenReturn(Mono.just(after));
         when(passwordEncoder.encode("PASSWORD_DIGEST2")).thenReturn("PASSWORD_DIGEST2");
         // when
@@ -203,16 +201,17 @@ class UserServiceTest {
     }
 
     @Nested
-    class irregular {
+    @DisplayName("異常系")
+    class Error {
 
       @Test
       @DisplayName("存在しないユーザの場合はエラーになる")
       void notExistingUserCauseException() {
         User after = User.builder()
             .id(2L).name("USER2").email("bbb@example.org")
-            .passwordDigest("PASSWORD_DIGEST2")
-            .build();
+            .passwordDigest("PASSWORD_DIGEST2").build();
         when(userRepository.findById(2L)).thenReturn(Mono.empty());
+        when(userRepository.findByEmail("bbb@example.org")).thenReturn(Mono.empty());
         when(userRepository.save(any(User.class))).thenReturn(Mono.just(after));
         when(passwordEncoder.encode("PASSWORD_DIGEST2")).thenReturn("PASSWORD_DIGEST2");
         // when
@@ -220,14 +219,38 @@ class UserServiceTest {
         // then
         StepVerifier.create(userMono).expectError(NotExistingException.class).verify();
       }
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotUpdateWithDuplicateEmail() {
+        // given
+        User before = User.builder()
+            .id(2L).name("user2").email("xxx@example.org")
+            .passwordDigest("password_digest2").build();
+        User after = User.builder()
+            .id(2L).name("USER2").email("yyy@example.org")
+            .passwordDigest("PASSWORD_DIGEST2").build();
+        User duplicate = User.builder()
+            .id(3L).name("user3").email("yyy@example.org")
+            .passwordDigest("password_digest3").build();
+        when(userRepository.findById(2L)).thenReturn(Mono.just(before));
+        when(userRepository.findByEmail("yyy@example.org")).thenReturn(Mono.just(duplicate));
+        when(userRepository.save(any(User.class))).thenReturn(Mono.just(after));
+        when(passwordEncoder.encode("PASSWORD_DIGEST2")).thenReturn("PASSWORD_DIGEST2");
+        // when
+        Mono<User> userMono = userService.update(after);
+        // then
+        StepVerifier.create(userMono).expectError(RedundantException.class).verify();
+      }
     }
   }
 
   @Nested
-  class delete {
+  class Delete {
 
     @Nested
-    class regular {
+    @DisplayName("正常系")
+    class Regular {
 
       @Test
       @DisplayName("ユーザを削除できる")

@@ -31,7 +31,7 @@ class TargetServiceTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットの件数を取得できる")
@@ -51,7 +51,7 @@ class TargetServiceTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットを全件取得できる")
@@ -91,7 +91,7 @@ class TargetServiceTest {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットをIDで取得できる")
@@ -114,11 +114,11 @@ class TargetServiceTest {
   }
 
   @Nested
-  class insert {
+  class Insert {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットを登録できる")
@@ -142,7 +142,7 @@ class TargetServiceTest {
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
@@ -160,11 +160,11 @@ class TargetServiceTest {
   }
 
   @Nested
-  class update {
+  class Update {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットを更新できる")
@@ -173,8 +173,9 @@ class TargetServiceTest {
         Target before = Target.builder()
             .id(2L).namespaceId(2L).objectIdRegex("object-id-2").createdBy(2L).build();
         Target after = Target.builder()
-            .id(2L).namespaceId(2L).objectIdRegex("object-id-1").createdBy(2L).build();
+            .id(2L).namespaceId(2L).objectIdRegex("OBJECT_ID_2").createdBy(2L).build();
         when(targetRepository.findById(2L)).thenReturn(Mono.just(before));
+        when(targetRepository.findDuplicate(2L, "OBJECT_ID_2")).thenReturn(Mono.empty());
         when(targetRepository.save(any(Target.class))).thenReturn(Mono.just(after));
         // when
         Mono<Target> targetMono = targetService.update(after);
@@ -183,36 +184,56 @@ class TargetServiceTest {
             .assertNext(cluster -> assertThat(cluster)
                 .extracting(Target::getId, Target::getNamespaceId,
                     Target::getObjectIdRegex, Target::getCreatedBy)
-                .containsExactly(2L, 2L, "object-id-1", 2L))
+                .containsExactly(2L, 2L, "OBJECT_ID_2", 2L))
             .verifyComplete();
       }
     }
 
     @Nested
     @DisplayName("異常系")
-    class irregular {
+    class Error {
 
       @Test
       @DisplayName("存在しないターゲットの場合はエラーになる")
       void notExistingTargetCauseException() {
         // given
-        Target after = Target.builder().id(2L).namespaceId(2L).objectIdRegex("object-id-1").createdBy(2L).build();
+        Target after = Target.builder().id(2L).namespaceId(2L).objectIdRegex("OBJECT_ID_2").createdBy(2L).build();
         when(targetRepository.findById(2L)).thenReturn(Mono.empty());
+        when(targetRepository.findDuplicate(2L, "OBJECT_ID_2")).thenReturn(Mono.empty());
         when(targetRepository.save(any(Target.class))).thenReturn(Mono.just(after));
         // when
         Mono<Target> targetMono = targetService.update(after);
         // then
         StepVerifier.create(targetMono).expectError(NotExistingException.class).verify();
       }
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotUpdateWithDuplicate() {
+        // given
+        Target before = Target.builder()
+            .id(2L).namespaceId(2L).objectIdRegex("object-id-2").createdBy(2L).build();
+        Target after = Target.builder()
+            .id(2L).namespaceId(2L).objectIdRegex("OBJECT_ID_2").createdBy(2L).build();
+        Target duplicate = Target.builder()
+            .id(3L).namespaceId(2L).objectIdRegex("OBJECT_ID_2").createdBy(2L).build();
+        when(targetRepository.findById(2L)).thenReturn(Mono.just(before));
+        when(targetRepository.findDuplicate(2L, "OBJECT_ID_2")).thenReturn(Mono.just(duplicate));
+        when(targetRepository.save(any(Target.class))).thenReturn(Mono.just(after));
+        // when
+        Mono<Target> targetMono = targetService.update(after);
+        // then
+        StepVerifier.create(targetMono).expectError(RedundantException.class).verify();
+      }
     }
   }
 
   @Nested
-  class delete {
+  class Delete {
 
     @Nested
     @DisplayName("正常系")
-    class regular {
+    class Regular {
 
       @Test
       @DisplayName("ターゲットを削除できる")

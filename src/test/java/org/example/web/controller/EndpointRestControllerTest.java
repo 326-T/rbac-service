@@ -10,9 +10,13 @@ import org.example.persistence.entity.User;
 import org.example.service.EndpointService;
 import org.example.service.ReactiveContextService;
 import org.example.web.filter.AuthenticationWebFilter;
+import org.example.web.request.EndpointInsertRequest;
+import org.example.web.request.EndpointUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
@@ -173,6 +177,37 @@ class EndpointRestControllerTest {
             });
       }
     }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @DisplayName("バリデーションエラーが発生する")
+      @ParameterizedTest
+      @CsvSource({
+          ", 'GET', 1",
+          "0, 'GET', 1",
+          "1, , 1",
+          "1, '', 1",
+          "1, ' ', 1",
+          "1, 'GET', ",
+          "1, 'GET', 0",
+      })
+      void validationErrorOccurs(Long pathId, String method, Long targetGroupId) {
+        // given
+        EndpointUpdateRequest endpointUpdateRequest = new EndpointUpdateRequest();
+        endpointUpdateRequest.setPathId(pathId);
+        endpointUpdateRequest.setTargetGroupId(targetGroupId);
+        endpointUpdateRequest.setMethod(method);
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/endpoints/2")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(endpointUpdateRequest)
+            .exchange()
+            .expectStatus().isBadRequest();
+      }
+    }
   }
 
   @Nested
@@ -197,6 +232,7 @@ class EndpointRestControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
+                  "namespaceId": 2,
                   "pathId": 3,
                   "method": "GET",
                   "targetGroupId": 2
@@ -213,6 +249,39 @@ class EndpointRestControllerTest {
                       Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
                   .containsExactly(4L, 2L, 3L, "GET", 2L, 1L);
             });
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @DisplayName("バリデーションエラーが発生する")
+      @ParameterizedTest
+      @CsvSource({
+          ", 1, 1, GET",
+          "0, 1, 1, GET",
+          "1, , 1, GET",
+          "1, 0, 1, GET",
+          "1, 1, , GET",
+          "1, 1, 0, GET",
+          "1, 1, 1, ",
+          "1, 1, 1, ''",
+          "1, 1, 1, ' '",
+      })
+      void validationErrorOccurs(Long namespaceId, Long pathId, Long targetGroupId, String method) {
+        // given
+        EndpointInsertRequest endpointInsertRequest = new EndpointInsertRequest();
+        endpointInsertRequest.setPathId(pathId);
+        endpointInsertRequest.setTargetGroupId(targetGroupId);
+        endpointInsertRequest.setMethod(method);
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/endpoints")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(endpointInsertRequest)
+            .exchange()
+            .expectStatus().isBadRequest();
       }
     }
   }

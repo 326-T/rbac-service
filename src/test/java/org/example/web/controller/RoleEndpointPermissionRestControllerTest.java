@@ -10,9 +10,12 @@ import org.example.persistence.entity.User;
 import org.example.service.ReactiveContextService;
 import org.example.service.RoleEndpointPermissionService;
 import org.example.web.filter.AuthenticationWebFilter;
+import org.example.web.request.RoleEndpointPermissionInsertRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
@@ -163,6 +166,36 @@ class RoleEndpointPermissionRestControllerTest {
                     .extracting(RoleEndpointPermission::getId, RoleEndpointPermission::getNamespaceId,
                         RoleEndpointPermission::getRoleId, RoleEndpointPermission::getEndpointId, RoleEndpointPermission::getCreatedBy)
                     .containsExactly(4L, 1L, 1L, 3L, 1L));
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @DisplayName("バリデーションエラーが発生する")
+      @ParameterizedTest
+      @CsvSource({
+          ", 1, 1",
+          "0, 1, 1",
+          "1, , 1",
+          "1, 0, 1",
+          "1, 1, ",
+          "1, 1, 0",
+      })
+      void validationErrorOccurs(Long namespaceId, Long roleId, Long endpointId) {
+        // given
+        RoleEndpointPermissionInsertRequest roleEndpointPermissionInsertRequest = new RoleEndpointPermissionInsertRequest();
+        roleEndpointPermissionInsertRequest.setNamespaceId(namespaceId);
+        roleEndpointPermissionInsertRequest.setRoleId(roleId);
+        roleEndpointPermissionInsertRequest.setEndpointId(endpointId);
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/role-endpoint-permissions")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(roleEndpointPermissionInsertRequest)
+            .exchange()
+            .expectStatus().isBadRequest();
       }
     }
   }

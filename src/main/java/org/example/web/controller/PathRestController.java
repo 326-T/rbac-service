@@ -1,5 +1,6 @@
 package org.example.web.controller;
 
+import jakarta.validation.Valid;
 import org.example.persistence.entity.Path;
 import org.example.service.PathService;
 import org.example.service.ReactiveContextService;
@@ -46,7 +47,7 @@ public class PathRestController {
   }
 
   @PostMapping
-  public Mono<Path> save(@RequestBody PathInsertRequest request) {
+  public Mono<Path> save(@Valid @RequestBody PathInsertRequest request) {
     return reactiveContextService.getCurrentUser()
         .flatMap(u -> {
           Path path = request.exportEntity();
@@ -57,7 +58,7 @@ public class PathRestController {
   }
 
   @PutMapping("/{id}")
-  public Mono<Path> update(@PathVariable Long id, @RequestBody PathUpdateRequest request) {
+  public Mono<Path> update(@PathVariable Long id, @Valid @RequestBody PathUpdateRequest request) {
     Path path = request.exportEntity();
     path.setId(id);
     return pathService.update(path);

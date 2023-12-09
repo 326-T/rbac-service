@@ -1,5 +1,6 @@
 package org.example.web.controller;
 
+import jakarta.validation.Valid;
 import org.example.persistence.entity.RoleEndpointPermission;
 import org.example.service.ReactiveContextService;
 import org.example.service.RoleEndpointPermissionService;
@@ -45,7 +46,7 @@ public class RoleEndpointPermissionRestController {
   }
 
   @PostMapping
-  public Mono<RoleEndpointPermission> save(@RequestBody RoleEndpointPermissionInsertRequest request) {
+  public Mono<RoleEndpointPermission> save(@Valid @RequestBody RoleEndpointPermissionInsertRequest request) {
     return reactiveContextService.getCurrentUser()
         .flatMap(u -> {
           RoleEndpointPermission roleEndpointPermission = request.exportEntity();

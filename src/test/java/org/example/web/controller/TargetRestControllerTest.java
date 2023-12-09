@@ -10,9 +10,14 @@ import org.example.persistence.entity.User;
 import org.example.service.ReactiveContextService;
 import org.example.service.TargetService;
 import org.example.web.filter.AuthenticationWebFilter;
+import org.example.web.request.TargetInsertRequest;
+import org.example.web.request.TargetUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
@@ -161,6 +166,27 @@ class TargetRestControllerTest {
                     .containsExactly(2L, 1L, "OBJECT-ID-2", 1L));
       }
     }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @DisplayName("バリデーションエラーが発生する")
+      @ParameterizedTest
+      @ValueSource(strings = {"", " "})
+      void validationErrorOccurs(String objectIdRegex) {
+        // given
+        TargetUpdateRequest targetUpdateRequest = new TargetUpdateRequest();
+        targetUpdateRequest.setObjectIdRegex(objectIdRegex);
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/targets/2")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(targetUpdateRequest)
+            .exchange()
+            .expectStatus().isBadRequest();
+      }
+    }
   }
 
   @Nested
@@ -197,6 +223,34 @@ class TargetRestControllerTest {
                     .extracting(Target::getId, Target::getNamespaceId, Target::getObjectIdRegex,
                         Target::getCreatedBy)
                     .containsExactly(4L, 1L, "object-id-4", 1L));
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @DisplayName("バリデーションエラーが発生する")
+      @ParameterizedTest
+      @CsvSource({
+          ", object-id-1",
+          "0, object-id-1",
+          "1, ",
+          "1, ''",
+          "1, ' '",
+      })
+      void validationErrorOccurs(Long namespaceId, String objectIdRegex) {
+        // given
+        TargetInsertRequest targetInsertRequest = new TargetInsertRequest();
+        targetInsertRequest.setNamespaceId(namespaceId);
+        targetInsertRequest.setObjectIdRegex(objectIdRegex);
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/targets")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(targetInsertRequest)
+            .exchange()
+            .expectStatus().isBadRequest();
       }
     }
   }

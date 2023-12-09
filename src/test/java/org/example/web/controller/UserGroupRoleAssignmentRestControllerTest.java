@@ -10,9 +10,12 @@ import org.example.persistence.entity.UserGroupRoleAssignment;
 import org.example.service.ReactiveContextService;
 import org.example.service.UserGroupRoleAssignmentService;
 import org.example.web.filter.AuthenticationWebFilter;
+import org.example.web.request.UserGroupRoleAssignmentInsertRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
@@ -163,6 +166,36 @@ class UserGroupRoleAssignmentRestControllerTest {
                     .extracting(UserGroupRoleAssignment::getId, UserGroupRoleAssignment::getNamespaceId,
                         UserGroupRoleAssignment::getUserGroupId, UserGroupRoleAssignment::getRoleId, UserGroupRoleAssignment::getCreatedBy)
                     .containsExactly(4L, 1L, 1L, 3L, 1L));
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @DisplayName("バリデーションエラーが発生する")
+      @ParameterizedTest
+      @CsvSource({
+          ", 1, 1",
+          "0, 1, 1",
+          "1, , 1",
+          "1, 0, 1",
+          "1, 1, ",
+          "1, 1, 0",
+      })
+      void validationErrorOccurs(Long namespaceId, Long userGroupId, Long roleId) {
+        // given
+        UserGroupRoleAssignmentInsertRequest userGroupRoleAssignmentInsertRequest = new UserGroupRoleAssignmentInsertRequest();
+        userGroupRoleAssignmentInsertRequest.setNamespaceId(namespaceId);
+        userGroupRoleAssignmentInsertRequest.setUserGroupId(userGroupId);
+        userGroupRoleAssignmentInsertRequest.setRoleId(roleId);
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/group-role-assignments")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(userGroupRoleAssignmentInsertRequest)
+            .exchange()
+            .expectStatus().isBadRequest();
       }
     }
   }

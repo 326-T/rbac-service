@@ -1,5 +1,6 @@
 package org.example.web.controller;
 
+import jakarta.validation.Valid;
 import org.example.persistence.dto.AccessPrivilege;
 import org.example.service.AccessPrivilegeService;
 import org.example.service.ReactiveContextService;
@@ -31,7 +32,7 @@ public class AccessPrivilegeRestController {
   }
 
   @PostMapping("/can-i")
-  public Mono<Boolean> canAccess(@RequestBody AccessPrivilegeRequest accessPrivilegeRequest) {
+  public Mono<Boolean> canAccess(@Valid @RequestBody AccessPrivilegeRequest accessPrivilegeRequest) {
     return reactiveContextService.getCurrentUser()
         .flatMap(u -> accessPrivilegeService.canAccess(u.getId(), accessPrivilegeRequest));
   }

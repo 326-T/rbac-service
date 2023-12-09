@@ -8,10 +8,14 @@ import static org.mockito.Mockito.when;
 import org.example.persistence.entity.User;
 import org.example.service.UserService;
 import org.example.web.filter.AuthenticationWebFilter;
+import org.example.web.request.UserInsertRequest;
+import org.example.web.request.UserUpdateRequest;
 import org.example.web.response.UserResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
@@ -167,6 +171,39 @@ class UserRestControllerTest {
                     .containsExactly(2L, "USER2", "bbb@example.org"));
       }
     }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @DisplayName("バリデーションエラーが発生する")
+      @ParameterizedTest
+      @CsvSource({
+          ", xxx@example.org, password",
+          "'', xxx@example.org, password",
+          "' ', xxx@example.org, password",
+          "user, , password",
+          "user, '', password",
+          "user, ' ', password",
+          "user, xxx@example.org, ",
+          "user, xxx@example.org, ''",
+          "user, xxx@example.org, ' '",
+      })
+      void validationErrorOccurs(String name, String email, String password) {
+        // given
+        UserUpdateRequest userUpdateRequest = new UserUpdateRequest();
+        userUpdateRequest.setName(name);
+        userUpdateRequest.setEmail(email);
+        userUpdateRequest.setPassword(password);
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/users/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(userUpdateRequest)
+            .exchange()
+            .expectStatus().isBadRequest();
+      }
+    }
   }
 
   @Nested
@@ -204,6 +241,39 @@ class UserRestControllerTest {
                 assertThat(response.getResponseBody())
                     .extracting(UserResponse::getId, UserResponse::getName, UserResponse::getEmail)
                     .containsExactly(null, "user4", "aaa@example.org"));
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @DisplayName("バリデーションエラーが発生する")
+      @ParameterizedTest
+      @CsvSource({
+          ", xxx@example.org, password",
+          "'', xxx@example.org, password",
+          "' ', xxx@example.org, password",
+          "user, , password",
+          "user, '', password",
+          "user, ' ', password",
+          "user, xxx@example.org, ",
+          "user, xxx@example.org, ''",
+          "user, xxx@example.org, ' '",
+      })
+      void validationErrorOccurs(String name, String email, String password) {
+        // given
+        UserInsertRequest userInsertRequest = new UserInsertRequest();
+        userInsertRequest.setName(name);
+        userInsertRequest.setEmail(email);
+        userInsertRequest.setPassword(password);
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(userInsertRequest)
+            .exchange()
+            .expectStatus().isBadRequest();
       }
     }
   }

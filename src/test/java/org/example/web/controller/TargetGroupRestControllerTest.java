@@ -10,9 +10,14 @@ import org.example.persistence.entity.User;
 import org.example.service.ReactiveContextService;
 import org.example.service.TargetGroupService;
 import org.example.web.filter.AuthenticationWebFilter;
+import org.example.web.request.TargetGroupInsertRequest;
+import org.example.web.request.TargetGroupUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
@@ -161,6 +166,27 @@ class TargetGroupRestControllerTest {
                     .containsExactly(2L, 1L, "OBJECT-ID-2", 1L));
       }
     }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @DisplayName("バリデーションエラーが発生する")
+      @ParameterizedTest
+      @ValueSource(strings = {"", " "})
+      void validationErrorOccurs(String name) {
+        // given
+        TargetGroupUpdateRequest targetGroupUpdateRequest = new TargetGroupUpdateRequest();
+        targetGroupUpdateRequest.setName(name);
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/target-groups/2")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(targetGroupUpdateRequest)
+            .exchange()
+            .expectStatus().isBadRequest();
+      }
+    }
   }
 
   @Nested
@@ -197,6 +223,34 @@ class TargetGroupRestControllerTest {
                     .extracting(TargetGroup::getId, TargetGroup::getNamespaceId, TargetGroup::getName,
                         TargetGroup::getCreatedBy)
                     .containsExactly(4L, 1L, "target-group-4", 1L));
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @DisplayName("バリデーションエラーが発生する")
+      @ParameterizedTest
+      @CsvSource({
+          ", target-group-1",
+          "0, target-group-1",
+          "1, ",
+          "1, ''",
+          "1, ' '",
+      })
+      void validationErrorOccurs(Long namespaceId, String name) {
+        // given
+        TargetGroupInsertRequest targetGroupInsertRequest = new TargetGroupInsertRequest();
+        targetGroupInsertRequest.setNamespaceId(namespaceId);
+        targetGroupInsertRequest.setName(name);
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/target-groups")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(targetGroupInsertRequest)
+            .exchange()
+            .expectStatus().isBadRequest();
       }
     }
   }

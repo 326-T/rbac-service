@@ -1,5 +1,6 @@
 package org.example.web.controller;
 
+import jakarta.validation.Valid;
 import org.example.persistence.entity.User;
 import org.example.service.UserService;
 import org.example.web.request.UserInsertRequest;
@@ -44,12 +45,12 @@ public class UserRestController {
   }
 
   @PostMapping
-  public Mono<UserResponse> save(@RequestBody UserInsertRequest request) {
+  public Mono<UserResponse> save(@Valid @RequestBody UserInsertRequest request) {
     return userService.insert(request.exportEntity()).map(UserResponse::new);
   }
 
   @PutMapping("/{id}")
-  public Mono<UserResponse> update(@PathVariable Long id, @RequestBody UserUpdateRequest request) {
+  public Mono<UserResponse> update(@PathVariable Long id, @Valid @RequestBody UserUpdateRequest request) {
     User user = request.exportEntity();
     user.setId(id);
     return userService.update(user).map(UserResponse::new);

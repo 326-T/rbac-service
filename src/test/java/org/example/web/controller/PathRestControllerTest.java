@@ -10,9 +10,14 @@ import org.example.persistence.entity.User;
 import org.example.service.PathService;
 import org.example.service.ReactiveContextService;
 import org.example.web.filter.AuthenticationWebFilter;
+import org.example.web.request.PathInsertRequest;
+import org.example.web.request.PathUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
@@ -161,6 +166,34 @@ class PathRestControllerTest {
                     .containsExactly(2L, 1L, "/replace-service/v1/", 1L));
       }
     }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @DisplayName("バリデーションエラーが発生する")
+      @ParameterizedTest
+      @CsvSource({
+          ", /user-service/v1/",
+          "0, /user-service/v1/",
+          "1, ",
+          "1, ''",
+          "1, ' '",
+      })
+      void validationErrorOccurs(Long namespaceId, String regex) {
+        // given
+        PathInsertRequest pathInsertRequest = new PathInsertRequest();
+        pathInsertRequest.setNamespaceId(namespaceId);
+        pathInsertRequest.setRegex(regex);
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/paths")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(pathInsertRequest)
+            .exchange()
+            .expectStatus().isBadRequest();
+      }
+    }
   }
 
   @Nested
@@ -197,6 +230,27 @@ class PathRestControllerTest {
                     .extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
                         Path::getCreatedBy)
                     .containsExactly(4L, 1L, "/next-service/v1/", 1L));
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @DisplayName("バリデーションエラーが発生する")
+      @ParameterizedTest
+      @ValueSource(strings = {"", " "})
+      void validationErrorOccurs(String regex) {
+        // given
+        PathUpdateRequest pathUpdateRequest = new PathUpdateRequest();
+        pathUpdateRequest.setRegex(regex);
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/paths/2")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(pathUpdateRequest)
+            .exchange()
+            .expectStatus().isBadRequest();
       }
     }
   }

@@ -1,5 +1,6 @@
 package org.example.web.controller;
 
+import jakarta.validation.Valid;
 import org.example.persistence.entity.Namespace;
 import org.example.service.NamespaceService;
 import org.example.service.ReactiveContextService;
@@ -46,7 +47,7 @@ public class NamespaceRestController {
   }
 
   @PostMapping
-  public Mono<Namespace> save(@RequestBody NamespaceInsertRequest request) {
+  public Mono<Namespace> save(@Valid @RequestBody NamespaceInsertRequest request) {
     return reactiveContextService.getCurrentUser()
         .flatMap(u -> {
           Namespace namespace = request.exportEntity();
@@ -57,7 +58,7 @@ public class NamespaceRestController {
   }
 
   @PutMapping("/{id}")
-  public Mono<Namespace> update(@PathVariable Long id, @RequestBody NamespaceUpdateRequest request) {
+  public Mono<Namespace> update(@PathVariable Long id, @Valid @RequestBody NamespaceUpdateRequest request) {
     Namespace namespace = request.exportEntity();
     namespace.setId(id);
     return namespaceService.update(namespace);

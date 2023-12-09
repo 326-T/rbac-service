@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -50,8 +51,7 @@ class JwtServiceTest {
         // when
         String jwt = jwtService.encode(user);
         // then
-        String base64Decoded = new String(java.util.Base64.getDecoder().decode(jwt));
-        DecodedJWT jwtDecoded = JWT.require(Algorithm.HMAC256("secret")).build().verify(base64Decoded);
+        DecodedJWT jwtDecoded = JWT.require(Algorithm.HMAC256("secret")).build().verify(jwt);
         assertThat(jwtDecoded.getIssuer()).isEqualTo("org.example");
         assertThat(jwtDecoded.getAudience()).isEqualTo(List.of("org.example"));
         assertThat(jwtDecoded.getSubject()).isEqualTo("1");
@@ -73,7 +73,7 @@ class JwtServiceTest {
       void decode() {
         // given
         Date now = new Date();
-        String rawJwt = JWT.create()
+        String jwt = JWT.create()
             .withJWTId(UUID.randomUUID().toString())
             .withIssuer("org.example")
             .withAudience("org.example")
@@ -84,7 +84,6 @@ class JwtServiceTest {
             .withNotBefore(now)
             .withExpiresAt(new Date(now.getTime() + 1000L))
             .sign(Algorithm.HMAC256("secret"));
-        String jwt = java.util.Base64.getEncoder().encodeToString(rawJwt.getBytes());
         // when
         User user = jwtService.decode(jwt);
         // then
@@ -103,7 +102,7 @@ class JwtServiceTest {
       void differentKey() {
         // given
         Date now = new Date();
-        String rawJwt = JWT.create()
+        String jwt = JWT.create()
             .withJWTId(UUID.randomUUID().toString())
             .withIssuer("org.example")
             .withAudience("org.example")
@@ -114,7 +113,6 @@ class JwtServiceTest {
             .withNotBefore(now)
             .withExpiresAt(new Date(now.getTime() + 1000L))
             .sign(Algorithm.HMAC256("invalid_secret"));
-        String jwt = java.util.Base64.getEncoder().encodeToString(rawJwt.getBytes());
         // when, then
         assertThrows(SignatureVerificationException.class, () -> jwtService.decode(jwt));
       }
@@ -124,7 +122,7 @@ class JwtServiceTest {
       void expired() {
         // given
         Date now = new Date();
-        String rawJwt = JWT.create()
+        String jwt = JWT.create()
             .withJWTId(UUID.randomUUID().toString())
             .withIssuer("org.example")
             .withAudience("org.example")
@@ -135,7 +133,6 @@ class JwtServiceTest {
             .withNotBefore(now)
             .withExpiresAt(new Date(now.getTime() - 1000L))
             .sign(Algorithm.HMAC256("secret"));
-        String jwt = java.util.Base64.getEncoder().encodeToString(rawJwt.getBytes());
         // when, then
         assertThrows(TokenExpiredException.class, () -> jwtService.decode(jwt));
       }
@@ -143,7 +140,7 @@ class JwtServiceTest {
       @Test
       void notJwtCase() {
         // when, then
-        assertThrows(IllegalArgumentException.class, () -> jwtService.decode("not_jwt"));
+        assertThrows(JWTDecodeException.class, () -> jwtService.decode("not_jwt"));
       }
     }
   }

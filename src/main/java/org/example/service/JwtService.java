@@ -31,7 +31,7 @@ public class JwtService {
 
   public String encode(User user) {
     Date now = new Date();
-    String rawJwt = JWT.create()
+    return JWT.create()
         .withJWTId(UUID.randomUUID().toString())
         .withIssuer("org.example")
         .withAudience("org.example")
@@ -42,12 +42,10 @@ public class JwtService {
         .withNotBefore(now)
         .withExpiresAt(new Date(now.getTime() + ttl))
         .sign(Algorithm.HMAC256(secretKey));
-    return encoder.encodeToString(rawJwt.getBytes());
   }
 
   public User decode(String jwt) throws TokenExpiredException, SignatureVerificationException, IllegalArgumentException {
-    String rawJwt = new String(decoder.decode(jwt));
-    DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC256(secretKey)).build().verify(rawJwt);
+    DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC256(secretKey)).build().verify(jwt);
     return User.builder()
         .id(Long.parseLong(decodedJWT.getSubject()))
         .name(decodedJWT.getClaim("name").asString())

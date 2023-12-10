@@ -62,13 +62,13 @@ class UserServiceTest {
         // given
         User user1 = User.builder()
             .id(1L).name("user1").email("xxx@example.org")
-            .passwordDigest("password_digest1").build();
+            .passwordDigest("$2a$10$/MmW9CyDFA41U2nyaU7Wq.lRUjSrs0fuwP3B49WOAT2LOWQ1Tzhjq").build();
         User user2 = User.builder()
             .id(2L).name("user2").email("yyy@example.org")
-            .passwordDigest("password_digest2").build();
+            .passwordDigest("$2a$10$wqoI80Es7rDralTel2nGR.W1odzTHU7RuXmKps//SUDZvSxY1Y0U.").build();
         User user3 = User.builder()
             .id(3L).name("user3").email("zzz@example.org")
-            .passwordDigest("password_digest3").build();
+            .passwordDigest("$2a$10$YxMTu2M07qcQPaf4.rt2aukUFenatquwsM1WyOWbPpy9Djz7pbY.y").build();
         when(userRepository.findAll()).thenReturn(Flux.just(user1, user2, user3));
         // when
         Flux<User> groupFlux = userService.findAll();
@@ -76,13 +76,13 @@ class UserServiceTest {
         StepVerifier.create(groupFlux)
             .assertNext(user -> assertThat(user)
                 .extracting(User::getId, User::getName, User::getEmail, User::getPasswordDigest)
-                .containsExactly(1L, "user1", "xxx@example.org", "password_digest1"))
+                .containsExactly(1L, "user1", "xxx@example.org", "$2a$10$/MmW9CyDFA41U2nyaU7Wq.lRUjSrs0fuwP3B49WOAT2LOWQ1Tzhjq"))
             .assertNext(user -> assertThat(user)
                 .extracting(User::getId, User::getName, User::getEmail, User::getPasswordDigest)
-                .containsExactly(2L, "user2", "yyy@example.org", "password_digest2"))
+                .containsExactly(2L, "user2", "yyy@example.org", "$2a$10$wqoI80Es7rDralTel2nGR.W1odzTHU7RuXmKps//SUDZvSxY1Y0U."))
             .assertNext(user -> assertThat(user)
                 .extracting(User::getId, User::getName, User::getEmail, User::getPasswordDigest)
-                .containsExactly(3L, "user3", "zzz@example.org", "password_digest3"))
+                .containsExactly(3L, "user3", "zzz@example.org", "$2a$10$YxMTu2M07qcQPaf4.rt2aukUFenatquwsM1WyOWbPpy9Djz7pbY.y"))
             .verifyComplete();
       }
     }
@@ -101,7 +101,7 @@ class UserServiceTest {
         // given
         User user1 = User.builder()
             .id(1L).name("user1").email("xxx@example.org")
-            .passwordDigest("password_digest1").build();
+            .passwordDigest("$2a$10$/MmW9CyDFA41U2nyaU7Wq.lRUjSrs0fuwP3B49WOAT2LOWQ1Tzhjq").build();
         when(userRepository.findById(1L)).thenReturn(Mono.just(user1));
         // when
         Mono<User> userMono = userService.findById(1L);
@@ -109,7 +109,7 @@ class UserServiceTest {
         StepVerifier.create(userMono)
             .assertNext(user -> assertThat(user)
                 .extracting(User::getId, User::getName, User::getEmail, User::getPasswordDigest)
-                .containsExactly(1L, "user1", "xxx@example.org", "password_digest1"))
+                .containsExactly(1L, "user1", "xxx@example.org", "$2a$10$/MmW9CyDFA41U2nyaU7Wq.lRUjSrs0fuwP3B49WOAT2LOWQ1Tzhjq"))
             .verifyComplete();
       }
     }
@@ -153,7 +153,7 @@ class UserServiceTest {
         // given
         User before = User.builder()
             .id(2L).name("user2").email("xxx@example.org")
-            .passwordDigest("password_digest2").build();
+            .passwordDigest("$2a$10$wqoI80Es7rDralTel2nGR.W1odzTHU7RuXmKps//SUDZvSxY1Y0U.").build();
         User after = User.builder()
             .id(2L).name("user4").email("xxx@example.org")
             .passwordDigest("password_digest4").build();
@@ -181,7 +181,7 @@ class UserServiceTest {
         // given
         User before = User.builder()
             .id(2L).name("user2").email("xxx@example.org")
-            .passwordDigest("password_digest2").build();
+            .passwordDigest("$2a$10$wqoI80Es7rDralTel2nGR.W1odzTHU7RuXmKps//SUDZvSxY1Y0U.").build();
         User after = User.builder()
             .id(2L).name("USER2").email("bbb@example.org")
             .passwordDigest("PASSWORD_DIGEST2").build();
@@ -226,13 +226,13 @@ class UserServiceTest {
         // given
         User before = User.builder()
             .id(2L).name("user2").email("xxx@example.org")
-            .passwordDigest("password_digest2").build();
+            .passwordDigest("$2a$10$wqoI80Es7rDralTel2nGR.W1odzTHU7RuXmKps//SUDZvSxY1Y0U.").build();
         User after = User.builder()
             .id(2L).name("USER2").email("yyy@example.org")
             .passwordDigest("PASSWORD_DIGEST2").build();
         User duplicate = User.builder()
             .id(3L).name("user3").email("yyy@example.org")
-            .passwordDigest("password_digest3").build();
+            .passwordDigest("$2a$10$YxMTu2M07qcQPaf4.rt2aukUFenatquwsM1WyOWbPpy9Djz7pbY.y").build();
         when(userRepository.findById(2L)).thenReturn(Mono.just(before));
         when(userRepository.findByEmail("yyy@example.org")).thenReturn(Mono.just(duplicate));
         when(userRepository.save(any(User.class))).thenReturn(Mono.just(after));

@@ -73,15 +73,15 @@ class UserRestControllerTest {
         // given
         User user1 = User.builder()
             .id(1L).name("user1").email("xxx@example.org")
-            .passwordDigest("password_digest1")
+            .passwordDigest("$2a$10$/MmW9CyDFA41U2nyaU7Wq.lRUjSrs0fuwP3B49WOAT2LOWQ1Tzhjq")
             .build();
         User user2 = User.builder()
             .id(2L).name("user2").email("yyy@example.org")
-            .passwordDigest("password_digest2")
+            .passwordDigest("$2a$10$wqoI80Es7rDralTel2nGR.W1odzTHU7RuXmKps//SUDZvSxY1Y0U.")
             .build();
         User user3 = User.builder()
             .id(3L).name("user3").email("zzz@example.org")
-            .passwordDigest("password_digest3")
+            .passwordDigest("$2a$10$YxMTu2M07qcQPaf4.rt2aukUFenatquwsM1WyOWbPpy9Djz7pbY.y")
             .build();
         when(userService.findAll()).thenReturn(Flux.just(user1, user2, user3));
         // when, then
@@ -117,7 +117,7 @@ class UserRestControllerTest {
         // given
         User user = User.builder()
             .id(1L).name("user1").email("xxx@example.org")
-            .passwordDigest("password_digest1")
+            .passwordDigest("$2a$10$/MmW9CyDFA41U2nyaU7Wq.lRUjSrs0fuwP3B49WOAT2LOWQ1Tzhjq")
             .build();
         when(userService.findById(1L)).thenReturn(Mono.just(user));
         // when, then

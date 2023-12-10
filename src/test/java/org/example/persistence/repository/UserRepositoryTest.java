@@ -63,22 +63,22 @@ public class UserRepositoryTest {
                 user -> assertThat(user)
                     .extracting(
                         User::getId, User::getName, User::getEmail, User::getPasswordDigest)
-                    .containsExactly(1L, "privilege", "privilege@example.org", "password"))
+                    .containsExactly(1L, "privilege", "privilege@example.org", "$2a$10$Weqah6oP9KO2AiOFuRir4.2sQslZM.99vTjgaopnUKOhyzK2zCr22"))
             .assertNext(
                 user -> assertThat(user)
                     .extracting(
                         User::getId, User::getName, User::getEmail, User::getPasswordDigest)
-                    .containsExactly(2L, "user1", "xxx@example.org", "password_digest1"))
+                    .containsExactly(2L, "user1", "xxx@example.org", "$2a$10$/MmW9CyDFA41U2nyaU7Wq.lRUjSrs0fuwP3B49WOAT2LOWQ1Tzhjq"))
             .assertNext(
                 user -> assertThat(user)
                     .extracting(
                         User::getId, User::getName, User::getEmail, User::getPasswordDigest)
-                    .containsExactly(3L, "user2", "yyy@example.org", "password_digest2"))
+                    .containsExactly(3L, "user2", "yyy@example.org", "$2a$10$wqoI80Es7rDralTel2nGR.W1odzTHU7RuXmKps//SUDZvSxY1Y0U."))
             .assertNext(
                 user -> assertThat(user)
                     .extracting(
                         User::getId, User::getName, User::getEmail, User::getPasswordDigest)
-                    .containsExactly(4L, "user3", "zzz@example.org", "password_digest3"))
+                    .containsExactly(4L, "user3", "zzz@example.org", "$2a$10$YxMTu2M07qcQPaf4.rt2aukUFenatquwsM1WyOWbPpy9Djz7pbY.y"))
             .verifyComplete();
       }
     }
@@ -102,7 +102,7 @@ public class UserRepositoryTest {
             .assertNext(
                 user -> assertThat(user)
                     .extracting(User::getId, User::getName, User::getEmail, User::getPasswordDigest)
-                    .containsExactly(2L, "user1", "xxx@example.org", "password_digest1"))
+                    .containsExactly(2L, "user1", "xxx@example.org", "$2a$10$/MmW9CyDFA41U2nyaU7Wq.lRUjSrs0fuwP3B49WOAT2LOWQ1Tzhjq"))
             .verifyComplete();
       }
     }
@@ -212,7 +212,7 @@ public class UserRepositoryTest {
             .assertNext(
                 user -> assertThat(user)
                     .extracting(User::getId, User::getName, User::getEmail, User::getPasswordDigest)
-                    .containsExactly(1L, "user1", "xxx@example.org", "password_digest1"));
+                    .containsExactly(1L, "user1", "xxx@example.org", "$2a$10$/MmW9CyDFA41U2nyaU7Wq.lRUjSrs0fuwP3B49WOAT2LOWQ1Tzhjq"));
       }
     }
   }

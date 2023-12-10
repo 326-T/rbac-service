@@ -7,6 +7,7 @@ import org.example.Application;
 import org.example.error.response.ErrorResponse;
 import org.example.listener.FlywayTestExecutionListener;
 import org.example.persistence.entity.User;
+import org.example.service.Base64Service;
 import org.example.service.JwtService;
 import org.example.web.response.UserResponse;
 import org.junit.jupiter.api.BeforeAll;
@@ -33,15 +34,16 @@ public class UserAPITest {
 
   @Autowired
   private WebTestClient webTestClient;
-
   @Autowired
   private JwtService jwtService;
+  @Autowired
+  private Base64Service base64Service;
 
   private String jwt;
 
   @BeforeAll
   void beforeAll() {
-    jwt = jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build());
+    jwt = base64Service.encode(jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build()));
   }
 
   @Nested

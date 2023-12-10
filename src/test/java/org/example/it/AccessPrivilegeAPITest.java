@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.tuple;
 import org.example.Application;
 import org.example.persistence.dto.AccessPrivilege;
 import org.example.persistence.entity.User;
+import org.example.service.Base64Service;
 import org.example.service.JwtService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.ClassOrderer;
@@ -34,12 +35,14 @@ public class AccessPrivilegeAPITest {
   private WebTestClient webTestClient;
   @Autowired
   private JwtService jwtService;
+  @Autowired
+  private Base64Service base64Service;
 
   private String jwt;
 
   @BeforeAll
   void beforeAll() {
-    jwt = jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build());
+    jwt = base64Service.encode(jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build()));
   }
 
   @Nested

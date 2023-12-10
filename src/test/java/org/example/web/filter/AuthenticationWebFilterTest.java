@@ -65,8 +65,8 @@ class AuthenticationWebFilterTest {
         MockServerWebExchange exchange = MockServerWebExchange.from(
             MockServerHttpRequest.get("/").header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ="));
         when(base64Service.decode("YWRtaW46cGFzc3dvcmQ="))
-            .thenReturn("admin:password");
-        when(userService.login("admin", "password"))
+            .thenReturn("aaa@example.org:password");
+        when(userService.login("aaa@example.org", "password"))
             .thenReturn(Mono.just(User.builder().id(1L).email("aaa@example.org").name("test").build()));
         WebFilterChain chain = filter -> Mono.empty();
         // when

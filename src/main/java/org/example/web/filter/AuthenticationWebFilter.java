@@ -9,6 +9,7 @@ import org.example.service.JwtService;
 import org.example.service.UserService;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
@@ -32,6 +33,7 @@ public class AuthenticationWebFilter implements WebFilter {
 
   /**
    * 認証を行う
+   * OPTIONSメソッドの場合は認証を行わない
    *
    * @param exchange サーバーとのやり取り
    * @param chain    フィルターチェーン
@@ -41,6 +43,9 @@ public class AuthenticationWebFilter implements WebFilter {
   @Override
   @NonNull
   public Mono<Void> filter(ServerWebExchange exchange, @NonNull WebFilterChain chain) {
+    if (HttpMethod.OPTIONS.equals(exchange.getRequest().getMethod())) {
+      return chain.filter(exchange);
+    }
     String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
     if (StringUtil.isNullOrEmpty(token)) {
       return Mono.error(new UnAuthorizedException("Authorization headerがありません。"));

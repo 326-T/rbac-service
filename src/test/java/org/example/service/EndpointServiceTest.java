@@ -121,6 +121,51 @@ class EndpointServiceTest {
   }
 
   @Nested
+  class FindByNamespaceId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("エンドポイントを名前空間IDで取得できる")
+      void findAllTheIndexes() {
+        // given
+        Endpoint endpoint1 = Endpoint.builder()
+            .id(1L).namespaceId(1L).pathId(1L).method("GET").targetGroupId(1L).createdBy(1L)
+            .build();
+        Endpoint endpoint2 = Endpoint.builder()
+            .id(2L).namespaceId(1L).pathId(2L).method("POST").targetGroupId(2L).createdBy(2L)
+            .build();
+        Endpoint endpoint3 = Endpoint.builder()
+            .id(3L).namespaceId(1L).pathId(3L).method("PUT").targetGroupId(3L).createdBy(3L)
+            .build();
+        when(endpointRepository.findByNamespaceId(1L)).thenReturn(Flux.just(endpoint1, endpoint2, endpoint3));
+        // when
+        Flux<Endpoint> clusterFlux = endpointService.findByNamespaceId(1L);
+        // then
+        StepVerifier.create(clusterFlux)
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(Endpoint::getId, Endpoint::getNamespaceId,
+                    Endpoint::getPathId, Endpoint::getMethod,
+                    Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
+                .containsExactly(1L, 1L, 1L, "GET", 1L, 1L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(Endpoint::getId, Endpoint::getNamespaceId,
+                    Endpoint::getPathId, Endpoint::getMethod,
+                    Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
+                .containsExactly(2L, 1L, 2L, "POST", 2L, 2L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(Endpoint::getId, Endpoint::getNamespaceId,
+                    Endpoint::getPathId, Endpoint::getMethod,
+                    Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
+                .containsExactly(3L, 1L, 3L, "PUT", 3L, 3L))
+            .verifyComplete();
+      }
+    }
+  }
+
+  @Nested
   class Insert {
 
     @Nested

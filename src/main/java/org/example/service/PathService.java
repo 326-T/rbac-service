@@ -30,6 +30,10 @@ public class PathService {
     return pathRepository.findById(id);
   }
 
+  public Flux<Path> findByNamespaceId(Long namespaceId) {
+    return pathRepository.findByNamespaceId(namespaceId);
+  }
+
   /**
    * 1. 重複がないか確認する
    * 2. 保存する

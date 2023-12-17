@@ -5,7 +5,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
 import org.example.persistence.entity.User;
@@ -15,16 +14,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class JwtService {
 
-  private final Base64.Encoder encoder;
-  private final Base64.Decoder decoder;
   private final String secretKey;
   private final Long ttl;
 
   public JwtService(
       @Value("${jwt.secret-key}") String secretKey,
       @Value("${jwt.ttl}") Long ttl) {
-    encoder = Base64.getEncoder();
-    decoder = Base64.getDecoder();
     this.secretKey = secretKey;
     this.ttl = ttl;
   }

@@ -30,6 +30,10 @@ public class EndpointService {
     return endpointRepository.findById(id);
   }
 
+  public Flux<Endpoint> findByNamespaceId(Long namespaceId) {
+    return endpointRepository.findByNamespaceId(namespaceId);
+  }
+
   public Mono<Endpoint> insert(Endpoint endpoint) {
     endpoint.setCreatedAt(LocalDateTime.now());
     endpoint.setUpdatedAt(LocalDateTime.now());
@@ -49,7 +53,7 @@ public class EndpointService {
    *
    * @param endpoint パスID
    *
-   * @return
+   * @return 保存したパス
    */
   public Mono<Endpoint> update(Endpoint endpoint) {
     Mono<Endpoint> endpointMono = endpointRepository.findById(endpoint.getId())

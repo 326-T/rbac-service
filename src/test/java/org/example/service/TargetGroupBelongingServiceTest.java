@@ -119,6 +119,49 @@ class TargetGroupBelongingServiceTest {
   }
 
   @Nested
+  class FindByNamespaceId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ターゲットグループを名前空間IDで取得できる")
+      void findAllTheIndexes() {
+        // given
+        TargetGroupBelonging targetGroupBelonging1 = TargetGroupBelonging.builder()
+            .id(1L).namespaceId(1L).targetId(1L).targetGroupId(1L).createdBy(1L).build();
+        TargetGroupBelonging targetGroupBelonging2 = TargetGroupBelonging.builder()
+            .id(2L).namespaceId(1L).targetId(2L).targetGroupId(2L).createdBy(2L).build();
+        TargetGroupBelonging targetGroupBelonging3 = TargetGroupBelonging.builder()
+            .id(3L).namespaceId(1L).targetId(3L).targetGroupId(3L).createdBy(3L).build();
+        when(targetGroupBelongingRepository.findByNamespaceId(1L))
+            .thenReturn(Flux.just(targetGroupBelonging1, targetGroupBelonging2, targetGroupBelonging3));
+        // when
+        Flux<TargetGroupBelonging> groupFlux = targetGroupBelongingService.findByNamespaceId(1L);
+        // then
+        StepVerifier.create(groupFlux)
+            .assertNext(group -> assertThat(group)
+                .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
+                    TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
+                    TargetGroupBelonging::getCreatedBy)
+                .containsExactly(1L, 1L, 1L, 1L, 1L))
+            .assertNext(group -> assertThat(group)
+                .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
+                    TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
+                    TargetGroupBelonging::getCreatedBy)
+                .containsExactly(2L, 1L, 2L, 2L, 2L))
+            .assertNext(group -> assertThat(group)
+                .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
+                    TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
+                    TargetGroupBelonging::getCreatedBy)
+                .containsExactly(3L, 1L, 3L, 3L, 3L))
+            .verifyComplete();
+      }
+    }
+  }
+
+  @Nested
   class Insert {
 
     @Nested

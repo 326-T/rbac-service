@@ -114,6 +114,47 @@ class TargetServiceTest {
   }
 
   @Nested
+  class FindByNamespaceId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ターゲットを名前空間IDで取得できる")
+      void findAllTheIndexes() {
+        // given
+        Target target1 = Target.builder()
+            .id(1L).namespaceId(1L).objectIdRegex("object-id-1").createdBy(1L).build();
+        Target target2 = Target.builder()
+            .id(2L).namespaceId(1L).objectIdRegex("object-id-2").createdBy(2L).build();
+        Target target3 = Target.builder()
+            .id(3L).namespaceId(1L).objectIdRegex("object-id-3").createdBy(3L).build();
+        when(targetRepository.findByNamespaceId(1L)).thenReturn(Flux.just(target1, target2,
+            target3));
+        // when
+        Flux<Target> clusterFlux = targetService.findByNamespaceId(1L);
+        // then
+        StepVerifier.create(clusterFlux)
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(Target::getId, Target::getNamespaceId,
+                    Target::getObjectIdRegex, Target::getCreatedBy)
+                .containsExactly(1L, 1L, "object-id-1", 1L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(Target::getId, Target::getNamespaceId,
+                    Target::getObjectIdRegex, Target::getCreatedBy)
+                .containsExactly(2L, 1L, "object-id-2", 2L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(Target::getId, Target::getNamespaceId,
+                    Target::getObjectIdRegex, Target::getCreatedBy)
+                .containsExactly(3L, 1L, "object-id-3", 3L))
+            .verifyComplete();
+      }
+    }
+  }
+
+
+  @Nested
   class Insert {
 
     @Nested

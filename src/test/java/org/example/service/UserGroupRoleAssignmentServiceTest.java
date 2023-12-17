@@ -127,6 +127,55 @@ class UserGroupRoleAssignmentServiceTest {
   }
 
   @Nested
+  class FindByNamespaceId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ターゲットグループを名前空間IDで取得できる")
+      void findAllTheIndexes() {
+        // given
+        UserGroupRoleAssignment userGroupRoleAssignment1 = UserGroupRoleAssignment.builder()
+            .id(1L).namespaceId(1L).userGroupId(1L).roleId(1L).createdBy(1L).build();
+        UserGroupRoleAssignment userGroupRoleAssignment2 = UserGroupRoleAssignment.builder()
+            .id(2L).namespaceId(1L).userGroupId(2L).roleId(2L).createdBy(2L).build();
+        UserGroupRoleAssignment userGroupRoleAssignment3 = UserGroupRoleAssignment.builder()
+            .id(3L).namespaceId(1L).userGroupId(3L).roleId(3L).createdBy(3L).build();
+        when(userGroupRoleAssignmentRepository.findByNamespaceId(1L))
+            .thenReturn(Flux.just(userGroupRoleAssignment1, userGroupRoleAssignment2, userGroupRoleAssignment3));
+        // when
+        Flux<UserGroupRoleAssignment> groupFlux = userGroupRoleAssignmentService.findByNamespaceId(1L);
+        // then
+        StepVerifier.create(groupFlux)
+            .assertNext(group -> assertThat(group)
+                .extracting(UserGroupRoleAssignment::getId,
+                    UserGroupRoleAssignment::getNamespaceId,
+                    UserGroupRoleAssignment::getUserGroupId,
+                    UserGroupRoleAssignment::getRoleId,
+                    UserGroupRoleAssignment::getCreatedBy)
+                .containsExactly(1L, 1L, 1L, 1L, 1L))
+            .assertNext(group -> assertThat(group)
+                .extracting(UserGroupRoleAssignment::getId,
+                    UserGroupRoleAssignment::getNamespaceId,
+                    UserGroupRoleAssignment::getUserGroupId,
+                    UserGroupRoleAssignment::getRoleId,
+                    UserGroupRoleAssignment::getCreatedBy)
+                .containsExactly(2L, 1L, 2L, 2L, 2L))
+            .assertNext(group -> assertThat(group)
+                .extracting(UserGroupRoleAssignment::getId,
+                    UserGroupRoleAssignment::getNamespaceId,
+                    UserGroupRoleAssignment::getUserGroupId,
+                    UserGroupRoleAssignment::getRoleId,
+                    UserGroupRoleAssignment::getCreatedBy)
+                .containsExactly(3L, 1L, 3L, 3L, 3L))
+            .verifyComplete();
+      }
+    }
+  }
+
+  @Nested
   class Insert {
 
     @Nested

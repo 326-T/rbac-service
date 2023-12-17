@@ -114,6 +114,46 @@ class UserGroupServiceTest {
   }
 
   @Nested
+  class FindByNamespaceId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ユーザグループを名前空間IDで取得できる")
+      void findAllTheIndexes() {
+        // given
+        UserGroup userGroup1 = UserGroup.builder()
+            .id(1L).namespaceId(1L).name("group1").createdBy(1L).build();
+        UserGroup userGroup2 = UserGroup.builder()
+            .id(2L).namespaceId(1L).name("group2").createdBy(2L).build();
+        UserGroup userGroup3 = UserGroup.builder()
+            .id(3L).namespaceId(1L).name("group3").createdBy(3L).build();
+        when(userGroupRepository.findByNamespaceId(1L))
+            .thenReturn(Flux.just(userGroup1, userGroup2, userGroup3));
+        // when
+        Flux<UserGroup> groupFlux = userGroupService.findByNamespaceId(1L);
+        // then
+        StepVerifier.create(groupFlux)
+            .assertNext(group -> assertThat(group)
+                .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                    UserGroup::getName, UserGroup::getCreatedBy)
+                .containsExactly(1L, 1L, "group1", 1L))
+            .assertNext(group -> assertThat(group)
+                .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                    UserGroup::getName, UserGroup::getCreatedBy)
+                .containsExactly(2L, 1L, "group2", 2L))
+            .assertNext(group -> assertThat(group)
+                .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                    UserGroup::getName, UserGroup::getCreatedBy)
+                .containsExactly(3L, 1L, "group3", 3L))
+            .verifyComplete();
+      }
+    }
+  }
+
+  @Nested
   class Insert {
 
     @Nested

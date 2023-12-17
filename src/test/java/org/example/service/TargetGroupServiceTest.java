@@ -113,6 +113,45 @@ class TargetGroupServiceTest {
   }
 
   @Nested
+  class FindByNamespaceId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("クラスターを名前空間IDで取得できる")
+      void findAllTheIndexes() {
+        // given
+        TargetGroup targetGroup1 = TargetGroup.builder()
+            .id(1L).namespaceId(1L).name("cluster1").createdBy(1L).build();
+        TargetGroup targetGroup2 = TargetGroup.builder()
+            .id(2L).namespaceId(1L).name("cluster2").createdBy(2L).build();
+        TargetGroup targetGroup3 = TargetGroup.builder()
+            .id(3L).namespaceId(1L).name("cluster3").createdBy(3L).build();
+        when(targetGroupRepository.findByNamespaceId(1L)).thenReturn(Flux.just(targetGroup1, targetGroup2, targetGroup3));
+        // when
+        Flux<TargetGroup> clusterFlux = targetGroupService.findByNamespaceId(1L);
+        // then
+        StepVerifier.create(clusterFlux)
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(TargetGroup::getId, TargetGroup::getNamespaceId,
+                    TargetGroup::getName, TargetGroup::getCreatedBy)
+                .containsExactly(1L, 1L, "cluster1", 1L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(TargetGroup::getId, TargetGroup::getNamespaceId,
+                    TargetGroup::getName, TargetGroup::getCreatedBy)
+                .containsExactly(2L, 1L, "cluster2", 2L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(TargetGroup::getId, TargetGroup::getNamespaceId,
+                    TargetGroup::getName, TargetGroup::getCreatedBy)
+                .containsExactly(3L, 1L, "cluster3", 3L))
+            .verifyComplete();
+      }
+    }
+  }
+
+  @Nested
   class Insert {
 
     @Nested

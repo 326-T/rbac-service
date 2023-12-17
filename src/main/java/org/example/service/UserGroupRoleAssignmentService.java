@@ -30,6 +30,10 @@ public class UserGroupRoleAssignmentService {
     return userGroupRoleAssignmentRepository.findById(id);
   }
 
+  public Flux<UserGroupRoleAssignment> findByNamespaceId(Long namespaceId) {
+    return userGroupRoleAssignmentRepository.findByNamespaceId(namespaceId);
+  }
+
   /**
    * 1. 重複がないか確認する
    * 2. 保存する

@@ -2,4 +2,4 @@ INSERT INTO rbac_target_group_belongings (namespace_id, target_id, target_group_
 VALUES
     (1, 1, 1, 1),
     (2, 2, 2, 2),
-    (3, 3, 3, 3);
+    (2, 3, 3, 3);

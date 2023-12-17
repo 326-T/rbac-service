@@ -48,7 +48,7 @@ public class UserGroupAPITest {
 
   @Nested
   @Order(1)
-  class index {
+  class Count {
 
     @Nested
     @DisplayName("正常系")
@@ -70,7 +70,7 @@ public class UserGroupAPITest {
 
   @Order(1)
   @Nested
-  class FindAll {
+  class Index {
 
     @Nested
     @DisplayName("正常系")
@@ -81,18 +81,17 @@ public class UserGroupAPITest {
       void findAllTheIndexes() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/user-groups")
+            .uri("/rbac-service/v1/user-groups?namespace-id=2")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(UserGroup.class)
             .consumeWith(response -> {
-              assertThat(response.getResponseBody()).hasSize(3);
+              assertThat(response.getResponseBody()).hasSize(2);
               assertThat(response.getResponseBody())
                   .extracting(UserGroup::getId, UserGroup::getNamespaceId,
                       UserGroup::getName, UserGroup::getCreatedBy)
                   .containsExactly(
-                      tuple(1L, 1L, "group1", 1L),
                       tuple(2L, 2L, "group2", 2L),
                       tuple(3L, 2L, "group3", 3L));
             });

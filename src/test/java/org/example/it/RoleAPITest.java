@@ -48,7 +48,7 @@ public class RoleAPITest {
 
   @Nested
   @Order(1)
-  class index {
+  class Count {
 
     @Nested
     @DisplayName("正常系")
@@ -70,7 +70,7 @@ public class RoleAPITest {
 
   @Order(1)
   @Nested
-  class FindAll {
+  class Index {
 
     @Nested
     @DisplayName("正常系")
@@ -81,17 +81,16 @@ public class RoleAPITest {
       void findAllTheIndexes() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/roles")
+            .uri("/rbac-service/v1/roles?namespace-id=2")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(Role.class)
             .consumeWith(response -> {
-              assertThat(response.getResponseBody()).hasSize(3);
+              assertThat(response.getResponseBody()).hasSize(2);
               assertThat(response.getResponseBody())
                   .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
                   .containsExactly(
-                      tuple(1L, 1L, "developers", 1L),
                       tuple(2L, 2L, "operations", 2L),
                       tuple(3L, 2L, "security", 3L)
                   );

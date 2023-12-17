@@ -48,7 +48,7 @@ public class RoleEndpointPermissionAPITest {
 
   @Nested
   @Order(1)
-  class index {
+  class Count {
 
     @Nested
     @DisplayName("正常系")
@@ -70,7 +70,7 @@ public class RoleEndpointPermissionAPITest {
 
   @Order(1)
   @Nested
-  class FindAll {
+  class Index {
 
     @Nested
     @DisplayName("正常系")
@@ -81,21 +81,20 @@ public class RoleEndpointPermissionAPITest {
       void findAllTheIndexes() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/role-endpoint-permissions")
+            .uri("/rbac-service/v1/role-endpoint-permissions?namespace-id=2")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(RoleEndpointPermission.class)
             .consumeWith(response -> {
-              assertThat(response.getResponseBody()).hasSize(3);
+              assertThat(response.getResponseBody()).hasSize(2);
               assertThat(response.getResponseBody())
                   .extracting(RoleEndpointPermission::getId, RoleEndpointPermission::getNamespaceId,
                       RoleEndpointPermission::getRoleId, RoleEndpointPermission::getEndpointId,
                       RoleEndpointPermission::getCreatedBy)
                   .containsExactly(
-                      tuple(1L, 1L, 1L, 1L, 1L),
                       tuple(2L, 2L, 2L, 2L, 2L),
-                      tuple(3L, 3L, 3L, 3L, 3L));
+                      tuple(3L, 2L, 3L, 3L, 3L));
             });
       }
     }

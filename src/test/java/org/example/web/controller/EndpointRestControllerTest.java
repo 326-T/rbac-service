@@ -42,7 +42,7 @@ class EndpointRestControllerTest {
   private WebTestClient webTestClient;
 
   @Nested
-  class index {
+  class Count {
 
     @Nested
     @DisplayName("正常系")
@@ -64,7 +64,7 @@ class EndpointRestControllerTest {
   }
 
   @Nested
-  class findAll {
+  class Index {
 
     @Nested
     @DisplayName("正常系")
@@ -78,15 +78,15 @@ class EndpointRestControllerTest {
             .id(1L).namespaceId(1L).pathId(1L).method("GET").targetGroupId(1L).createdBy(1L)
             .build();
         Endpoint endpoint2 = Endpoint.builder()
-            .id(2L).namespaceId(2L).pathId(2L).method("POST").targetGroupId(2L).createdBy(2L)
+            .id(2L).namespaceId(1L).pathId(2L).method("POST").targetGroupId(2L).createdBy(2L)
             .build();
         Endpoint endpoint3 = Endpoint.builder()
-            .id(3L).namespaceId(3L).pathId(3L).method("PUT").targetGroupId(3L).createdBy(3L)
+            .id(3L).namespaceId(1L).pathId(3L).method("PUT").targetGroupId(3L).createdBy(3L)
             .build();
-        when(endpointService.findAll()).thenReturn(Flux.just(endpoint1, endpoint2, endpoint3));
+        when(endpointService.findByNamespaceId(1L)).thenReturn(Flux.just(endpoint1, endpoint2, endpoint3));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/endpoints")
+            .uri("/rbac-service/v1/endpoints?namespace-id=1")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(Endpoint.class)
@@ -98,8 +98,8 @@ class EndpointRestControllerTest {
                         Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
                     .containsExactly(
                         tuple(1L, 1L, 1L, "GET", 1L, 1L),
-                        tuple(2L, 2L, 2L, "POST", 2L, 2L),
-                        tuple(3L, 3L, 3L, "PUT", 3L, 3L)
+                        tuple(2L, 1L, 2L, "POST", 2L, 2L),
+                        tuple(3L, 1L, 3L, "PUT", 3L, 3L)
                     )
             );
       }
@@ -107,7 +107,7 @@ class EndpointRestControllerTest {
   }
 
   @Nested
-  class findById {
+  class FindById {
 
     @Nested
     @DisplayName("正常系")

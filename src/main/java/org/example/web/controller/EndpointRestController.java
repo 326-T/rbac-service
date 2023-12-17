@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
@@ -32,8 +33,8 @@ public class EndpointRestController {
   }
 
   @GetMapping
-  public Flux<Endpoint> index() {
-    return endpointService.findAll();
+  public Flux<Endpoint> index(@RequestParam("namespace-id") Long namespaceId) {
+    return endpointService.findByNamespaceId(namespaceId);
   }
 
   @GetMapping("/count")

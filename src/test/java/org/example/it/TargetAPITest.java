@@ -48,7 +48,7 @@ public class TargetAPITest {
 
   @Nested
   @Order(1)
-  class index {
+  class Count {
 
     @Nested
     @DisplayName("正常系")
@@ -70,7 +70,7 @@ public class TargetAPITest {
 
   @Order(1)
   @Nested
-  class FindAll {
+  class Index {
 
     @Nested
     @DisplayName("正常系")
@@ -81,19 +81,18 @@ public class TargetAPITest {
       void findAllTheIndexes() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/targets")
+            .uri("/rbac-service/v1/targets?namespace-id=2")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(Target.class)
             .consumeWith(response -> {
-              assertThat(response.getResponseBody()).hasSize(3);
+              assertThat(response.getResponseBody()).hasSize(2);
               assertThat(response.getResponseBody())
                   .extracting(Target::getId, Target::getNamespaceId, Target::getObjectIdRegex,
                       Target::getCreatedBy)
                   .containsExactly(
 
-                      tuple(1L, 1L, "object-id-1", 1L),
                       tuple(2L, 2L, "object-id-2", 2L),
                       tuple(3L, 2L, "object-id-3", 3L));
             });

@@ -76,7 +76,7 @@ class UserGroupBelongingRepositoryTest {
                     .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
                         UserGroupBelonging::getUserGroupId, UserGroupBelonging::getUserId,
                         UserGroupBelonging::getCreatedBy)
-                    .containsExactly(3L, 3L, 3L, 4L, 3L))
+                    .containsExactly(3L, 2L, 3L, 4L, 3L))
             .verifyComplete();
       }
     }

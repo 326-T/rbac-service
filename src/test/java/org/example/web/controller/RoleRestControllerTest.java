@@ -43,7 +43,7 @@ class RoleRestControllerTest {
   private WebTestClient webTestClient;
 
   @Nested
-  class index {
+  class Count {
 
     @Nested
     @DisplayName("正常系")
@@ -65,7 +65,7 @@ class RoleRestControllerTest {
   }
 
   @Nested
-  class findAll {
+  class Index {
 
     @Nested
     @DisplayName("正常系")
@@ -78,13 +78,13 @@ class RoleRestControllerTest {
         Role role1 = Role.builder()
             .id(1L).namespaceId(1L).name("developer").createdBy(1L).build();
         Role role2 = Role.builder()
-            .id(2L).namespaceId(2L).name("operator").createdBy(2L).build();
+            .id(2L).namespaceId(1L).name("operator").createdBy(2L).build();
         Role role3 = Role.builder()
-            .id(3L).namespaceId(3L).name("security").createdBy(3L).build();
-        when(roleService.findAll()).thenReturn(Flux.just(role1, role2, role3));
+            .id(3L).namespaceId(1L).name("security").createdBy(3L).build();
+        when(roleService.findByNamespaceId(1L)).thenReturn(Flux.just(role1, role2, role3));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/roles")
+            .uri("/rbac-service/v1/roles?namespace-id=1")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(Role.class)
@@ -95,8 +95,8 @@ class RoleRestControllerTest {
                         Role::getName, Role::getCreatedBy)
                     .containsExactly(
                         tuple(1L, 1L, "developer", 1L),
-                        tuple(2L, 2L, "operator", 2L),
-                        tuple(3L, 3L, "security", 3L)
+                        tuple(2L, 1L, "operator", 2L),
+                        tuple(3L, 1L, "security", 3L)
                     )
             );
       }
@@ -104,7 +104,7 @@ class RoleRestControllerTest {
   }
 
   @Nested
-  class findById {
+  class FindById {
 
     @Nested
     @DisplayName("正常系")

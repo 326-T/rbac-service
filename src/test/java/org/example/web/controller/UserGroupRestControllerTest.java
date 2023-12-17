@@ -42,7 +42,7 @@ class UserGroupRestControllerTest {
   private WebTestClient webTestClient;
 
   @Nested
-  class index {
+  class Count {
 
     @Nested
     @DisplayName("正常系")
@@ -64,7 +64,7 @@ class UserGroupRestControllerTest {
   }
 
   @Nested
-  class findAll {
+  class Index {
 
     @Nested
     @DisplayName("正常系")
@@ -77,13 +77,14 @@ class UserGroupRestControllerTest {
         UserGroup userGroup1 = UserGroup.builder()
             .id(1L).namespaceId(1L).name("group-1").createdBy(1L).build();
         UserGroup userGroup2 = UserGroup.builder()
-            .id(2L).namespaceId(2L).name("group-2").createdBy(2L).build();
+            .id(2L).namespaceId(1L).name("group-2").createdBy(2L).build();
         UserGroup userGroup3 = UserGroup.builder()
-            .id(3L).namespaceId(3L).name("group-3").createdBy(3L).build();
-        when(userGroupService.findAll()).thenReturn(Flux.just(userGroup1, userGroup2, userGroup3));
+            .id(3L).namespaceId(1L).name("group-3").createdBy(3L).build();
+        when(userGroupService.findByNamespaceId(1L))
+            .thenReturn(Flux.just(userGroup1, userGroup2, userGroup3));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/user-groups")
+            .uri("/rbac-service/v1/user-groups?namespace-id=1")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(UserGroup.class)
@@ -94,8 +95,8 @@ class UserGroupRestControllerTest {
                         UserGroup::getName, UserGroup::getCreatedBy)
                     .containsExactly(
                         tuple(1L, 1L, "group-1", 1L),
-                        tuple(2L, 2L, "group-2", 2L),
-                        tuple(3L, 3L, "group-3", 3L)
+                        tuple(2L, 1L, "group-2", 2L),
+                        tuple(3L, 1L, "group-3", 3L)
                     )
             );
       }
@@ -103,7 +104,7 @@ class UserGroupRestControllerTest {
   }
 
   @Nested
-  class findById {
+  class FindById {
 
     @Nested
     @DisplayName("正常系")

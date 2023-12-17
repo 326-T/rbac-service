@@ -48,7 +48,7 @@ public class NamespaceAPITest {
 
   @Nested
   @Order(1)
-  class index {
+  class Count {
 
     @Nested
     @DisplayName("正常系")
@@ -70,7 +70,7 @@ public class NamespaceAPITest {
 
   @Order(1)
   @Nested
-  class FindAll {
+  class Index {
 
     @Nested
     @DisplayName("正常系")

@@ -85,7 +85,7 @@ class RoleEndpointPermissionRepositoryTest {
                         RoleEndpointPermission::getRoleId,
                         RoleEndpointPermission::getEndpointId,
                         RoleEndpointPermission::getCreatedBy)
-                    .containsExactly(3L, 3L, 3L, 3L, 3L))
+                    .containsExactly(3L, 2L, 3L, 3L, 3L))
             .verifyComplete();
       }
     }

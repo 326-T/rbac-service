@@ -48,7 +48,7 @@ public class EndpointAPITest {
 
   @Nested
   @Order(1)
-  class index {
+  class Count {
 
     @Nested
     @DisplayName("正常系")
@@ -70,7 +70,7 @@ public class EndpointAPITest {
 
   @Order(1)
   @Nested
-  class FindAll {
+  class Index {
 
     @Nested
     @DisplayName("正常系")
@@ -81,19 +81,18 @@ public class EndpointAPITest {
       void findAllTheIndexes() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/endpoints")
+            .uri("/rbac-service/v1/endpoints?namespace-id=2")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(Endpoint.class)
             .consumeWith(response -> {
-              assertThat(response.getResponseBody()).hasSize(3);
+              assertThat(response.getResponseBody()).hasSize(2);
               assertThat(response.getResponseBody())
                   .extracting(Endpoint::getId, Endpoint::getNamespaceId,
                       Endpoint::getPathId, Endpoint::getMethod,
                       Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
                   .containsExactly(
-                      tuple(1L, 1L, 1L, "GET", 1L, 1L),
                       tuple(2L, 2L, 2L, "POST", 2L, 2L),
                       tuple(3L, 2L, 3L, "PUT", 3L, 3L)
                   );

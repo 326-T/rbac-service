@@ -82,7 +82,7 @@ class UserGroupRoleAssignmentRepositoryTest {
                         UserGroupRoleAssignment::getRoleId,
                         UserGroupRoleAssignment::getUserGroupId,
                         UserGroupRoleAssignment::getCreatedBy)
-                    .containsExactly(3L, 3L, 3L, 3L, 3L))
+                    .containsExactly(3L, 2L, 3L, 3L, 3L))
             .verifyComplete();
       }
     }

@@ -76,7 +76,7 @@ class TargetGroupBelongingRepositoryTest {
                     .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
                         TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
                         TargetGroupBelonging::getCreatedBy)
-                    .containsExactly(3L, 3L, 3L, 3L, 3L))
+                    .containsExactly(3L, 2L, 3L, 3L, 3L))
             .verifyComplete();
       }
     }

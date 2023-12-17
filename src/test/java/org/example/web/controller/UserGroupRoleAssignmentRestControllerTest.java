@@ -41,7 +41,7 @@ class UserGroupRoleAssignmentRestControllerTest {
   private WebTestClient webTestClient;
 
   @Nested
-  class index {
+  class Count {
 
     @Nested
     @DisplayName("正常系")
@@ -63,7 +63,7 @@ class UserGroupRoleAssignmentRestControllerTest {
   }
 
   @Nested
-  class findAll {
+  class Index {
 
     @Nested
     @DisplayName("正常系")
@@ -76,14 +76,14 @@ class UserGroupRoleAssignmentRestControllerTest {
         UserGroupRoleAssignment userGroupRoleAssignment1 = UserGroupRoleAssignment.builder()
             .id(1L).namespaceId(1L).userGroupId(1L).roleId(1L).createdBy(1L).build();
         UserGroupRoleAssignment userGroupRoleAssignment2 = UserGroupRoleAssignment.builder()
-            .id(2L).namespaceId(2L).userGroupId(2L).roleId(2L).createdBy(2L).build();
+            .id(2L).namespaceId(1L).userGroupId(2L).roleId(2L).createdBy(2L).build();
         UserGroupRoleAssignment userGroupRoleAssignment3 = UserGroupRoleAssignment.builder()
-            .id(3L).namespaceId(3L).userGroupId(3L).roleId(3L).createdBy(3L).build();
-        when(userGroupRoleAssignmentService.findAll()).thenReturn(
-            Flux.just(userGroupRoleAssignment1, userGroupRoleAssignment2, userGroupRoleAssignment3));
+            .id(3L).namespaceId(1L).userGroupId(3L).roleId(3L).createdBy(3L).build();
+        when(userGroupRoleAssignmentService.findByNamespaceId(1L))
+            .thenReturn(Flux.just(userGroupRoleAssignment1, userGroupRoleAssignment2, userGroupRoleAssignment3));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/group-role-assignments")
+            .uri("/rbac-service/v1/group-role-assignments?namespace-id=1")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(UserGroupRoleAssignment.class)
@@ -94,8 +94,8 @@ class UserGroupRoleAssignmentRestControllerTest {
                         UserGroupRoleAssignment::getUserGroupId, UserGroupRoleAssignment::getRoleId, UserGroupRoleAssignment::getCreatedBy)
                     .containsExactly(
                         tuple(1L, 1L, 1L, 1L, 1L),
-                        tuple(2L, 2L, 2L, 2L, 2L),
-                        tuple(3L, 3L, 3L, 3L, 3L)
+                        tuple(2L, 1L, 2L, 2L, 2L),
+                        tuple(3L, 1L, 3L, 3L, 3L)
                     )
             );
       }
@@ -103,7 +103,7 @@ class UserGroupRoleAssignmentRestControllerTest {
   }
 
   @Nested
-  class findById {
+  class FindById {
 
     @Nested
     @DisplayName("正常系")

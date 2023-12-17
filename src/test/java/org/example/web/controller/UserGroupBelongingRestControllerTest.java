@@ -41,7 +41,7 @@ class UserGroupBelongingRestControllerTest {
   private WebTestClient webTestClient;
 
   @Nested
-  class index {
+  class Count {
 
     @Nested
     @DisplayName("正常系")
@@ -76,14 +76,14 @@ class UserGroupBelongingRestControllerTest {
         UserGroupBelonging userGroupBelonging1 = UserGroupBelonging.builder()
             .id(1L).namespaceId(1L).userId(1L).userGroupId(1L).createdBy(1L).build();
         UserGroupBelonging userGroupBelonging2 = UserGroupBelonging.builder()
-            .id(2L).namespaceId(2L).userId(2L).userGroupId(2L).createdBy(2L).build();
+            .id(2L).namespaceId(1L).userId(2L).userGroupId(2L).createdBy(2L).build();
         UserGroupBelonging userGroupBelonging3 = UserGroupBelonging.builder()
-            .id(3L).namespaceId(3L).userId(3L).userGroupId(3L).createdBy(3L).build();
-        when(userGroupBelongingService.findAll()).thenReturn(
-            Flux.just(userGroupBelonging1, userGroupBelonging2, userGroupBelonging3));
+            .id(3L).namespaceId(1L).userId(3L).userGroupId(3L).createdBy(3L).build();
+        when(userGroupBelongingService.findByNamespaceId(1L))
+            .thenReturn(Flux.just(userGroupBelonging1, userGroupBelonging2, userGroupBelonging3));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/user-group-belongings")
+            .uri("/rbac-service/v1/user-group-belongings?namespace-id=1")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(UserGroupBelonging.class)
@@ -94,8 +94,8 @@ class UserGroupBelongingRestControllerTest {
                         UserGroupBelonging::getUserId, UserGroupBelonging::getUserGroupId, UserGroupBelonging::getCreatedBy)
                     .containsExactly(
                         tuple(1L, 1L, 1L, 1L, 1L),
-                        tuple(2L, 2L, 2L, 2L, 2L),
-                        tuple(3L, 3L, 3L, 3L, 3L)
+                        tuple(2L, 1L, 2L, 2L, 2L),
+                        tuple(3L, 1L, 3L, 3L, 3L)
                     )
             );
       }
@@ -103,7 +103,7 @@ class UserGroupBelongingRestControllerTest {
   }
 
   @Nested
-  class findById {
+  class FindById {
 
     @Nested
     @DisplayName("正常系")

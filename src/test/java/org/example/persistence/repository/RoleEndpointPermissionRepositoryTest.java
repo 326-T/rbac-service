@@ -121,6 +121,35 @@ class RoleEndpointPermissionRepositoryTest {
     }
   }
 
+  @Order(1)
+  @Nested
+  class FindByNamespaceId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("グループとロールの関係情報をnamespaceIdで取得できる")
+      void findAllTheIndexes() {
+        // when
+        Flux<RoleEndpointPermission> groupHasRoleFlux = roleEndpointPermissionRepository.findByNamespaceId(1L);
+        // then
+        StepVerifier.create(groupHasRoleFlux)
+            .assertNext(
+                roleEndpointPermission -> assertThat(roleEndpointPermission)
+                    .extracting(
+                        RoleEndpointPermission::getId,
+                        RoleEndpointPermission::getNamespaceId,
+                        RoleEndpointPermission::getRoleId,
+                        RoleEndpointPermission::getEndpointId,
+                        RoleEndpointPermission::getCreatedBy)
+                    .containsExactly(1L, 1L, 1L, 1L, 1L))
+            .verifyComplete();
+      }
+    }
+  }
+
   @Order(2)
   @Nested
   @TestExecutionListeners(listeners = {

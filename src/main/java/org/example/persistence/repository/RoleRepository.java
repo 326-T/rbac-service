@@ -16,6 +16,12 @@ public interface RoleRepository extends ReactiveCrudRepository<Role, Long> {
 
   Mono<Role> findById(Long id);
 
+  @Query("""
+      SELECT * FROM rbac_roles
+      WHERE namespace_id = :namespaceId;
+      """)
+  Flux<Role> findByNamespaceId(Long namespaceId);
+
   Mono<Role> save(Role role);
 
   Mono<Void> deleteById(Long id);

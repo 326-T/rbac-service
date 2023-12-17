@@ -109,6 +109,32 @@ class TargetGroupBelongingRepositoryTest {
     }
   }
 
+  @Order(1)
+  @Nested
+  class FindByNamespaceId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ターゲットとグループの関係情報をnamespaceIdで取得できる")
+      void findAllTheIndexes() {
+        // when
+        Flux<TargetGroupBelonging> targetBelongsGroupFlux = targetGroupBelongingRepository.findByNamespaceId(1L);
+        // then
+        StepVerifier.create(targetBelongsGroupFlux)
+            .assertNext(
+                targetClusterBelonging -> assertThat(targetClusterBelonging)
+                    .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
+                        TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
+                        TargetGroupBelonging::getCreatedBy)
+                    .containsExactly(1L, 1L, 1L, 1L, 1L))
+            .verifyComplete();
+      }
+    }
+  }
+
   @Order(2)
   @Nested
   @TestExecutionListeners(listeners = {

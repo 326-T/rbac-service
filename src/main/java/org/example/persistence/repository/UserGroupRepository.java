@@ -16,6 +16,12 @@ public interface UserGroupRepository extends ReactiveCrudRepository<UserGroup, L
 
   Mono<UserGroup> findById(Long id);
 
+  @Query("""
+      SELECT * FROM rbac_user_groups
+      WHERE namespace_id = :namespaceId;
+      """)
+  Flux<UserGroup> findByNamespaceId(Long namespaceId);
+
   Mono<UserGroup> save(UserGroup userGroup);
 
   Mono<Void> deleteById(Long id);

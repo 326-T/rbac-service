@@ -17,6 +17,12 @@ public interface UserGroupBelongingRepository extends
 
   Mono<UserGroupBelonging> findById(Long id);
 
+  @Query("""
+      SELECT * FROM rbac_user_group_belongings
+      WHERE namespace_id = :namespaceId;
+      """)
+  Flux<UserGroupBelonging> findByNamespaceId(Long namespaceId);
+
   Mono<UserGroupBelonging> save(UserGroupBelonging userGroupBelonging);
 
   Mono<Void> deleteById(Long id);

@@ -17,6 +17,12 @@ public interface EndpointRepository extends
 
   Mono<Endpoint> findById(Long id);
 
+  @Query("""
+      SELECT * FROM rbac_endpoints
+      WHERE namespace_id = :namespaceId;
+      """)
+  Flux<Endpoint> findByNamespaceId(Long namespaceId);
+
   Mono<Endpoint> save(Endpoint endpoint);
 
   Mono<Void> deleteById(Long id);

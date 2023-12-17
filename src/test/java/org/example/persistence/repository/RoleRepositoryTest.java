@@ -100,6 +100,30 @@ class RoleRepositoryTest {
     }
   }
 
+  @Order(1)
+  @Nested
+  class FindByNamespaceId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ロールをnamespaceIdで取得できる")
+      void findAllTheIndexes() {
+        // when
+        Flux<Role> roleFlux = roleRepository.findByNamespaceId(1L);
+        // then
+        StepVerifier.create(roleFlux)
+            .assertNext(
+                role -> assertThat(role)
+                    .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
+                    .containsExactly(1L, 1L, "developers", 1L))
+            .verifyComplete();
+      }
+    }
+  }
+
   @Order(2)
   @Nested
   @TestExecutionListeners(listeners = {

@@ -16,6 +16,12 @@ public interface TargetRepository extends ReactiveCrudRepository<Target, Long> {
 
   Mono<Target> findById(Long id);
 
+  @Query("""
+      SELECT * FROM rbac_targets
+      WHERE namespace_id = :namespaceId;
+      """)
+  Flux<Target> findByNamespaceId(Long namespaceId);
+
   Mono<Target> save(Target target);
 
   Mono<Void> deleteById(Long id);

@@ -43,7 +43,7 @@ class TargetGroupRestControllerTest {
   private WebTestClient webTestClient;
 
   @Nested
-  class index {
+  class Count {
 
     @Nested
     @DisplayName("正常系")
@@ -65,7 +65,7 @@ class TargetGroupRestControllerTest {
   }
 
   @Nested
-  class findAll {
+  class Index {
 
     @Nested
     @DisplayName("正常系")
@@ -78,13 +78,14 @@ class TargetGroupRestControllerTest {
         TargetGroup targetGroup1 = TargetGroup.builder()
             .id(1L).namespaceId(1L).name("target-group-1").createdBy(1L).build();
         TargetGroup targetGroup2 = TargetGroup.builder()
-            .id(2L).namespaceId(2L).name("target-group-2").createdBy(2L).build();
+            .id(2L).namespaceId(1L).name("target-group-2").createdBy(2L).build();
         TargetGroup targetGroup3 = TargetGroup.builder()
-            .id(3L).namespaceId(3L).name("target-group-3").createdBy(3L).build();
-        when(targetGroupService.findAll()).thenReturn(Flux.just(targetGroup1, targetGroup2, targetGroup3));
+            .id(3L).namespaceId(1L).name("target-group-3").createdBy(3L).build();
+        when(targetGroupService.findByNamespaceId(1L))
+            .thenReturn(Flux.just(targetGroup1, targetGroup2, targetGroup3));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/target-groups")
+            .uri("/rbac-service/v1/target-groups?namespace-id=1")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(TargetGroup.class)
@@ -95,8 +96,8 @@ class TargetGroupRestControllerTest {
                         TargetGroup::getName, TargetGroup::getCreatedBy)
                     .containsExactly(
                         tuple(1L, 1L, "target-group-1", 1L),
-                        tuple(2L, 2L, "target-group-2", 2L),
-                        tuple(3L, 3L, "target-group-3", 3L)
+                        tuple(2L, 1L, "target-group-2", 2L),
+                        tuple(3L, 1L, "target-group-3", 3L)
                     )
             );
       }
@@ -104,7 +105,7 @@ class TargetGroupRestControllerTest {
   }
 
   @Nested
-  class findById {
+  class FindById {
 
     @Nested
     @DisplayName("正常系")

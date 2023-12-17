@@ -17,6 +17,12 @@ public interface RoleEndpointPermissionRepository extends
 
   Mono<RoleEndpointPermission> findById(Long id);
 
+  @Query("""
+      SELECT * FROM rbac_role_endpoint_permissions
+      WHERE namespace_id = :namespaceId;
+      """)
+  Flux<RoleEndpointPermission> findByNamespaceId(Long namespaceId);
+
   Mono<RoleEndpointPermission> save(RoleEndpointPermission roleEndpointPermission);
 
   Mono<Void> deleteById(Long id);

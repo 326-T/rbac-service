@@ -127,6 +127,55 @@ class RoleEndpointPermissionServiceTest {
   }
 
   @Nested
+  class FindByNamespaceId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ターゲットグループを名前空間IDで取得できる")
+      void findAllTheIndexes() {
+        // given
+        RoleEndpointPermission roleEndpointPermission1 = RoleEndpointPermission.builder()
+            .id(1L).namespaceId(1L).roleId(1L).endpointId(1L).createdBy(1L).build();
+        RoleEndpointPermission roleEndpointPermission2 = RoleEndpointPermission.builder()
+            .id(2L).namespaceId(1L).roleId(2L).endpointId(2L).createdBy(2L).build();
+        RoleEndpointPermission roleEndpointPermission3 = RoleEndpointPermission.builder()
+            .id(3L).namespaceId(1L).roleId(3L).endpointId(3L).createdBy(3L).build();
+        when(roleEndpointPermissionRepository.findByNamespaceId(1L))
+            .thenReturn(Flux.just(roleEndpointPermission1, roleEndpointPermission2, roleEndpointPermission3));
+        // when
+        Flux<RoleEndpointPermission> groupFlux = roleEndpointPermissionService.findByNamespaceId(1L);
+        // then
+        StepVerifier.create(groupFlux)
+            .assertNext(group -> assertThat(group)
+                .extracting(RoleEndpointPermission::getId,
+                    RoleEndpointPermission::getNamespaceId,
+                    RoleEndpointPermission::getRoleId,
+                    RoleEndpointPermission::getEndpointId,
+                    RoleEndpointPermission::getCreatedBy)
+                .containsExactly(1L, 1L, 1L, 1L, 1L))
+            .assertNext(group -> assertThat(group)
+                .extracting(RoleEndpointPermission::getId,
+                    RoleEndpointPermission::getNamespaceId,
+                    RoleEndpointPermission::getRoleId,
+                    RoleEndpointPermission::getEndpointId,
+                    RoleEndpointPermission::getCreatedBy)
+                .containsExactly(2L, 1L, 2L, 2L, 2L))
+            .assertNext(group -> assertThat(group)
+                .extracting(RoleEndpointPermission::getId,
+                    RoleEndpointPermission::getNamespaceId,
+                    RoleEndpointPermission::getRoleId,
+                    RoleEndpointPermission::getEndpointId,
+                    RoleEndpointPermission::getCreatedBy)
+                .containsExactly(3L, 1L, 3L, 3L, 3L))
+            .verifyComplete();
+      }
+    }
+  }
+
+  @Nested
   class Insert {
 
     @Nested

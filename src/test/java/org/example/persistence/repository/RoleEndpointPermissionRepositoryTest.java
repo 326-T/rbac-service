@@ -85,7 +85,7 @@ class RoleEndpointPermissionRepositoryTest {
                         RoleEndpointPermission::getRoleId,
                         RoleEndpointPermission::getEndpointId,
                         RoleEndpointPermission::getCreatedBy)
-                    .containsExactly(3L, 3L, 3L, 3L, 3L))
+                    .containsExactly(3L, 2L, 3L, 3L, 3L))
             .verifyComplete();
       }
     }
@@ -107,6 +107,35 @@ class RoleEndpointPermissionRepositoryTest {
             1L);
         // then
         StepVerifier.create(groupHasRoleMono)
+            .assertNext(
+                roleEndpointPermission -> assertThat(roleEndpointPermission)
+                    .extracting(
+                        RoleEndpointPermission::getId,
+                        RoleEndpointPermission::getNamespaceId,
+                        RoleEndpointPermission::getRoleId,
+                        RoleEndpointPermission::getEndpointId,
+                        RoleEndpointPermission::getCreatedBy)
+                    .containsExactly(1L, 1L, 1L, 1L, 1L))
+            .verifyComplete();
+      }
+    }
+  }
+
+  @Order(1)
+  @Nested
+  class FindByNamespaceId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("グループとロールの関係情報をnamespaceIdで取得できる")
+      void findAllTheIndexes() {
+        // when
+        Flux<RoleEndpointPermission> groupHasRoleFlux = roleEndpointPermissionRepository.findByNamespaceId(1L);
+        // then
+        StepVerifier.create(groupHasRoleFlux)
             .assertNext(
                 roleEndpointPermission -> assertThat(roleEndpointPermission)
                     .extracting(

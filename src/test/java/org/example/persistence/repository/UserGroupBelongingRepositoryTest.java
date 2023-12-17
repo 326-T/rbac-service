@@ -76,7 +76,7 @@ class UserGroupBelongingRepositoryTest {
                     .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
                         UserGroupBelonging::getUserGroupId, UserGroupBelonging::getUserId,
                         UserGroupBelonging::getCreatedBy)
-                    .containsExactly(3L, 3L, 3L, 4L, 3L))
+                    .containsExactly(3L, 2L, 3L, 4L, 3L))
             .verifyComplete();
       }
     }
@@ -97,6 +97,32 @@ class UserGroupBelongingRepositoryTest {
         Mono<UserGroupBelonging> userBelongsGroupMono = userGroupBelongingRepository.findById(1L);
         // then
         StepVerifier.create(userBelongsGroupMono)
+            .assertNext(
+                userGroupBelonging -> assertThat(userGroupBelonging)
+                    .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
+                        UserGroupBelonging::getUserGroupId, UserGroupBelonging::getUserId,
+                        UserGroupBelonging::getCreatedBy)
+                    .containsExactly(1L, 1L, 1L, 2L, 1L))
+            .verifyComplete();
+      }
+    }
+  }
+
+  @Order(1)
+  @Nested
+  class FindAllByNamespaceId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ユーザとグループの関係情報をnamespaceIdで取得できる")
+      void findAllTheIndexes() {
+        // when
+        Flux<UserGroupBelonging> userBelongsGroupFlux = userGroupBelongingRepository.findByNamespaceId(1L);
+        // then
+        StepVerifier.create(userBelongsGroupFlux)
             .assertNext(
                 userGroupBelonging -> assertThat(userGroupBelonging)
                     .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,

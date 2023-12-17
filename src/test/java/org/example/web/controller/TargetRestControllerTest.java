@@ -43,7 +43,7 @@ class TargetRestControllerTest {
   private WebTestClient webTestClient;
 
   @Nested
-  class index {
+  class Count {
 
     @Nested
     @DisplayName("正常系")
@@ -65,7 +65,7 @@ class TargetRestControllerTest {
   }
 
   @Nested
-  class findAll {
+  class Index {
 
     @Nested
     @DisplayName("正常系")
@@ -78,13 +78,13 @@ class TargetRestControllerTest {
         Target target1 = Target.builder()
             .id(1L).namespaceId(1L).objectIdRegex("object-id-1").createdBy(1L).build();
         Target target2 = Target.builder()
-            .id(2L).namespaceId(2L).objectIdRegex("object-id-2").createdBy(2L).build();
+            .id(2L).namespaceId(1L).objectIdRegex("object-id-2").createdBy(2L).build();
         Target target3 = Target.builder()
-            .id(3L).namespaceId(3L).objectIdRegex("object-id-3").createdBy(3L).build();
-        when(targetService.findAll()).thenReturn(Flux.just(target1, target2, target3));
+            .id(3L).namespaceId(1L).objectIdRegex("object-id-3").createdBy(3L).build();
+        when(targetService.findByNamespaceId(1L)).thenReturn(Flux.just(target1, target2, target3));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/targets")
+            .uri("/rbac-service/v1/targets?namespace-id=1")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(Target.class)
@@ -95,8 +95,8 @@ class TargetRestControllerTest {
                         Target::getObjectIdRegex, Target::getCreatedBy)
                     .containsExactly(
                         tuple(1L, 1L, "object-id-1", 1L),
-                        tuple(2L, 2L, "object-id-2", 2L),
-                        tuple(3L, 3L, "object-id-3", 3L)
+                        tuple(2L, 1L, "object-id-2", 2L),
+                        tuple(3L, 1L, "object-id-3", 3L)
                     )
             );
       }
@@ -104,7 +104,7 @@ class TargetRestControllerTest {
   }
 
   @Nested
-  class findById {
+  class FindById {
 
     @Nested
     @DisplayName("正常系")

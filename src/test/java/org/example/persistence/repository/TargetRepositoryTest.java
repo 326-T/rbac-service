@@ -94,6 +94,30 @@ class TargetRepositoryTest {
     }
   }
 
+  @Order(1)
+  @Nested
+  class FindAllByNamespaceId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ターゲットをnamespaceIdで全件取得できる")
+      void findAllTheIndexes() {
+        // when
+        Flux<Target> targetFlux = targetRepository.findByNamespaceId(1L);
+        // then
+        StepVerifier.create(targetFlux)
+            .assertNext(target ->
+                assertThat(target)
+                    .extracting(Target::getId, Target::getNamespaceId, Target::getObjectIdRegex, Target::getCreatedBy)
+                    .containsExactly(1L, 1L, "object-id-1", 1L))
+            .verifyComplete();
+      }
+    }
+  }
+
   @Order(2)
   @Nested
   @TestExecutionListeners(listeners = {

@@ -17,6 +17,12 @@ public interface UserGroupRoleAssignmentRepository extends
 
   Mono<UserGroupRoleAssignment> findById(Long id);
 
+  @Query("""
+      SELECT * FROM rbac_user_group_role_assignments
+      WHERE namespace_id = :namespaceId;
+      """)
+  Flux<UserGroupRoleAssignment> findByNamespaceId(Long namespaceId);
+
   Mono<UserGroupRoleAssignment> save(UserGroupRoleAssignment userGroupRoleAssignment);
 
   Mono<Void> deleteById(Long id);

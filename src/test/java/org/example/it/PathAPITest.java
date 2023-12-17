@@ -48,7 +48,7 @@ public class PathAPITest {
 
   @Nested
   @Order(1)
-  class index {
+  class Count {
 
     @Nested
     @DisplayName("正常系")
@@ -70,7 +70,7 @@ public class PathAPITest {
 
   @Order(1)
   @Nested
-  class FindAll {
+  class Index {
 
     @Nested
     @DisplayName("正常系")
@@ -81,17 +81,16 @@ public class PathAPITest {
       void findAllTheIndexes() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/paths")
+            .uri("/rbac-service/v1/paths?namespace-id=2")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(Path.class)
             .consumeWith(response -> {
-              assertThat(response.getResponseBody()).hasSize(3);
+              assertThat(response.getResponseBody()).hasSize(2);
               assertThat(response.getResponseBody())
                   .extracting(Path::getId, Path::getNamespaceId, Path::getRegex, Path::getCreatedBy)
                   .containsExactly(
-                      tuple(1L, 1L, "/user-service/v1/", 1L),
                       tuple(2L, 2L, "/billing-service/v1/", 2L),
                       tuple(3L, 2L, "/inventory-service/v2/", 3L));
             });

@@ -82,7 +82,7 @@ class UserGroupRoleAssignmentRepositoryTest {
                         UserGroupRoleAssignment::getRoleId,
                         UserGroupRoleAssignment::getUserGroupId,
                         UserGroupRoleAssignment::getCreatedBy)
-                    .containsExactly(3L, 3L, 3L, 3L, 3L))
+                    .containsExactly(3L, 2L, 3L, 3L, 3L))
             .verifyComplete();
       }
     }
@@ -104,6 +104,34 @@ class UserGroupRoleAssignmentRepositoryTest {
             1L);
         // then
         StepVerifier.create(groupHasRoleMono)
+            .assertNext(
+                groupRoleAssignment -> assertThat(groupRoleAssignment)
+                    .extracting(UserGroupRoleAssignment::getId,
+                        UserGroupRoleAssignment::getNamespaceId,
+                        UserGroupRoleAssignment::getRoleId,
+                        UserGroupRoleAssignment::getUserGroupId,
+                        UserGroupRoleAssignment::getCreatedBy)
+                    .containsExactly(1L, 1L, 1L, 1L, 1L))
+            .verifyComplete();
+      }
+    }
+  }
+
+  @Order(1)
+  @Nested
+  class FindAllByNamespaceId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("グループとロールの関係情報をnamespaceIdで取得できる")
+      void findAllTheIndexes() {
+        // when
+        Flux<UserGroupRoleAssignment> groupHasRoleFlux = userGroupRoleAssignmentRepository.findByNamespaceId(1L);
+        // then
+        StepVerifier.create(groupHasRoleFlux)
             .assertNext(
                 groupRoleAssignment -> assertThat(groupRoleAssignment)
                     .extracting(UserGroupRoleAssignment::getId,

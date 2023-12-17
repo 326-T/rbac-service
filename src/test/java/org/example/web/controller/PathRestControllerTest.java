@@ -43,7 +43,7 @@ class PathRestControllerTest {
   private WebTestClient webTestClient;
 
   @Nested
-  class index {
+  class Count {
 
     @Nested
     @DisplayName("正常系")
@@ -65,7 +65,7 @@ class PathRestControllerTest {
   }
 
   @Nested
-  class findAll {
+  class Index {
 
     @Nested
     @DisplayName("正常系")
@@ -78,13 +78,13 @@ class PathRestControllerTest {
         Path path1 = Path.builder()
             .id(1L).namespaceId(1L).regex("/user-service/v1").createdBy(1L).build();
         Path path2 = Path.builder()
-            .id(2L).namespaceId(2L).regex("/billing-service/v1").createdBy(2L).build();
+            .id(2L).namespaceId(1L).regex("/billing-service/v1").createdBy(2L).build();
         Path path3 = Path.builder()
-            .id(3L).namespaceId(3L).regex("/movie-service/v1").createdBy(3L).build();
-        when(pathService.findAll()).thenReturn(Flux.just(path1, path2, path3));
+            .id(3L).namespaceId(1L).regex("/movie-service/v1").createdBy(3L).build();
+        when(pathService.findByNamespaceId(1L)).thenReturn(Flux.just(path1, path2, path3));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/paths")
+            .uri("/rbac-service/v1/paths?namespace-id=1")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(Path.class)
@@ -95,8 +95,8 @@ class PathRestControllerTest {
                         Path::getRegex, Path::getCreatedBy)
                     .containsExactly(
                         tuple(1L, 1L, "/user-service/v1", 1L),
-                        tuple(2L, 2L, "/billing-service/v1", 2L),
-                        tuple(3L, 3L, "/movie-service/v1", 3L)
+                        tuple(2L, 1L, "/billing-service/v1", 2L),
+                        tuple(3L, 1L, "/movie-service/v1", 3L)
                     )
             );
       }
@@ -104,7 +104,7 @@ class PathRestControllerTest {
   }
 
   @Nested
-  class findById {
+  class FindById {
 
     @Nested
     @DisplayName("正常系")

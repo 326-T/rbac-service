@@ -17,6 +17,12 @@ public interface TargetGroupBelongingRepository extends
 
   Mono<TargetGroupBelonging> findById(Long id);
 
+  @Query("""
+      SELECT * FROM rbac_target_group_belongings
+      WHERE namespace_id = :namespaceId;
+      """)
+  Flux<TargetGroupBelonging> findByNamespaceId(Long namespaceId);
+
   Mono<TargetGroupBelonging> save(TargetGroupBelonging targetGroupBelonging);
 
   Mono<Void> deleteById(Long id);

@@ -16,6 +16,12 @@ public interface PathRepository extends ReactiveCrudRepository<Path, Long> {
 
   Mono<Path> findById(Long id);
 
+  @Query("""
+      SELECT * FROM rbac_paths
+      WHERE namespace_id = :namespaceId;
+      """)
+  Flux<Path> findByNamespaceId(Long namespaceId);
+
   Mono<Path> save(Path path);
 
   Mono<Void> deleteById(Long id);

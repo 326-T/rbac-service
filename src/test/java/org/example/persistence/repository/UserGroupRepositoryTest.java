@@ -104,6 +104,31 @@ class UserGroupRepositoryTest {
     }
   }
 
+  @Order(1)
+  @Nested
+  class FindAllByNamespaceId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ユーザグループをnamespaceIdで取得できる")
+      void findAllTheIndexes() {
+        // when
+        Flux<UserGroup> userGroupFlux = groupRepository.findByNamespaceId(1L);
+        // then
+        StepVerifier.create(userGroupFlux)
+            .assertNext(
+                group -> assertThat(group)
+                    .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                        UserGroup::getName, UserGroup::getCreatedBy)
+                    .containsExactly(1L, 1L, "group1", 1L))
+            .verifyComplete();
+      }
+    }
+  }
+
   @Order(2)
   @Nested
   @TestExecutionListeners(listeners = {

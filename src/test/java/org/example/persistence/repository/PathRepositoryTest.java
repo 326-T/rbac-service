@@ -58,13 +58,19 @@ class PathRepositoryTest {
         // when
         Flux<Path> pathFlux = pathRepository.findAll();
         // then
-        StepVerifier.create(pathFlux).assertNext(
-                path -> assertThat(path).extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
-                    Path::getCreatedBy).containsExactly(1L, 1L, "/user-service/v1/", 1L)).assertNext(
-                path -> assertThat(path).extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
-                    Path::getCreatedBy).containsExactly(2L, 2L, "/billing-service/v1/", 2L)).assertNext(
-                path -> assertThat(path).extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
-                    Path::getCreatedBy).containsExactly(3L, 2L, "/inventory-service/v2/", 3L))
+        StepVerifier.create(pathFlux)
+            .assertNext(path ->
+                assertThat(path)
+                    .extracting(Path::getId, Path::getNamespaceId, Path::getRegex, Path::getCreatedBy)
+                    .containsExactly(1L, 1L, "/user-service/v1/", 1L))
+            .assertNext(path ->
+                assertThat(path)
+                    .extracting(Path::getId, Path::getNamespaceId, Path::getRegex, Path::getCreatedBy)
+                    .containsExactly(2L, 2L, "/billing-service/v1/", 2L))
+            .assertNext(path ->
+                assertThat(path)
+                    .extracting(Path::getId, Path::getNamespaceId, Path::getRegex, Path::getCreatedBy)
+                    .containsExactly(3L, 2L, "/inventory-service/v2/", 3L))
             .verifyComplete();
       }
     }
@@ -84,9 +90,34 @@ class PathRepositoryTest {
         // when
         Mono<Path> pathMono = pathRepository.findById(1L);
         // then
-        StepVerifier.create(pathMono).assertNext(
-                path -> assertThat(path).extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
-                    Path::getCreatedBy).containsExactly(1L, 1L, "/user-service/v1/", 1L))
+        StepVerifier.create(pathMono)
+            .assertNext(path -> assertThat(path)
+                .extracting(Path::getId, Path::getNamespaceId, Path::getRegex, Path::getCreatedBy)
+                .containsExactly(1L, 1L, "/user-service/v1/", 1L))
+            .verifyComplete();
+      }
+    }
+  }
+
+  @Order(1)
+  @Nested
+  class FindByNamespaceId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("パスをnamespaceIdで取得できる")
+      void findAllTheIndexes() {
+        // when
+        Flux<Path> pathFlux = pathRepository.findByNamespaceId(1L);
+        // then
+        StepVerifier.create(pathFlux)
+            .assertNext(path ->
+                assertThat(path)
+                    .extracting(Path::getId, Path::getNamespaceId, Path::getRegex, Path::getCreatedBy)
+                    .containsExactly(1L, 1L, "/user-service/v1/", 1L))
             .verifyComplete();
       }
     }
@@ -111,13 +142,17 @@ class PathRepositoryTest {
         // when
         Mono<Path> pathMono = pathRepository.save(path);
         // then
-        StepVerifier.create(pathMono).assertNext(
-                path1 -> assertThat(path1).extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
-                    Path::getCreatedBy).containsExactly(2L, 1L, "/replace-service/v1/", 1L))
+        StepVerifier.create(pathMono)
+            .assertNext(path1 ->
+                assertThat(path1)
+                    .extracting(Path::getId, Path::getNamespaceId, Path::getRegex, Path::getCreatedBy)
+                    .containsExactly(2L, 1L, "/replace-service/v1/", 1L))
             .verifyComplete();
-        pathRepository.findById(2L).as(StepVerifier::create).assertNext(
-                path1 -> assertThat(path1).extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
-                    Path::getCreatedBy).containsExactly(2L, 1L, "/replace-service/v1/", 1L))
+        pathRepository.findById(2L).as(StepVerifier::create)
+            .assertNext(path1 ->
+                assertThat(path1)
+                    .extracting(Path::getId, Path::getNamespaceId, Path::getRegex, Path::getCreatedBy)
+                    .containsExactly(2L, 1L, "/replace-service/v1/", 1L))
             .verifyComplete();
       }
 
@@ -129,13 +164,16 @@ class PathRepositoryTest {
         // when
         Mono<Path> pathMono = pathRepository.save(path);
         // then
-        StepVerifier.create(pathMono).assertNext(
-                path1 -> assertThat(path1).extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
-                    Path::getCreatedBy).containsExactly(4L, 1L, "/next-service/v1/", 1L))
+        StepVerifier.create(pathMono)
+            .assertNext(path1 ->
+                assertThat(path1).extracting(Path::getId, Path::getNamespaceId, Path::getRegex, Path::getCreatedBy)
+                    .containsExactly(4L, 1L, "/next-service/v1/", 1L))
             .verifyComplete();
-        pathRepository.findById(4L).as(StepVerifier::create).assertNext(
-                path1 -> assertThat(path1).extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
-                    Path::getCreatedBy).containsExactly(4L, 1L, "/next-service/v1/", 1L))
+        pathRepository.findById(4L).as(StepVerifier::create)
+            .assertNext(path1 ->
+                assertThat(path1)
+                    .extracting(Path::getId, Path::getNamespaceId, Path::getRegex, Path::getCreatedBy)
+                    .containsExactly(4L, 1L, "/next-service/v1/", 1L))
             .verifyComplete();
       }
     }
@@ -177,9 +215,11 @@ class PathRepositoryTest {
         // when
         Mono<Path> pathMono = pathRepository.findDuplicate(1L, "/user-service/v1/");
         // then
-        StepVerifier.create(pathMono).assertNext(
-                path -> assertThat(path).extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
-                    Path::getCreatedBy).containsExactly(1L, 1L, "/user-service/v1/", 1L))
+        StepVerifier.create(pathMono)
+            .assertNext(path ->
+                assertThat(path)
+                    .extracting(Path::getId, Path::getNamespaceId, Path::getRegex, Path::getCreatedBy)
+                    .containsExactly(1L, 1L, "/user-service/v1/", 1L))
             .verifyComplete();
       }
     }

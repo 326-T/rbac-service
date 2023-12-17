@@ -30,6 +30,10 @@ public class UserGroupService {
     return groupRepository.findById(id);
   }
 
+  public Flux<UserGroup> findByNamespaceId(Long namespaceId) {
+    return groupRepository.findByNamespaceId(namespaceId);
+  }
+
   /**
    * 1. 重複がないか確認する
    * 2. 保存する

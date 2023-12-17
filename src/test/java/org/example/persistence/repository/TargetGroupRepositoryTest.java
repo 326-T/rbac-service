@@ -104,6 +104,31 @@ class TargetGroupRepositoryTest {
     }
   }
 
+  @Order(1)
+  @Nested
+  class FindAllByNamespaceId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ターゲットグループをnamespaceIdで取得できる")
+      void findAllTheIndexes() {
+        // when
+        Flux<TargetGroup> targetGroupFlux = targetGroupRepository.findByNamespaceId(1L);
+        // then
+        StepVerifier.create(targetGroupFlux)
+            .assertNext(
+                cluster -> assertThat(cluster)
+                    .extracting(TargetGroup::getId, TargetGroup::getNamespaceId,
+                        TargetGroup::getName, TargetGroup::getCreatedBy)
+                    .containsExactly(1L, 1L, "target-group-1", 1L))
+            .verifyComplete();
+      }
+    }
+  }
+
   @Order(2)
   @Nested
   @TestExecutionListeners(listeners = {

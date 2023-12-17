@@ -56,9 +56,9 @@ class EndpointRepositoryTest {
       @DisplayName("エンドポイントを全件取得できる")
       void findAllTheIndexes() {
         // when
-        Flux<Endpoint> roleRestPermissionFlux = endpointRepository.findAll();
+        Flux<Endpoint> endpointFlux = endpointRepository.findAll();
         // then
-        StepVerifier.create(roleRestPermissionFlux)
+        StepVerifier.create(endpointFlux)
             .assertNext(
                 endpoint -> assertThat(endpoint)
                     .extracting(Endpoint::getId, Endpoint::getNamespaceId,
@@ -94,10 +94,36 @@ class EndpointRepositoryTest {
       @DisplayName("エンドポイントをIDで取得できる")
       void findTargetById() {
         // when
-        Mono<Endpoint> roleRestPermissionMono = endpointRepository.findById(
+        Mono<Endpoint> endpointMono = endpointRepository.findById(
             1L);
         // then
-        StepVerifier.create(roleRestPermissionMono)
+        StepVerifier.create(endpointMono)
+            .assertNext(
+                endpoint -> assertThat(endpoint)
+                    .extracting(Endpoint::getId, Endpoint::getNamespaceId,
+                        Endpoint::getPathId, Endpoint::getMethod,
+                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
+                    .containsExactly(1L, 1L, 1L, "GET", 1L, 1L))
+            .verifyComplete();
+      }
+    }
+  }
+
+  @Order(1)
+  @Nested
+  class FindByNamespaceId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("エンドポイントをnamespaceIdで取得できる")
+      void findAllTheIndexes() {
+        // when
+        Flux<Endpoint> endpointFlux = endpointRepository.findByNamespaceId(1L);
+        // then
+        StepVerifier.create(endpointFlux)
             .assertNext(
                 endpoint -> assertThat(endpoint)
                     .extracting(Endpoint::getId, Endpoint::getNamespaceId,
@@ -133,10 +159,10 @@ class EndpointRepositoryTest {
             .updatedAt(LocalDateTime.now())
             .build();
         // when
-        Mono<Endpoint> roleRestPermissionMono = endpointRepository.save(
+        Mono<Endpoint> endpointMono = endpointRepository.save(
             endpoint);
         // then
-        StepVerifier.create(roleRestPermissionMono)
+        StepVerifier.create(endpointMono)
             .assertNext(
                 endpoint1 -> assertThat(endpoint1)
                     .extracting(Endpoint::getId, Endpoint::getNamespaceId,
@@ -166,10 +192,10 @@ class EndpointRepositoryTest {
             .createdBy(3L)
             .build();
         // when
-        Mono<Endpoint> roleRestPermissionMono = endpointRepository.save(
+        Mono<Endpoint> endpointMono = endpointRepository.save(
             endpoint);
         // then
-        StepVerifier.create(roleRestPermissionMono)
+        StepVerifier.create(endpointMono)
             .assertNext(
                 endpoint1 -> assertThat(endpoint1)
                     .extracting(Endpoint::getId, Endpoint::getNamespaceId,

@@ -41,7 +41,7 @@ class TargetGroupBelongingRestControllerTest {
   private WebTestClient webTestClient;
 
   @Nested
-  class index {
+  class Count {
 
     @Nested
     @DisplayName("正常系")
@@ -63,7 +63,7 @@ class TargetGroupBelongingRestControllerTest {
   }
 
   @Nested
-  class findAll {
+  class Index {
 
     @Nested
     @DisplayName("正常系")
@@ -76,14 +76,14 @@ class TargetGroupBelongingRestControllerTest {
         TargetGroupBelonging targetGroupBelonging1 = TargetGroupBelonging.builder()
             .id(1L).namespaceId(1L).targetId(1L).targetGroupId(1L).createdBy(1L).build();
         TargetGroupBelonging targetGroupBelonging2 = TargetGroupBelonging.builder()
-            .id(2L).namespaceId(2L).targetId(2L).targetGroupId(2L).createdBy(2L).build();
+            .id(2L).namespaceId(1L).targetId(2L).targetGroupId(2L).createdBy(2L).build();
         TargetGroupBelonging targetGroupBelonging3 = TargetGroupBelonging.builder()
-            .id(3L).namespaceId(3L).targetId(3L).targetGroupId(3L).createdBy(3L).build();
-        when(targetGroupBelongingService.findAll()).thenReturn(
-            Flux.just(targetGroupBelonging1, targetGroupBelonging2, targetGroupBelonging3));
+            .id(3L).namespaceId(1L).targetId(3L).targetGroupId(3L).createdBy(3L).build();
+        when(targetGroupBelongingService.findByNamespaceId(1L))
+            .thenReturn(Flux.just(targetGroupBelonging1, targetGroupBelonging2, targetGroupBelonging3));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/target-group-belongings")
+            .uri("/rbac-service/v1/target-group-belongings?namespace-id=1")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(TargetGroupBelonging.class)
@@ -94,8 +94,8 @@ class TargetGroupBelongingRestControllerTest {
                         TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId, TargetGroupBelonging::getCreatedBy)
                     .containsExactly(
                         tuple(1L, 1L, 1L, 1L, 1L),
-                        tuple(2L, 2L, 2L, 2L, 2L),
-                        tuple(3L, 3L, 3L, 3L, 3L)
+                        tuple(2L, 1L, 2L, 2L, 2L),
+                        tuple(3L, 1L, 3L, 3L, 3L)
                     )
             );
       }
@@ -103,7 +103,7 @@ class TargetGroupBelongingRestControllerTest {
   }
 
   @Nested
-  class findById {
+  class FindById {
 
     @Nested
     @DisplayName("正常系")

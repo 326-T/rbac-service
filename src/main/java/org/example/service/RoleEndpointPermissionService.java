@@ -30,6 +30,10 @@ public class RoleEndpointPermissionService {
     return roleEndpointPermissionRepository.findById(id);
   }
 
+  public Flux<RoleEndpointPermission> findByNamespaceId(Long namespaceId) {
+    return roleEndpointPermissionRepository.findByNamespaceId(namespaceId);
+  }
+
   /**
    * 1. 重複がないか確認する
    * 2. 保存する

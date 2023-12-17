@@ -30,6 +30,10 @@ public class RoleService {
     return roleRepository.findById(id);
   }
 
+  public Flux<Role> findByNamespaceId(Long namespaceId) {
+    return roleRepository.findByNamespaceId(namespaceId);
+  }
+
   /**
    * 1. 重複がないか確認する
    * 2. 保存する

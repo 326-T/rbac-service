@@ -30,6 +30,10 @@ public class TargetGroupService {
     return targetGroupRepository.findById(id);
   }
 
+  public Flux<TargetGroup> findByNamespaceId(Long namespaceId) {
+    return targetGroupRepository.findByNamespaceId(namespaceId);
+  }
+
   /**
    * 1. 重複がないか確認する
    * 2. 保存する

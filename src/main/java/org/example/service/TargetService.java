@@ -30,6 +30,10 @@ public class TargetService {
     return targetRepository.findById(id);
   }
 
+  public Flux<Target> findByNamespaceId(Long namespaceId) {
+    return targetRepository.findByNamespaceId(namespaceId);
+  }
+
   /**
    * 1. 重複がないか確認する
    * 2. 保存する

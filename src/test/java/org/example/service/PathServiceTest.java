@@ -108,6 +108,42 @@ class PathServiceTest {
   }
 
   @Nested
+  class FindByNamespaceId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("パスを名前空間IDで取得できる")
+      void findAllTheIndexes() {
+        // given
+        Path path1 = Path.builder().id(1L).namespaceId(1L).regex("/user-service/v1").createdBy(1L).build();
+        Path path2 = Path.builder().id(2L).namespaceId(1L).regex("/billing-service/v1").createdBy(2L).build();
+        Path path3 = Path.builder().id(3L).namespaceId(1L).regex("/movie-service/v1").createdBy(3L).build();
+        when(pathRepository.findByNamespaceId(1L)).thenReturn(Flux.just(path1, path2, path3));
+        // when
+        Flux<Path> clusterFlux = pathService.findByNamespaceId(1L);
+        // then
+        StepVerifier.create(clusterFlux)
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(Path::getId, Path::getNamespaceId,
+                    Path::getRegex, Path::getCreatedBy)
+                .containsExactly(1L, 1L, "/user-service/v1", 1L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(Path::getId, Path::getNamespaceId,
+                    Path::getRegex, Path::getCreatedBy)
+                .containsExactly(2L, 1L, "/billing-service/v1", 2L))
+            .assertNext(cluster -> assertThat(cluster)
+                .extracting(Path::getId, Path::getNamespaceId,
+                    Path::getRegex, Path::getCreatedBy)
+                .containsExactly(3L, 1L, "/movie-service/v1", 3L))
+            .verifyComplete();
+      }
+    }
+  }
+
+  @Nested
   class Insert {
 
     @Nested

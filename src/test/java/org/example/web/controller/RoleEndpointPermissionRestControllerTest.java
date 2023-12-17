@@ -41,7 +41,7 @@ class RoleEndpointPermissionRestControllerTest {
   private WebTestClient webTestClient;
 
   @Nested
-  class index {
+  class Count {
 
     @Nested
     @DisplayName("正常系")
@@ -63,7 +63,7 @@ class RoleEndpointPermissionRestControllerTest {
   }
 
   @Nested
-  class findAll {
+  class Index {
 
     @Nested
     @DisplayName("正常系")
@@ -76,14 +76,14 @@ class RoleEndpointPermissionRestControllerTest {
         RoleEndpointPermission roleEndpointPermission1 = RoleEndpointPermission.builder()
             .id(1L).namespaceId(1L).roleId(1L).endpointId(1L).createdBy(1L).build();
         RoleEndpointPermission roleEndpointPermission2 = RoleEndpointPermission.builder()
-            .id(2L).namespaceId(2L).roleId(2L).endpointId(2L).createdBy(2L).build();
+            .id(2L).namespaceId(1L).roleId(2L).endpointId(2L).createdBy(2L).build();
         RoleEndpointPermission roleEndpointPermission3 = RoleEndpointPermission.builder()
-            .id(3L).namespaceId(3L).roleId(3L).endpointId(3L).createdBy(3L).build();
-        when(roleEndpointPermissionService.findAll()).thenReturn(
-            Flux.just(roleEndpointPermission1, roleEndpointPermission2, roleEndpointPermission3));
+            .id(3L).namespaceId(1L).roleId(3L).endpointId(3L).createdBy(3L).build();
+        when(roleEndpointPermissionService.findByNamespaceId(1L))
+            .thenReturn(Flux.just(roleEndpointPermission1, roleEndpointPermission2, roleEndpointPermission3));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/role-endpoint-permissions")
+            .uri("/rbac-service/v1/role-endpoint-permissions?namespace-id=1")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(RoleEndpointPermission.class)
@@ -94,8 +94,8 @@ class RoleEndpointPermissionRestControllerTest {
                         RoleEndpointPermission::getRoleId, RoleEndpointPermission::getEndpointId, RoleEndpointPermission::getCreatedBy)
                     .containsExactly(
                         tuple(1L, 1L, 1L, 1L, 1L),
-                        tuple(2L, 2L, 2L, 2L, 2L),
-                        tuple(3L, 3L, 3L, 3L, 3L)
+                        tuple(2L, 1L, 2L, 2L, 2L),
+                        tuple(3L, 1L, 3L, 3L, 3L)
                     )
             );
       }
@@ -103,7 +103,7 @@ class RoleEndpointPermissionRestControllerTest {
   }
 
   @Nested
-  class findById {
+  class FindById {
 
     @Nested
     @DisplayName("正常系")

@@ -48,7 +48,7 @@ public class TargetGroupBelongingAPITest {
 
   @Nested
   @Order(1)
-  class index {
+  class Count {
 
     @Nested
     @DisplayName("正常系")
@@ -70,7 +70,7 @@ public class TargetGroupBelongingAPITest {
 
   @Order(1)
   @Nested
-  class FindAll {
+  class Index {
 
     @Nested
     @DisplayName("正常系")
@@ -81,21 +81,20 @@ public class TargetGroupBelongingAPITest {
       void findAllTheIndexes() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/target-group-belongings")
+            .uri("/rbac-service/v1/target-group-belongings?namespace-id=2")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(TargetGroupBelonging.class)
             .consumeWith(response -> {
-              assertThat(response.getResponseBody()).hasSize(3);
+              assertThat(response.getResponseBody()).hasSize(2);
               assertThat(response.getResponseBody())
                   .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
                       TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
                       TargetGroupBelonging::getCreatedBy)
                   .containsExactly(
-                      tuple(1L, 1L, 1L, 1L, 1L),
                       tuple(2L, 2L, 2L, 2L, 2L),
-                      tuple(3L, 3L, 3L, 3L, 3L));
+                      tuple(3L, 2L, 3L, 3L, 3L));
             });
       }
     }

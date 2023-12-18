@@ -108,6 +108,54 @@ public class UserRepositoryTest {
     }
   }
 
+  @Order(1)
+  @Nested
+  class FindByEmail {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ユーザーをメールアドレスで取得できる")
+      void findUserByEmail() {
+        // when
+        Mono<User> userMono = userRepository.findByEmail("xxx@example.org");
+        // then
+        StepVerifier.create(userMono)
+            .assertNext(
+                user -> assertThat(user)
+                    .extracting(User::getId, User::getName, User::getEmail, User::getPasswordDigest)
+                    .containsExactly(1L, "user1", "xxx@example.org", "$2a$10$/MmW9CyDFA41U2nyaU7Wq.lRUjSrs0fuwP3B49WOAT2LOWQ1Tzhjq"));
+      }
+    }
+  }
+
+  @Order(1)
+  @Nested
+  class FindByUserGroupId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ユーザーをグループIDで取得できる")
+      void findAllTheIndexes() {
+        // when
+        Flux<User> userFlux = userRepository.findByUserGroupId(1L);
+        // then
+        StepVerifier.create(userFlux)
+            .assertNext(
+                user -> assertThat(user)
+                    .extracting(
+                        User::getId, User::getName, User::getEmail, User::getPasswordDigest)
+                    .containsExactly(2L, "user1", "xxx@example.org", "$2a$10$/MmW9CyDFA41U2nyaU7Wq.lRUjSrs0fuwP3B49WOAT2LOWQ1Tzhjq"))
+            .verifyComplete();
+      }
+    }
+  }
+
   @Order(2)
   @Nested
   @TestExecutionListeners(listeners = {
@@ -190,29 +238,6 @@ public class UserRepositoryTest {
         // then
         StepVerifier.create(voidMono).verifyComplete();
         userRepository.findById(3L).as(StepVerifier::create).verifyComplete();
-      }
-    }
-  }
-
-  @Order(1)
-  @Nested
-  class FindByEmail {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ユーザーをメールアドレスで取得できる")
-      void findUserByEmail() {
-        // when
-        Mono<User> userMono = userRepository.findByEmail("xxx@example.org");
-        // then
-        StepVerifier.create(userMono)
-            .assertNext(
-                user -> assertThat(user)
-                    .extracting(User::getId, User::getName, User::getEmail, User::getPasswordDigest)
-                    .containsExactly(1L, "user1", "xxx@example.org", "$2a$10$/MmW9CyDFA41U2nyaU7Wq.lRUjSrs0fuwP3B49WOAT2LOWQ1Tzhjq"));
       }
     }
   }

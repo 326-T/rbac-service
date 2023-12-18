@@ -72,8 +72,8 @@ class TargetRestControllerTest {
     class Regular {
 
       @Test
-      @DisplayName("ターゲットを全件取得できる")
-      void findAllTheIndexes() {
+      @DisplayName("ターゲットをnamespace-idで取得できる")
+      void findAllByNamespaceId() {
         // given
         Target target1 = Target.builder()
             .id(1L).namespaceId(1L).objectIdRegex("object-id-1").createdBy(1L).build();
@@ -85,6 +85,37 @@ class TargetRestControllerTest {
         // when, then
         webTestClient.get()
             .uri("/rbac-service/v1/targets?namespace-id=1")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBodyList(Target.class)
+            .hasSize(3)
+            .consumeWith(result ->
+                assertThat(result.getResponseBody())
+                    .extracting(Target::getId, Target::getNamespaceId,
+                        Target::getObjectIdRegex, Target::getCreatedBy)
+                    .containsExactly(
+                        tuple(1L, 1L, "object-id-1", 1L),
+                        tuple(2L, 1L, "object-id-2", 2L),
+                        tuple(3L, 1L, "object-id-3", 3L)
+                    )
+            );
+      }
+
+      @Test
+      @DisplayName("ターゲットをnamespace-idとtarget-group-idで取得できる")
+      void findAllByNamespaceIdAndUserGroupId() {
+        // given
+        Target target1 = Target.builder()
+            .id(1L).namespaceId(1L).objectIdRegex("object-id-1").createdBy(1L).build();
+        Target target2 = Target.builder()
+            .id(2L).namespaceId(1L).objectIdRegex("object-id-2").createdBy(2L).build();
+        Target target3 = Target.builder()
+            .id(3L).namespaceId(1L).objectIdRegex("object-id-3").createdBy(3L).build();
+        when(targetService.findByNamespaceIdAndTargetGroupId(1L, 1L))
+            .thenReturn(Flux.just(target1, target2, target3));
+        // when, then
+        webTestClient.get()
+            .uri("/rbac-service/v1/targets?namespace-id=1&target-group-id=1")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(Target.class)

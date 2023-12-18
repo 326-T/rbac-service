@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
@@ -30,8 +31,11 @@ public class UserRestController {
   }
 
   @GetMapping
-  public Flux<UserResponse> index() {
-    return userService.findAll().map(UserResponse::new);
+  public Flux<UserResponse> index(@RequestParam(value = "user-group-id", required = false) Long userGroupId) {
+    if (userGroupId == null) {
+      return userService.findAll().map(UserResponse::new);
+    }
+    return userService.findByUserGroupId(userGroupId).map(UserResponse::new);
   }
 
   @GetMapping("/count")

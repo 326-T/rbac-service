@@ -39,7 +39,7 @@ class UserRestControllerTest {
   private WebTestClient webTestClient;
 
   @Nested
-  class index {
+  class Count {
 
     @Nested
     @DisplayName("正常系")
@@ -61,7 +61,7 @@ class UserRestControllerTest {
   }
 
   @Nested
-  class findAll {
+  class Index {
 
     @Nested
     @DisplayName("正常系")
@@ -101,11 +101,46 @@ class UserRestControllerTest {
                     )
             );
       }
+
+      @Test
+      @DisplayName("ユーザをグループIDで取得できる")
+      void findByUserGroupId() {
+        // given
+        User user1 = User.builder()
+            .id(1L).name("user1").email("xxx@example.org")
+            .passwordDigest("$2a$10$/MmW9CyDFA41U2nyaU7Wq.lRUjSrs0fuwP3B49WOAT2LOWQ1Tzhjq")
+            .build();
+        User user2 = User.builder()
+            .id(2L).name("user2").email("yyy@example.org")
+            .passwordDigest("$2a$10$wqoI80Es7rDralTel2nGR.W1odzTHU7RuXmKps//SUDZvSxY1Y0U.")
+            .build();
+        User user3 = User.builder()
+            .id(3L).name("user3").email("zzz@example.org")
+            .passwordDigest("$2a$10$YxMTu2M07qcQPaf4.rt2aukUFenatquwsM1WyOWbPpy9Djz7pbY.y")
+            .build();
+        when(userService.findByUserGroupId(1L)).thenReturn(Flux.just(user1, user2, user3));
+        // when, then
+        webTestClient.get()
+            .uri("/rbac-service/v1/users?user-group-id=1")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBodyList(UserResponse.class)
+            .hasSize(3)
+            .consumeWith(result ->
+                assertThat(result.getResponseBody())
+                    .extracting(UserResponse::getId, UserResponse::getName, UserResponse::getEmail)
+                    .containsExactly(
+                        tuple(1L, "user1", "xxx@example.org"),
+                        tuple(2L, "user2", "yyy@example.org"),
+                        tuple(3L, "user3", "zzz@example.org")
+                    )
+            );
+      }
     }
   }
 
   @Nested
-  class findById {
+  class FindById {
 
     @Nested
     @DisplayName("正常系")

@@ -116,6 +116,72 @@ class UserServiceTest {
   }
 
   @Nested
+  class FindByEmail {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ユーザをメールアドレスで取得できる")
+      void findByEmail() {
+        // given
+        User user1 = User.builder()
+            .id(1L).name("user1").email("xxx@example.org")
+            .passwordDigest("$2a$10$/MmW9CyDFA41U2nyaU7Wq.lRUjSrs0fuwP3B49WOAT2LOWQ1Tzhjq").build();
+        when(userRepository.findByEmail("xxx@example.org")).thenReturn(Mono.just(user1));
+        // when
+        Mono<User> userMono = userService.findByEmail("xxx@example.org");
+        // then
+        StepVerifier.create(userMono)
+            .assertNext(user -> assertThat(user)
+                .extracting(User::getId, User::getName, User::getEmail, User::getPasswordDigest)
+                .containsExactly(1L, "user1", "xxx@example.org", "$2a$10$/MmW9CyDFA41U2nyaU7Wq.lRUjSrs0fuwP3B49WOAT2LOWQ1Tzhjq"))
+            .verifyComplete();
+      }
+    }
+  }
+
+  @Nested
+  class FindByUserGroupId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ユーザをuserGroupIdで全件取得できる")
+      void findByUserGroupId() {
+        // given
+        User user1 = User.builder()
+            .id(1L).name("user1").email("xxx@example.org")
+            .passwordDigest("$2a$10$/MmW9CyDFA41U2nyaU7Wq.lRUjSrs0fuwP3B49WOAT2LOWQ1Tzhjq").build();
+        User user2 = User.builder()
+            .id(2L).name("user2").email("yyy@example.org")
+            .passwordDigest("$2a$10$wqoI80Es7rDralTel2nGR.W1odzTHU7RuXmKps//SUDZvSxY1Y0U.").build();
+        User user3 = User.builder()
+            .id(3L).name("user3").email("zzz@example.org")
+            .passwordDigest("$2a$10$YxMTu2M07qcQPaf4.rt2aukUFenatquwsM1WyOWbPpy9Djz7pbY.y").build();
+        when(userRepository.findByUserGroupId(1L)).thenReturn(Flux.just(user1, user2, user3));
+        // when
+        Flux<User> groupFlux = userService.findByUserGroupId(1L);
+        // then
+        StepVerifier.create(groupFlux)
+            .assertNext(user -> assertThat(user)
+                .extracting(User::getId, User::getName, User::getEmail, User::getPasswordDigest)
+                .containsExactly(1L, "user1", "xxx@example.org", "$2a$10$/MmW9CyDFA41U2nyaU7Wq.lRUjSrs0fuwP3B49WOAT2LOWQ1Tzhjq"))
+            .assertNext(user -> assertThat(user)
+                .extracting(User::getId, User::getName, User::getEmail, User::getPasswordDigest)
+                .containsExactly(2L, "user2", "yyy@example.org", "$2a$10$wqoI80Es7rDralTel2nGR.W1odzTHU7RuXmKps//SUDZvSxY1Y0U."))
+            .assertNext(user -> assertThat(user)
+                .extracting(User::getId, User::getName, User::getEmail, User::getPasswordDigest)
+                .containsExactly(3L, "user3", "zzz@example.org", "$2a$10$YxMTu2M07qcQPaf4.rt2aukUFenatquwsM1WyOWbPpy9Djz7pbY.y"))
+            .verifyComplete();
+      }
+    }
+  }
+
+  @Nested
   class Insert {
 
     @Nested

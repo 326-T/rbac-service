@@ -97,6 +97,25 @@ public class UserAPITest {
                       tuple(4L, "user3", "zzz@example.org"));
             });
       }
+
+      @Test
+      @DisplayName("ユーザをユーザグループIDで取得できる")
+      void findByUserGroupId() {
+        // when, then
+        webTestClient.get()
+            .uri("/rbac-service/v1/users?user-group-id=1")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBodyList(UserResponse.class)
+            .consumeWith(response -> {
+              assertThat(response.getResponseBody()).hasSize(1);
+              assertThat(response.getResponseBody())
+                  .extracting(UserResponse::getId, UserResponse::getName, UserResponse::getEmail)
+                  .containsExactly(
+                      tuple(2L, "user1", "xxx@example.org"));
+            });
+      }
     }
   }
 

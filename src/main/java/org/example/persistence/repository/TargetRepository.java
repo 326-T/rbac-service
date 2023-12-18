@@ -22,6 +22,14 @@ public interface TargetRepository extends ReactiveCrudRepository<Target, Long> {
       """)
   Flux<Target> findByNamespaceId(Long namespaceId);
 
+  @Query("""
+      SELECT * FROM rbac_targets AS t
+      INNER JOIN rbac_target_group_belongings AS tgb ON t.id = tgb.target_id
+      WHERE t.namespace_id = :namespaceId
+        AND tgb.target_group_id = :targetGroupId;
+      """)
+  Flux<Target> findByNamespaceIdAndTargetGroupId(Long namespaceId, Long targetGroupId);
+
   Mono<Target> save(Target target);
 
   Mono<Void> deleteById(Long id);

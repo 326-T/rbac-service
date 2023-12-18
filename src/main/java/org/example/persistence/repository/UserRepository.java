@@ -16,6 +16,13 @@ public interface UserRepository extends ReactiveCrudRepository<User, Long> {
 
   Mono<User> findById(Long id);
 
+  @Query("""
+      SELECT * FROM rbac_users AS u
+      INNER JOIN rbac_user_group_belongings AS ugb ON u.id = ugb.user_id
+      WHERE ugb.user_group_id = :userGroupId;
+      """)
+  Flux<User> findByUserGroupId(Long userGroupId);
+
   Mono<User> save(User user);
 
   Mono<Void> deleteById(Long id);

@@ -28,6 +28,14 @@ public interface UserGroupBelongingRepository extends
   Mono<Void> deleteById(Long id);
 
   @Query("""
+      DELETE FROM rbac_user_group_belongings
+      WHERE namespace_id = :namespaceId
+        AND user_id = :userId
+        AND user_group_id = :userGroupId;
+      """)
+  Mono<Void> deleteByUniqueKeys(Long namespaceId, Long userId, Long userGroupId);
+
+  @Query("""
       SELECT * FROM rbac_user_group_belongings
       WHERE namespace_id = :namespaceId
         AND user_id = :userId

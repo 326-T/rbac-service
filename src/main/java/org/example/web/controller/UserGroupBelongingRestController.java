@@ -62,4 +62,13 @@ public class UserGroupBelongingRestController {
   public Mono<Void> deleteById(@PathVariable Long id) {
     return userGroupBelongingService.deleteById(id);
   }
+
+  @DeleteMapping
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public Mono<Void> deleteByUniqueKeys(
+      @RequestParam("namespace-id") Long namespaceId,
+      @RequestParam("user-id") Long userId,
+      @RequestParam("user-group-id") Long userGroupId) {
+    return userGroupBelongingService.deleteByUniqueKeys(namespaceId, userId, userGroupId);
+  }
 }

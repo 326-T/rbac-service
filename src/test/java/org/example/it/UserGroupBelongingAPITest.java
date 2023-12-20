@@ -242,4 +242,34 @@ public class UserGroupBelongingAPITest {
       }
     }
   }
+
+  @Order(3)
+  @Nested
+  @TestExecutionListeners(listeners = {
+      FlywayTestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+  class DeleteByUniqueKeys {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ユーザとグループの関係情報をユニークキーで削除できる")
+      void deleteTargetUserGroupBelongingByUniqueKeys() {
+        // when, then
+        webTestClient.delete()
+            .uri("/rbac-service/v1/user-group-belongings?namespace-id=2&user-group-id=4&user-id=3")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .exchange()
+            .expectStatus().isNoContent()
+            .expectBody(Void.class);
+        webTestClient.get()
+            .uri("/rbac-service/v1/user-group-belongings/3")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(Void.class);
+      }
+    }
+  }
 }

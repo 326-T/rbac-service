@@ -4,22 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[add]サービス層にfindByNamespaceIdを追加">
+    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[add]userとtargetをそれぞれgroupで一覧できるように">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/TargetRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/TargetRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/UserRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/TargetService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/TargetService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/TargetRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/TargetRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/TargetAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/TargetAPITest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/UserAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/UserAPITest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/TargetRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/TargetRepositoryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/UserRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/UserRepositoryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/TargetServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/TargetServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/UserServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/UserServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/TargetRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/TargetRestControllerTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserRestControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/TargetGroupBelongingRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/TargetGroupBelongingRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/UserGroupBelongingRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/UserGroupBelongingRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/TargetGroupBelongingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/TargetGroupBelongingService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/UserGroupBelongingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/UserGroupBelongingService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/TargetGroupBelongingRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/TargetGroupBelongingRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserGroupBelongingRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserGroupBelongingRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/TargetGroupBelongingRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/TargetGroupBelongingRepositoryTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/UserGroupBelongingRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/UserGroupBelongingRepositoryTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/TargetGroupBelongingServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/TargetGroupBelongingServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupBelongingServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupBelongingServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/TargetGroupBelongingRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/TargetGroupBelongingRestControllerTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -138,8 +135,8 @@
       <recent name="org.example.service" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.example in rbac-service">
-    <configuration name="TargetAPITest$Index$Regular.findByNamespaceIdAndTargetGroupId" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="JUnit.UserGroupBelongingAPITest$DeleteByUniqueKeys">
+    <configuration name="TargetGroupBelongingAPITest$DeleteByUniqueKeys$Regular.deleteTargetTargetClusterBelongingByUniqueKeys" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
@@ -147,46 +144,30 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.it.TargetAPITest.Index" />
-      <option name="MAIN_CLASS_NAME" value="org.example.it.TargetAPITest$Index$Regular" />
-      <option name="METHOD_NAME" value="findByNamespaceIdAndTargetGroupId" />
+      <option name="PACKAGE_NAME" value="org.example.it.TargetGroupBelongingAPITest.DeleteByUniqueKeys" />
+      <option name="MAIN_CLASS_NAME" value="org.example.it.TargetGroupBelongingAPITest$DeleteByUniqueKeys$Regular" />
+      <option name="METHOD_NAME" value="deleteTargetTargetClusterBelongingByUniqueKeys" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TargetRepositoryTest$FindAllByNamespaceIdAndTargetGroupId$Regular.findAllTheIndexes" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="TargetGroupBelongingRestControllerTest$DeleteByUniqueKeys" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.persistence.repository.*" />
+          <option name="PATTERN" value="org.example.web.controller.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.persistence.repository.TargetRepositoryTest.FindAllByNamespaceIdAndTargetGroupId" />
-      <option name="MAIN_CLASS_NAME" value="org.example.persistence.repository.TargetRepositoryTest$FindAllByNamespaceIdAndTargetGroupId$Regular" />
-      <option name="METHOD_NAME" value="findAllTheIndexes" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="TargetRepositoryTest$FindAllByNamespaceIdAndTargetGroupId" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="rbac-service" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.persistence.repository.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.persistence.repository.TargetRepositoryTest" />
-      <option name="MAIN_CLASS_NAME" value="org.example.persistence.repository.TargetRepositoryTest$FindAllByNamespaceIdAndTargetGroupId" />
+      <option name="PACKAGE_NAME" value="org.example.web.controller.TargetGroupBelongingRestControllerTest" />
+      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.TargetGroupBelongingRestControllerTest$DeleteByUniqueKeys" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="UserAPITest$FindAll$Regular.findByUserGroupId" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="UserGroupBelongingAPITest$DeleteByUniqueKeys" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
@@ -194,29 +175,51 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.it.UserAPITest.FindAll" />
-      <option name="MAIN_CLASS_NAME" value="org.example.it.UserAPITest$FindAll$Regular" />
-      <option name="METHOD_NAME" value="findByUserGroupId" />
-      <option name="TEST_OBJECT" value="method" />
+      <option name="PACKAGE_NAME" value="org.example.it.UserGroupBelongingAPITest" />
+      <option name="MAIN_CLASS_NAME" value="org.example.it.UserGroupBelongingAPITest$DeleteByUniqueKeys" />
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="example in rbac-service" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="UserGroupBelongingRestControllerTest$DeleteByUniqueKeys" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
-      <option name="TEST_OBJECT" value="directory" />
-      <dir value="$PROJECT_DIR$/src/test/java/org/example" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.web.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.web.controller.UserGroupBelongingRestControllerTest" />
+      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.UserGroupBelongingRestControllerTest$DeleteByUniqueKeys" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UserGroupBelongingServiceTest$DeleteByUniqueKeys$Regular.deleteByUniqueKeys" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rbac-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.service.UserGroupBelongingServiceTest.DeleteByUniqueKeys" />
+      <option name="MAIN_CLASS_NAME" value="org.example.service.UserGroupBelongingServiceTest$DeleteByUniqueKeys$Regular" />
+      <option name="METHOD_NAME" value="deleteByUniqueKeys" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.example in rbac-service" />
-        <item itemvalue="JUnit.TargetAPITest$Index$Regular.findByNamespaceIdAndTargetGroupId" />
-        <item itemvalue="JUnit.UserAPITest$FindAll$Regular.findByUserGroupId" />
-        <item itemvalue="JUnit.TargetRepositoryTest$FindAllByNamespaceIdAndTargetGroupId$Regular.findAllTheIndexes" />
-        <item itemvalue="JUnit.TargetRepositoryTest$FindAllByNamespaceIdAndTargetGroupId" />
+        <item itemvalue="JUnit.UserGroupBelongingAPITest$DeleteByUniqueKeys" />
+        <item itemvalue="JUnit.TargetGroupBelongingAPITest$DeleteByUniqueKeys$Regular.deleteTargetTargetClusterBelongingByUniqueKeys" />
+        <item itemvalue="JUnit.UserGroupBelongingRestControllerTest$DeleteByUniqueKeys" />
+        <item itemvalue="JUnit.TargetGroupBelongingRestControllerTest$DeleteByUniqueKeys" />
+        <item itemvalue="JUnit.UserGroupBelongingServiceTest$DeleteByUniqueKeys$Regular.deleteByUniqueKeys" />
       </list>
     </recent_temporary>
   </component>
@@ -397,7 +400,15 @@
       <option name="project" value="LOCAL" />
       <updated>1702823520897</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="[add]userとtargetをそれぞれgroupで一覧できるように">
+      <option name="closed" value="true" />
+      <created>1702896376612</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1702896376612</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -421,7 +432,8 @@
     <MESSAGE value="[update]タイポの修正" />
     <MESSAGE value="[add]永続化層にfindByNamespaceIdを追加" />
     <MESSAGE value="[add]サービス層にfindByNamespaceIdを追加" />
-    <option name="LAST_COMMIT_MESSAGE" value="[add]サービス層にfindByNamespaceIdを追加" />
+    <MESSAGE value="[add]userとtargetをそれぞれgroupで一覧できるように" />
+    <option name="LAST_COMMIT_MESSAGE" value="[add]userとtargetをそれぞれgroupで一覧できるように" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

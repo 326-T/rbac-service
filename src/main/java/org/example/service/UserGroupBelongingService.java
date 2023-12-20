@@ -58,4 +58,8 @@ public class UserGroupBelongingService {
   public Mono<Void> deleteById(Long id) {
     return userGroupBelongingRepository.deleteById(id);
   }
+
+  public Mono<Void> deleteByUniqueKeys(Long namespaceId, Long userId, Long userGroupId) {
+    return userGroupBelongingRepository.deleteByUniqueKeys(namespaceId, userId, userGroupId);
+  }
 }

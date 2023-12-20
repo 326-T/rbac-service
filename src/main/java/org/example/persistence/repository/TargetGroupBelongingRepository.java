@@ -28,6 +28,14 @@ public interface TargetGroupBelongingRepository extends
   Mono<Void> deleteById(Long id);
 
   @Query("""
+      DELETE FROM rbac_target_group_belongings
+      WHERE namespace_id = :namespaceId
+        AND target_id = :targetId
+        AND target_group_id = :targetGroupId;
+      """)
+  Mono<Void> deleteByUniqueKeys(Long namespaceId, Long targetId, Long targetGroupId);
+
+  @Query("""
       SELECT *
       FROM rbac_target_group_belongings
       WHERE namespace_id = :namespaceId

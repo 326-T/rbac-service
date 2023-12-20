@@ -221,4 +221,27 @@ class UserGroupBelongingRestControllerTest {
       }
     }
   }
+
+  @Nested
+  class DeleteByUniqueKeys {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ユーザとグループの関係を名前空間IDとユーザIDとユーザグループIDで削除できる")
+      void canDeleteTheUserGroupBelongingByUniqueKeys() {
+        // given
+        when(userGroupBelongingService.deleteByUniqueKeys(1L, 2L, 3L))
+            .thenReturn(Mono.empty());
+        // when, then
+        webTestClient.delete()
+            .uri("/rbac-service/v1/user-group-belongings?namespace-id=1&user-id=2&user-group-id=3")
+            .exchange()
+            .expectStatus().isNoContent()
+            .expectBody().isEmpty();
+      }
+    }
+  }
 }

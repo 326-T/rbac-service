@@ -140,6 +140,40 @@ class RoleServiceTest {
   }
 
   @Nested
+  class FindByNamespaceIdAndUserGroupId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ロールを名前空間IDで取得できる")
+      void findAllTheIndexes() {
+        // given
+        Role role1 = Role.builder().id(1L).namespaceId(1L).name("developer").createdBy(1L).build();
+        Role role2 = Role.builder().id(2L).namespaceId(1L).name("operator").createdBy(2L).build();
+        Role role3 = Role.builder().id(3L).namespaceId(1L).name("security").createdBy(3L).build();
+        when(roleRepository.findByNamespaceIdAndUserGroupId(1L, 1L))
+            .thenReturn(Flux.just(role1, role2, role3));
+        // when
+        Flux<Role> groupFlux = roleService.findByNamespaceIdAndUserGroupId(1L, 1L);
+        // then
+        StepVerifier.create(groupFlux)
+            .assertNext(group -> assertThat(group)
+                .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
+                .containsExactly(1L, 1L, "developer", 1L))
+            .assertNext(group -> assertThat(group)
+                .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
+                .containsExactly(2L, 1L, "operator", 2L))
+            .assertNext(group -> assertThat(group)
+                .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
+                .containsExactly(3L, 1L, "security", 3L))
+            .verifyComplete();
+      }
+    }
+  }
+
+  @Nested
   class Insert {
 
     @Nested

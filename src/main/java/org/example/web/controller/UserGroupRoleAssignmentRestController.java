@@ -63,4 +63,13 @@ public class UserGroupRoleAssignmentRestController {
   public Mono<Void> deleteById(@PathVariable Long id) {
     return userGroupRoleAssignmentService.deleteById(id);
   }
+
+  @DeleteMapping
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public Mono<Void> deleteByUniqueKeys(
+      @RequestParam("namespace-id") Long namespaceId,
+      @RequestParam("user-group-id") Long userGroupId,
+      @RequestParam("role-id") Long roleId) {
+    return userGroupRoleAssignmentService.deleteByUniqueKeys(namespaceId, userGroupId, roleId);
+  }
 }

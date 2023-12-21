@@ -34,8 +34,13 @@ public class RoleRestController {
   }
 
   @GetMapping
-  public Flux<Role> index(@RequestParam("namespace-id") Long namespaceId) {
-    return roleService.findByNamespaceId(namespaceId);
+  public Flux<Role> index(
+      @RequestParam("namespace-id") Long namespaceId,
+      @RequestParam(value = "user-group-id", required = false) Long userGroupId) {
+    if (userGroupId == null) {
+      return roleService.findByNamespaceId(namespaceId);
+    }
+    return roleService.findByNamespaceIdAndUserGroupId(namespaceId, userGroupId);
   }
 
   @GetMapping("/count")

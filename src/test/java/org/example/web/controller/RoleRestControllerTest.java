@@ -72,8 +72,8 @@ class RoleRestControllerTest {
     class Regular {
 
       @Test
-      @DisplayName("ロールを全件取得できる")
-      void findAllTheIndexes() {
+      @DisplayName("ロールをnamespaceIdで取得できる")
+      void canFindByNamespaceId() {
         // given
         Role role1 = Role.builder()
             .id(1L).namespaceId(1L).name("developer").createdBy(1L).build();
@@ -85,6 +85,37 @@ class RoleRestControllerTest {
         // when, then
         webTestClient.get()
             .uri("/rbac-service/v1/roles?namespace-id=1")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBodyList(Role.class)
+            .hasSize(3)
+            .consumeWith(result ->
+                assertThat(result.getResponseBody())
+                    .extracting(Role::getId, Role::getNamespaceId,
+                        Role::getName, Role::getCreatedBy)
+                    .containsExactly(
+                        tuple(1L, 1L, "developer", 1L),
+                        tuple(2L, 1L, "operator", 2L),
+                        tuple(3L, 1L, "security", 3L)
+                    )
+            );
+      }
+
+      @Test
+      @DisplayName("ロールをnamespaceIdとuserGroupIdで取得できる")
+      void canFindByNamespaceIdAndUserGroupId() {
+        // given
+        Role role1 = Role.builder()
+            .id(1L).namespaceId(1L).name("developer").createdBy(1L).build();
+        Role role2 = Role.builder()
+            .id(2L).namespaceId(1L).name("operator").createdBy(2L).build();
+        Role role3 = Role.builder()
+            .id(3L).namespaceId(1L).name("security").createdBy(3L).build();
+        when(roleService.findByNamespaceIdAndUserGroupId(1L, 1L))
+            .thenReturn(Flux.just(role1, role2, role3));
+        // when, then
+        webTestClient.get()
+            .uri("/rbac-service/v1/roles?namespace-id=1&user-group-id=1")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(Role.class)

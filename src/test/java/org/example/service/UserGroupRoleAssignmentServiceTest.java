@@ -241,11 +241,32 @@ class UserGroupRoleAssignmentServiceTest {
 
       @Test
       @DisplayName("ターゲットグループを削除できる")
-      void deleteTheIndex() {
+      void canDeleteById() {
         // given
         when(userGroupRoleAssignmentRepository.deleteById(1L)).thenReturn(Mono.empty());
         // when
         Mono<Void> groupMono = userGroupRoleAssignmentService.deleteById(1L);
+        // then
+        StepVerifier.create(groupMono).verifyComplete();
+      }
+    }
+  }
+
+  @Nested
+  class DeleteByUniqueKeys {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ターゲットグループをユニークキーで削除できる")
+      void canDeleteByUniqueKeys() {
+        // given
+        when(userGroupRoleAssignmentRepository.deleteByUniqueKeys(1L, 1L, 1L))
+            .thenReturn(Mono.empty());
+        // when
+        Mono<Void> groupMono = userGroupRoleAssignmentService.deleteByUniqueKeys(1L, 1L, 1L);
         // then
         StepVerifier.create(groupMono).verifyComplete();
       }

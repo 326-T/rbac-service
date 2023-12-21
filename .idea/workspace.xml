@@ -4,22 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[add]UserGroupBelongingsとTargetGroupBelongingsをユニークキーで削除できるように">
+    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[add]RoleEndpointPermissionをUnique制約で削除できるように。EndpointをRoleIdで絞り込めるように。">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/EndpointRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/EndpointRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/RoleEndpointPermissionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/RoleEndpointPermissionRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/EndpointService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/EndpointService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/RoleEndpointPermissionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/RoleEndpointPermissionService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/EndpointRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/EndpointRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/RoleEndpointPermissionRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/RoleEndpointPermissionRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/RoleEndpointPermissionAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/RoleEndpointPermissionAPITest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/EndpointRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/EndpointRepositoryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/RoleEndpointPermissionRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/RoleEndpointPermissionRepositoryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/TargetRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/TargetRepositoryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/EndpointServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/EndpointServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/RoleEndpointPermissionServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/RoleEndpointPermissionServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/EndpointRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/EndpointRestControllerTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/RoleEndpointPermissionRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/RoleEndpointPermissionRestControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/RoleRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/RoleRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/UserGroupRoleAssignmentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/UserGroupRoleAssignmentRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/RoleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/RoleService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/UserGroupRoleAssignmentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/UserGroupRoleAssignmentService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/RoleRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/RoleRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserGroupRoleAssignmentRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserGroupRoleAssignmentRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/UserGroupRoleAssignmentAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/UserGroupRoleAssignmentAPITest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/RoleRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/RoleRepositoryTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/UserGroupRoleAssignmentRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/UserGroupRoleAssignmentRepositoryTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/RoleServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/RoleServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupRoleAssignmentServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupRoleAssignmentServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserGroupRoleAssignmentRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserGroupRoleAssignmentRestControllerTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -138,8 +136,8 @@
       <recent name="org.example.service" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.EndpointAPITest$Index$Regular.canFindByNamespaceIdAndRoleId">
-    <configuration name="EndpointAPITest$Index$Regular.canFindByNamespaceIdAndRoleId" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="JUnit.RoleAPITest$Index">
+    <configuration name="RoleAPITest$Index" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
@@ -147,15 +145,14 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.it.EndpointAPITest.Index" />
-      <option name="MAIN_CLASS_NAME" value="org.example.it.EndpointAPITest$Index$Regular" />
-      <option name="METHOD_NAME" value="canFindByNamespaceIdAndRoleId" />
-      <option name="TEST_OBJECT" value="method" />
+      <option name="PACKAGE_NAME" value="org.example.it.RoleAPITest" />
+      <option name="MAIN_CLASS_NAME" value="org.example.it.RoleAPITest$Index" />
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="EndpointRepositoryTest$FindByNamespaceIdAndRoleId$Regular.findAllTheIndexes" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="RoleRepositoryTest$FindByNamespaceIdAndUserGroupId$Regular.canFindByNamespaceIdAndUserGroupId" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
@@ -163,15 +160,15 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.persistence.repository.EndpointRepositoryTest.FindByNamespaceIdAndRoleId" />
-      <option name="MAIN_CLASS_NAME" value="org.example.persistence.repository.EndpointRepositoryTest$FindByNamespaceIdAndRoleId$Regular" />
-      <option name="METHOD_NAME" value="findAllTheIndexes" />
+      <option name="PACKAGE_NAME" value="org.example.persistence.repository.RoleRepositoryTest.FindByNamespaceIdAndUserGroupId" />
+      <option name="MAIN_CLASS_NAME" value="org.example.persistence.repository.RoleRepositoryTest$FindByNamespaceIdAndUserGroupId$Regular" />
+      <option name="METHOD_NAME" value="canFindByNamespaceIdAndUserGroupId" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="EndpointRestControllerTest$Index" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="RoleRestControllerTest$Index" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
@@ -179,14 +176,14 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.web.controller.EndpointRestControllerTest" />
-      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.EndpointRestControllerTest$Index" />
+      <option name="PACKAGE_NAME" value="org.example.web.controller.RoleRestControllerTest" />
+      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.RoleRestControllerTest$Index" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="EndpointServiceTest$FindByNamespaceIdAndRoleId$Regular.canFindByNamespaceIdAndRoleId" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="RoleServiceTest$FindByNamespaceIdAndUserGroupId$Regular.findAllTheIndexes" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
@@ -194,15 +191,15 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.service.EndpointServiceTest.FindByNamespaceIdAndRoleId" />
-      <option name="MAIN_CLASS_NAME" value="org.example.service.EndpointServiceTest$FindByNamespaceIdAndRoleId$Regular" />
-      <option name="METHOD_NAME" value="canFindByNamespaceIdAndRoleId" />
+      <option name="PACKAGE_NAME" value="org.example.service.RoleServiceTest.FindByNamespaceIdAndUserGroupId" />
+      <option name="MAIN_CLASS_NAME" value="org.example.service.RoleServiceTest$FindByNamespaceIdAndUserGroupId$Regular" />
+      <option name="METHOD_NAME" value="findAllTheIndexes" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="RoleEndpointPermissionAPITest$DeleteByUniqueKeys" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="UserGroupRoleAssignmentAPITest$DeleteByUniqueKeys$Regular.canDeleteGroupGroupRoleAssignmentByUniqueKeys" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
@@ -210,20 +207,21 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.it.RoleEndpointPermissionAPITest" />
-      <option name="MAIN_CLASS_NAME" value="org.example.it.RoleEndpointPermissionAPITest$DeleteByUniqueKeys" />
-      <option name="TEST_OBJECT" value="class" />
+      <option name="PACKAGE_NAME" value="org.example.it.UserGroupRoleAssignmentAPITest.DeleteByUniqueKeys" />
+      <option name="MAIN_CLASS_NAME" value="org.example.it.UserGroupRoleAssignmentAPITest$DeleteByUniqueKeys$Regular" />
+      <option name="METHOD_NAME" value="canDeleteGroupGroupRoleAssignmentByUniqueKeys" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.EndpointAPITest$Index$Regular.canFindByNamespaceIdAndRoleId" />
-        <item itemvalue="JUnit.EndpointRestControllerTest$Index" />
-        <item itemvalue="JUnit.EndpointServiceTest$FindByNamespaceIdAndRoleId$Regular.canFindByNamespaceIdAndRoleId" />
-        <item itemvalue="JUnit.EndpointRepositoryTest$FindByNamespaceIdAndRoleId$Regular.findAllTheIndexes" />
-        <item itemvalue="JUnit.RoleEndpointPermissionAPITest$DeleteByUniqueKeys" />
+        <item itemvalue="JUnit.RoleAPITest$Index" />
+        <item itemvalue="JUnit.RoleRestControllerTest$Index" />
+        <item itemvalue="JUnit.RoleServiceTest$FindByNamespaceIdAndUserGroupId$Regular.findAllTheIndexes" />
+        <item itemvalue="JUnit.RoleRepositoryTest$FindByNamespaceIdAndUserGroupId$Regular.canFindByNamespaceIdAndUserGroupId" />
+        <item itemvalue="JUnit.UserGroupRoleAssignmentAPITest$DeleteByUniqueKeys$Regular.canDeleteGroupGroupRoleAssignmentByUniqueKeys" />
       </list>
     </recent_temporary>
   </component>
@@ -420,7 +418,15 @@
       <option name="project" value="LOCAL" />
       <updated>1703051442121</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="[add]RoleEndpointPermissionをUnique制約で削除できるように。EndpointをRoleIdで絞り込めるように。">
+      <option name="closed" value="true" />
+      <created>1703137604343</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1703137604343</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -446,7 +452,8 @@
     <MESSAGE value="[add]サービス層にfindByNamespaceIdを追加" />
     <MESSAGE value="[add]userとtargetをそれぞれgroupで一覧できるように" />
     <MESSAGE value="[add]UserGroupBelongingsとTargetGroupBelongingsをユニークキーで削除できるように" />
-    <option name="LAST_COMMIT_MESSAGE" value="[add]UserGroupBelongingsとTargetGroupBelongingsをユニークキーで削除できるように" />
+    <MESSAGE value="[add]RoleEndpointPermissionをUnique制約で削除できるように。EndpointをRoleIdで絞り込めるように。" />
+    <option name="LAST_COMMIT_MESSAGE" value="[add]RoleEndpointPermissionをUnique制約で削除できるように。EndpointをRoleIdで絞り込めるように。" />
   </component>
   <component name="XDebuggerManager">
     <pin-to-top-manager>

@@ -233,7 +233,7 @@ class RoleEndpointPermissionServiceTest {
   }
 
   @Nested
-  class Delete {
+  class DeleteById {
 
     @Nested
     @DisplayName("正常系")
@@ -241,11 +241,32 @@ class RoleEndpointPermissionServiceTest {
 
       @Test
       @DisplayName("ターゲットグループを削除できる")
-      void deleteTheIndex() {
+      void canDeleteById() {
         // given
         when(roleEndpointPermissionRepository.deleteById(1L)).thenReturn(Mono.empty());
         // when
         Mono<Void> groupMono = roleEndpointPermissionService.deleteById(1L);
+        // then
+        StepVerifier.create(groupMono).verifyComplete();
+      }
+    }
+  }
+
+  @Nested
+  class DeleteByUniqueKeys {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ターゲットグループを削除できる")
+      void canDeleteByUniqueKeys() {
+        // given
+        when(roleEndpointPermissionRepository.deleteByUniqueKeys(1L, 1L, 1L))
+            .thenReturn(Mono.empty());
+        // when
+        Mono<Void> groupMono = roleEndpointPermissionService.deleteByUniqueKeys(1L, 1L, 1L);
         // then
         StepVerifier.create(groupMono).verifyComplete();
       }

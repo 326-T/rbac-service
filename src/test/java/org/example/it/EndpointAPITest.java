@@ -77,8 +77,8 @@ public class EndpointAPITest {
     class Regular {
 
       @Test
-      @DisplayName("エンドポイントを全件取得できる")
-      void findAllTheIndexes() {
+      @DisplayName("エンドポイントをnamespaceIdで取得できる")
+      void canFindByNamespaceId() {
         // when, then
         webTestClient.get()
             .uri("/rbac-service/v1/endpoints?namespace-id=2")
@@ -95,6 +95,28 @@ public class EndpointAPITest {
                   .containsExactly(
                       tuple(2L, 2L, 2L, "POST", 2L, 2L),
                       tuple(3L, 2L, 3L, "PUT", 3L, 3L)
+                  );
+            });
+      }
+
+      @Test
+      @DisplayName("エンドポイントをnamespaceIdとroleIdで取得できる")
+      void canFindByNamespaceIdAndRoleId() {
+        // when, then
+        webTestClient.get()
+            .uri("/rbac-service/v1/endpoints?namespace-id=2&role-id=2")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBodyList(Endpoint.class)
+            .consumeWith(response -> {
+              assertThat(response.getResponseBody()).hasSize(1);
+              assertThat(response.getResponseBody())
+                  .extracting(Endpoint::getId, Endpoint::getNamespaceId,
+                      Endpoint::getPathId, Endpoint::getMethod,
+                      Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
+                  .containsExactly(
+                      tuple(2L, 2L, 2L, "POST", 2L, 2L)
                   );
             });
       }

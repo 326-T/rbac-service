@@ -58,4 +58,8 @@ public class RoleEndpointPermissionService {
   public Mono<Void> deleteById(Long id) {
     return roleEndpointPermissionRepository.deleteById(id);
   }
+
+  public Mono<Void> deleteByUniqueKeys(Long namespaceId, Long roleId, Long endpointId) {
+    return roleEndpointPermissionRepository.deleteByUniqueKeys(namespaceId, roleId, endpointId);
+  }
 }

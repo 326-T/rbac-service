@@ -242,4 +242,34 @@ public class RoleEndpointPermissionAPITest {
       }
     }
   }
+
+  @Order(3)
+  @Nested
+  @TestExecutionListeners(listeners = {
+      FlywayTestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+  class DeleteByUniqueKeys {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ロールとエンドポイントの関係情報をユニークキーで削除できる")
+      void deleteTargetRoleEndpointPermissionByUniqueKeys() {
+        // when, then
+        webTestClient.delete()
+            .uri("/rbac-service/v1/role-endpoint-permissions?namespace-id=2&role-id=3&endpoint-id=3")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .exchange()
+            .expectStatus().isNoContent()
+            .expectBody(Void.class);
+        webTestClient.get()
+            .uri("/rbac-service/v1/role-endpoint-permissions/3")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(Void.class);
+      }
+    }
+  }
 }

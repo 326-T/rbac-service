@@ -135,6 +135,32 @@ class EndpointRepositoryTest {
     }
   }
 
+  @Order(1)
+  @Nested
+  class FindByNamespaceIdAndRoleId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("エンドポイントをnamespaceIdとroleIdで取得できる")
+      void canFindByNamespaceIdAndRoleId() {
+        // when
+        Flux<Endpoint> endpointFlux = endpointRepository.findByNamespaceIdAndRoleId(2L, 2L);
+        // then
+        StepVerifier.create(endpointFlux)
+            .assertNext(
+                endpoint -> assertThat(endpoint)
+                    .extracting(Endpoint::getId, Endpoint::getNamespaceId,
+                        Endpoint::getPathId, Endpoint::getMethod,
+                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
+                    .containsExactly(2L, 2L, 2L, "POST", 2L, 2L))
+            .verifyComplete();
+      }
+    }
+  }
+
   @Order(2)
   @Nested
   @TestExecutionListeners(listeners = {

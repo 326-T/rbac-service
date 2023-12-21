@@ -34,6 +34,10 @@ public class EndpointService {
     return endpointRepository.findByNamespaceId(namespaceId);
   }
 
+  public Flux<Endpoint> findByNamespaceIdAndRoleId(Long namespaceId, Long roleId) {
+    return endpointRepository.findByNamespaceIdAndRoleId(namespaceId, roleId);
+  }
+
   public Mono<Endpoint> insert(Endpoint endpoint) {
     endpoint.setCreatedAt(LocalDateTime.now());
     endpoint.setUpdatedAt(LocalDateTime.now());

@@ -28,6 +28,14 @@ public interface RoleEndpointPermissionRepository extends
   Mono<Void> deleteById(Long id);
 
   @Query("""
+      DELETE FROM rbac_role_endpoint_permissions
+      WHERE namespace_id = :namespaceId
+        AND role_id = :roleId
+        AND endpoint_id = :endpointId;
+      """)
+  Mono<Void> deleteByUniqueKeys(Long namespaceId, Long roleId, Long endpointId);
+
+  @Query("""
       SELECT *
       FROM rbac_role_endpoint_permissions
       WHERE namespace_id = :namespaceId

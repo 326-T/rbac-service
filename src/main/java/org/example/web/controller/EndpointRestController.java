@@ -33,8 +33,13 @@ public class EndpointRestController {
   }
 
   @GetMapping
-  public Flux<Endpoint> index(@RequestParam("namespace-id") Long namespaceId) {
-    return endpointService.findByNamespaceId(namespaceId);
+  public Flux<Endpoint> index(
+      @RequestParam("namespace-id") Long namespaceId,
+      @RequestParam(value = "role-id", required = false) Long roleId) {
+    if (roleId == null) {
+      return endpointService.findByNamespaceId(namespaceId);
+    }
+    return endpointService.findByNamespaceIdAndRoleId(namespaceId, roleId);
   }
 
   @GetMapping("/count")

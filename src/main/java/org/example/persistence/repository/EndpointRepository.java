@@ -23,6 +23,14 @@ public interface EndpointRepository extends
       """)
   Flux<Endpoint> findByNamespaceId(Long namespaceId);
 
+  @Query("""
+      SELECT * FROM rbac_endpoints AS e
+      INNER JOIN rbac_role_endpoint_permissions AS rep ON e.id = rep.endpoint_id
+      WHERE e.namespace_id = :namespaceId
+        AND rep.role_id = :roleId;
+      """)
+  Flux<Endpoint> findByNamespaceIdAndRoleId(Long namespaceId, Long roleId);
+
   Mono<Endpoint> save(Endpoint endpoint);
 
   Mono<Void> deleteById(Long id);

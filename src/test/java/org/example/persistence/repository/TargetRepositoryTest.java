@@ -99,7 +99,7 @@ class TargetRepositoryTest {
 
   @Order(1)
   @Nested
-  class FindAllByNamespaceId {
+  class findByNamespaceId {
 
     @Nested
     @DisplayName("正常系")
@@ -123,7 +123,7 @@ class TargetRepositoryTest {
 
   @Order(1)
   @Nested
-  class FindAllByNamespaceIdAndTargetGroupId {
+  class FindByNamespaceIdAndTargetGroupId {
 
     @Nested
     @DisplayName("正常系")
@@ -131,7 +131,7 @@ class TargetRepositoryTest {
 
       @Test
       @DisplayName("ターゲットをnamespaceIdとtargetGroupIdで全件取得できる")
-      void findAllTheIndexes() {
+      void canFindByNamespaceIdAndTargetGroupId() {
         // when
         Flux<Target> targetFlux = targetRepository.findByNamespaceIdAndTargetGroupId(2L, 2L);
         // then

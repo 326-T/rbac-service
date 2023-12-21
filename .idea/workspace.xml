@@ -4,20 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[add]RoleEndpointPermissionをUnique制約で削除できるように。EndpointをRoleIdで絞り込めるように。">
+    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[add]UserGroupRoleAssignmentをUnique制約で削除できるように。&#10;RoleをUserGroupIdで絞り込めるように。">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/dto/EndpointDetail.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/EndpointDetailRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/EndpointDetailService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/EndpointDetailRepositoryTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/service/EndpointDetailServiceTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/RoleRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/RoleRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/UserGroupRoleAssignmentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/UserGroupRoleAssignmentRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/RoleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/RoleService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/UserGroupRoleAssignmentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/UserGroupRoleAssignmentService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/RoleRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/RoleRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserGroupRoleAssignmentRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserGroupRoleAssignmentRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/UserGroupRoleAssignmentAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/UserGroupRoleAssignmentAPITest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/RoleRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/RoleRepositoryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/UserGroupRoleAssignmentRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/UserGroupRoleAssignmentRepositoryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/RoleServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/RoleServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupRoleAssignmentServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/UserGroupRoleAssignmentServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserGroupRoleAssignmentRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserGroupRoleAssignmentRestControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/EndpointRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/EndpointRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/EndpointRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/EndpointRestControllerTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,8 +28,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Interface" />
-        <option value="JUnit5 Test Class" />
         <option value="Class" />
+        <option value="JUnit5 Test Class" />
       </list>
     </option>
   </component>
@@ -123,20 +118,80 @@
     </key>
     <key name="CreateTestDialog.RecentsKey">
       <recent name="org.example.service" />
+      <recent name="org.example.persistence.repository" />
       <recent name="org.example.web.filter" />
       <recent name="org.example.web.controller" />
-      <recent name="org.example.persistence.repository" />
       <recent name="org.example.it.persistence.repository" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="org.example.persistence.repository" />
       <recent name="org.example.error.exception" />
       <recent name="org.example.web.request" />
       <recent name="org.example.web.filter" />
       <recent name="org.example.web.controller" />
-      <recent name="org.example.service" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.RoleAPITest$Index">
+  <component name="RunManager" selected="JUnit.EndpointAPITest$Index">
+    <configuration name="EndpointAPITest$Index" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rbac-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.it.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.it.EndpointAPITest" />
+      <option name="MAIN_CLASS_NAME" value="org.example.it.EndpointAPITest$Index" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="EndpointDetailDetailRepositoryTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rbac-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.persistence.repository.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.persistence.repository" />
+      <option name="MAIN_CLASS_NAME" value="org.example.persistence.repository.EndpointDetailDetailRepositoryTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="EndpointDetailServiceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rbac-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.service" />
+      <option name="MAIN_CLASS_NAME" value="org.example.service.EndpointDetailServiceTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="EndpointRestControllerTest$Index" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rbac-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.web.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.web.controller.EndpointRestControllerTest" />
+      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.EndpointRestControllerTest$Index" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="RoleAPITest$Index" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
@@ -152,76 +207,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="RoleRepositoryTest$FindByNamespaceIdAndUserGroupId$Regular.canFindByNamespaceIdAndUserGroupId" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="rbac-service" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.persistence.repository.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.persistence.repository.RoleRepositoryTest.FindByNamespaceIdAndUserGroupId" />
-      <option name="MAIN_CLASS_NAME" value="org.example.persistence.repository.RoleRepositoryTest$FindByNamespaceIdAndUserGroupId$Regular" />
-      <option name="METHOD_NAME" value="canFindByNamespaceIdAndUserGroupId" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="RoleRestControllerTest$Index" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="rbac-service" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.web.controller.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.web.controller.RoleRestControllerTest" />
-      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.RoleRestControllerTest$Index" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="RoleServiceTest$FindByNamespaceIdAndUserGroupId$Regular.findAllTheIndexes" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="rbac-service" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.service.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.service.RoleServiceTest.FindByNamespaceIdAndUserGroupId" />
-      <option name="MAIN_CLASS_NAME" value="org.example.service.RoleServiceTest$FindByNamespaceIdAndUserGroupId$Regular" />
-      <option name="METHOD_NAME" value="findAllTheIndexes" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="UserGroupRoleAssignmentAPITest$DeleteByUniqueKeys$Regular.canDeleteGroupGroupRoleAssignmentByUniqueKeys" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="rbac-service" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.it.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.it.UserGroupRoleAssignmentAPITest.DeleteByUniqueKeys" />
-      <option name="MAIN_CLASS_NAME" value="org.example.it.UserGroupRoleAssignmentAPITest$DeleteByUniqueKeys$Regular" />
-      <option name="METHOD_NAME" value="canDeleteGroupGroupRoleAssignmentByUniqueKeys" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.EndpointAPITest$Index" />
+        <item itemvalue="JUnit.EndpointRestControllerTest$Index" />
+        <item itemvalue="JUnit.EndpointDetailServiceTest" />
+        <item itemvalue="JUnit.EndpointDetailDetailRepositoryTest" />
         <item itemvalue="JUnit.RoleAPITest$Index" />
-        <item itemvalue="JUnit.RoleRestControllerTest$Index" />
-        <item itemvalue="JUnit.RoleServiceTest$FindByNamespaceIdAndUserGroupId$Regular.findAllTheIndexes" />
-        <item itemvalue="JUnit.RoleRepositoryTest$FindByNamespaceIdAndUserGroupId$Regular.canFindByNamespaceIdAndUserGroupId" />
-        <item itemvalue="JUnit.UserGroupRoleAssignmentAPITest$DeleteByUniqueKeys$Regular.canDeleteGroupGroupRoleAssignmentByUniqueKeys" />
       </list>
     </recent_temporary>
   </component>
@@ -426,7 +418,15 @@
       <option name="project" value="LOCAL" />
       <updated>1703137604343</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="[add]UserGroupRoleAssignmentをUnique制約で削除できるように。&#10;RoleをUserGroupIdで絞り込めるように。">
+      <option name="closed" value="true" />
+      <created>1703142146761</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1703142146761</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -453,7 +453,8 @@
     <MESSAGE value="[add]userとtargetをそれぞれgroupで一覧できるように" />
     <MESSAGE value="[add]UserGroupBelongingsとTargetGroupBelongingsをユニークキーで削除できるように" />
     <MESSAGE value="[add]RoleEndpointPermissionをUnique制約で削除できるように。EndpointをRoleIdで絞り込めるように。" />
-    <option name="LAST_COMMIT_MESSAGE" value="[add]RoleEndpointPermissionをUnique制約で削除できるように。EndpointをRoleIdで絞り込めるように。" />
+    <MESSAGE value="[add]UserGroupRoleAssignmentをUnique制約で削除できるように。&#10;RoleをUserGroupIdで絞り込めるように。" />
+    <option name="LAST_COMMIT_MESSAGE" value="[add]UserGroupRoleAssignmentをUnique制約で削除できるように。&#10;RoleをUserGroupIdで絞り込めるように。" />
   </component>
   <component name="XDebuggerManager">
     <pin-to-top-manager>

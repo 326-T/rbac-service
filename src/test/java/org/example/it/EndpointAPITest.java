@@ -1,11 +1,12 @@
 package org.example.it;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 
+import org.assertj.core.groups.Tuple;
 import org.example.Application;
 import org.example.error.response.ErrorResponse;
 import org.example.listener.FlywayTestExecutionListener;
+import org.example.persistence.dto.EndpointDetail;
 import org.example.persistence.entity.Endpoint;
 import org.example.persistence.entity.User;
 import org.example.service.Base64Service;
@@ -85,16 +86,19 @@ public class EndpointAPITest {
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
-            .expectBodyList(Endpoint.class)
+            .expectBodyList(EndpointDetail.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody()).hasSize(2);
               assertThat(response.getResponseBody())
-                  .extracting(Endpoint::getId, Endpoint::getNamespaceId,
-                      Endpoint::getPathId, Endpoint::getMethod,
-                      Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
+                  .extracting(EndpointDetail::getId,
+                      EndpointDetail::getNamespaceId,
+                      EndpointDetail::getPathId, EndpointDetail::getPathRegex,
+                      EndpointDetail::getTargetGroupId, EndpointDetail::getTargetGroupName,
+                      EndpointDetail::getMethod,
+                      EndpointDetail::getCreatedBy)
                   .containsExactly(
-                      tuple(2L, 2L, 2L, "POST", 2L, 2L),
-                      tuple(3L, 2L, 3L, "PUT", 3L, 3L)
+                      Tuple.tuple(2L, 2L, 2L, "/billing-service/v1/", 2L, "target-group-2", "POST", 2L),
+                      Tuple.tuple(3L, 2L, 3L, "/inventory-service/v2/", 3L, "target-group-3", "PUT", 3L)
                   );
             });
       }
@@ -108,15 +112,18 @@ public class EndpointAPITest {
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
-            .expectBodyList(Endpoint.class)
+            .expectBodyList(EndpointDetail.class)
             .consumeWith(response -> {
               assertThat(response.getResponseBody()).hasSize(1);
               assertThat(response.getResponseBody())
-                  .extracting(Endpoint::getId, Endpoint::getNamespaceId,
-                      Endpoint::getPathId, Endpoint::getMethod,
-                      Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
+                  .extracting(EndpointDetail::getId,
+                      EndpointDetail::getNamespaceId,
+                      EndpointDetail::getPathId, EndpointDetail::getPathRegex,
+                      EndpointDetail::getTargetGroupId, EndpointDetail::getTargetGroupName,
+                      EndpointDetail::getMethod,
+                      EndpointDetail::getCreatedBy)
                   .containsExactly(
-                      tuple(2L, 2L, 2L, "POST", 2L, 2L)
+                      Tuple.tuple(2L, 2L, 2L, "/billing-service/v1/", 2L, "target-group-2", "POST", 2L)
                   );
             });
       }

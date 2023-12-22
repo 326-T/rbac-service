@@ -4,15 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[add]UserGroupRoleAssignmentをUnique制約で削除できるように。&#10;RoleをUserGroupIdで絞り込めるように。">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/dto/EndpointDetail.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/EndpointDetailRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/EndpointDetailService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/EndpointDetailRepositoryTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/service/EndpointDetailServiceTest.java" afterDir="false" />
+    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[add]EndpointはJOINした情報を返すように修正">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/MethodController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/web/response/MethodResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/MethodControllerTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/EndpointRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/EndpointRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/EndpointRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/EndpointRestControllerTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -117,10 +113,10 @@
       <recent name="org.example.persistence.repository" />
     </key>
     <key name="CreateTestDialog.RecentsKey">
+      <recent name="org.example.web.controller" />
       <recent name="org.example.service" />
       <recent name="org.example.persistence.repository" />
       <recent name="org.example.web.filter" />
-      <recent name="org.example.web.controller" />
       <recent name="org.example.it.persistence.repository" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
@@ -131,7 +127,7 @@
       <recent name="org.example.web.controller" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.EndpointAPITest$Index">
+  <component name="RunManager" selected="JUnit.MethodControllerTest$Index$Regular.CanGetTheListOfMethods">
     <configuration name="EndpointAPITest$Index" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
@@ -192,28 +188,29 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="RoleAPITest$Index" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="MethodControllerTest$Index$Regular.CanGetTheListOfMethods" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.it.*" />
+          <option name="PATTERN" value="org.example.web.controller.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.it.RoleAPITest" />
-      <option name="MAIN_CLASS_NAME" value="org.example.it.RoleAPITest$Index" />
-      <option name="TEST_OBJECT" value="class" />
+      <option name="PACKAGE_NAME" value="org.example.web.controller.MethodControllerTest.Index" />
+      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.MethodControllerTest$Index$Regular" />
+      <option name="METHOD_NAME" value="CanGetTheListOfMethods" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.MethodControllerTest$Index$Regular.CanGetTheListOfMethods" />
         <item itemvalue="JUnit.EndpointAPITest$Index" />
         <item itemvalue="JUnit.EndpointRestControllerTest$Index" />
         <item itemvalue="JUnit.EndpointDetailServiceTest" />
         <item itemvalue="JUnit.EndpointDetailDetailRepositoryTest" />
-        <item itemvalue="JUnit.RoleAPITest$Index" />
       </list>
     </recent_temporary>
   </component>
@@ -426,7 +423,15 @@
       <option name="project" value="LOCAL" />
       <updated>1703142146761</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="[add]EndpointはJOINした情報を返すように修正">
+      <option name="closed" value="true" />
+      <created>1703153299817</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1703153299817</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -454,7 +459,8 @@
     <MESSAGE value="[add]UserGroupBelongingsとTargetGroupBelongingsをユニークキーで削除できるように" />
     <MESSAGE value="[add]RoleEndpointPermissionをUnique制約で削除できるように。EndpointをRoleIdで絞り込めるように。" />
     <MESSAGE value="[add]UserGroupRoleAssignmentをUnique制約で削除できるように。&#10;RoleをUserGroupIdで絞り込めるように。" />
-    <option name="LAST_COMMIT_MESSAGE" value="[add]UserGroupRoleAssignmentをUnique制約で削除できるように。&#10;RoleをUserGroupIdで絞り込めるように。" />
+    <MESSAGE value="[add]EndpointはJOINした情報を返すように修正" />
+    <option name="LAST_COMMIT_MESSAGE" value="[add]EndpointはJOINした情報を返すように修正" />
   </component>
   <component name="XDebuggerManager">
     <pin-to-top-manager>

@@ -28,6 +28,14 @@ public interface UserGroupRoleAssignmentRepository extends
   Mono<Void> deleteById(Long id);
 
   @Query("""
+      DELETE FROM rbac_user_group_role_assignments
+      WHERE namespace_id = :namespaceId
+        AND user_group_id = :userGroupId
+        AND role_id = :roleId;
+      """)
+  Mono<Void> deleteByUniqueKeys(Long namespaceId, Long userGroupId, Long roleId);
+
+  @Query("""
       SELECT * FROM rbac_user_group_role_assignments
       WHERE namespace_id = :namespaceId
         AND user_group_id = :userGroupId

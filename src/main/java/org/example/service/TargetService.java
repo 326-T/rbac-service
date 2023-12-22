@@ -34,6 +34,10 @@ public class TargetService {
     return targetRepository.findByNamespaceId(namespaceId);
   }
 
+  public Flux<Target> findByNamespaceIdAndTargetGroupId(Long namespaceId, Long targetGroupId) {
+    return targetRepository.findByNamespaceIdAndTargetGroupId(namespaceId, targetGroupId);
+  }
+
   /**
    * 1. 重複がないか確認する
    * 2. 保存する

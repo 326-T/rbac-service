@@ -2,6 +2,7 @@ package org.example.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.example.error.exception.RedundantException;
@@ -229,6 +230,29 @@ class UserGroupBelongingServiceTest {
         Mono<Void> groupMono = userGroupBelongingService.deleteById(1L);
         // then
         StepVerifier.create(groupMono).verifyComplete();
+        verify(userGroupBelongingRepository).deleteById(1L);
+      }
+    }
+  }
+
+  @Nested
+  class DeleteByUniqueKeys {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ユーザグループを名前空間IDとユーザIDとユーザグループIDで削除できる")
+      void deleteByUniqueKeys() {
+        // given
+        when(userGroupBelongingRepository.deleteByUniqueKeys(1L, 1L, 1L))
+            .thenReturn(Mono.empty());
+        // when
+        Mono<Void> groupMono = userGroupBelongingService.deleteByUniqueKeys(1L, 1L, 1L);
+        // then
+        StepVerifier.create(groupMono).verifyComplete();
+        verify(userGroupBelongingRepository).deleteByUniqueKeys(1L, 1L, 1L);
       }
     }
   }

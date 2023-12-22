@@ -221,4 +221,27 @@ class RoleEndpointPermissionRestControllerTest {
       }
     }
   }
+
+  @Nested
+  class DeleteByUniqueKeys {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ユーザグループを削除できる")
+      void canDeleteTheRoleEndpointPermissionByUniqueKeys() {
+        // given
+        when(roleEndpointPermissionService.deleteByUniqueKeys(1L, 1L, 1L))
+            .thenReturn(Mono.empty());
+        // when, then
+        webTestClient.delete()
+            .uri("/rbac-service/v1/role-endpoint-permissions?namespace-id=1&role-id=1&endpoint-id=1")
+            .exchange()
+            .expectStatus().isNoContent()
+            .expectBody().isEmpty();
+      }
+    }
+  }
 }

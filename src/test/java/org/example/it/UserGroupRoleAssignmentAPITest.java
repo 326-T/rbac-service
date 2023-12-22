@@ -226,10 +226,40 @@ public class UserGroupRoleAssignmentAPITest {
 
       @Test
       @DisplayName("グループとロールの関係情報をIDで削除できる")
-      void deleteGroupGroupRoleAssignmentById() {
+      void canDeleteGroupGroupRoleAssignmentById() {
         // when, then
         webTestClient.delete()
             .uri("/rbac-service/v1/group-role-assignments/3")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .exchange()
+            .expectStatus().isNoContent()
+            .expectBody(Void.class);
+        webTestClient.get()
+            .uri("/rbac-service/v1/group-role-assignments/3")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(Void.class);
+      }
+    }
+  }
+
+  @Order(3)
+  @Nested
+  @TestExecutionListeners(listeners = {
+      FlywayTestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+  class DeleteByUniqueKeys {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("グループとロールの関係情報をIDで削除できる")
+      void canDeleteGroupGroupRoleAssignmentByUniqueKeys() {
+        // when, then
+        webTestClient.delete()
+            .uri("/rbac-service/v1/group-role-assignments?namespace-id=2&user-group-id=3&role-id=3")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isNoContent()

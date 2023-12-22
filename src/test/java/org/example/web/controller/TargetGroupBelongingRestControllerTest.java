@@ -221,4 +221,27 @@ class TargetGroupBelongingRestControllerTest {
       }
     }
   }
+
+  @Nested
+  class DeleteByUniqueKeys {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ターゲットとグループの関係を名前空間IDとターゲットIDとターゲットグループIDで削除できる")
+      void canDeleteTheTargetGroupBelongingByUniqueKeys() {
+        // given
+        when(targetGroupBelongingService.deleteByUniqueKeys(1L, 2L, 3L))
+            .thenReturn(Mono.empty());
+        // when, then
+        webTestClient.delete()
+            .uri("/rbac-service/v1/target-group-belongings?namespace-id=1&target-id=2&target-group-id=3")
+            .exchange()
+            .expectStatus().isNoContent()
+            .expectBody().isEmpty();
+      }
+    }
+  }
 }

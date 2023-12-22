@@ -5,8 +5,10 @@ import static org.assertj.core.groups.Tuple.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import org.example.persistence.dto.EndpointDetail;
 import org.example.persistence.entity.Endpoint;
 import org.example.persistence.entity.User;
+import org.example.service.EndpointDetailService;
 import org.example.service.EndpointService;
 import org.example.service.ReactiveContextService;
 import org.example.web.filter.AuthenticationWebFilter;
@@ -36,6 +38,8 @@ class EndpointRestControllerTest {
 
   @MockBean
   private EndpointService endpointService;
+  @MockBean
+  private EndpointDetailService endpointDetailService;
   @MockBean
   private ReactiveContextService reactiveContextService;
   @Autowired
@@ -71,35 +75,75 @@ class EndpointRestControllerTest {
     class Regular {
 
       @Test
-      @DisplayName("エンドポイントを全件取得できる")
-      void findAllTheIndexes() {
+      @DisplayName("エンドポイントをnamespaceIDで取得できる")
+      void canFindByNamespaceId() {
         // given
-        Endpoint endpoint1 = Endpoint.builder()
-            .id(1L).namespaceId(1L).pathId(1L).method("GET").targetGroupId(1L).createdBy(1L)
-            .build();
-        Endpoint endpoint2 = Endpoint.builder()
-            .id(2L).namespaceId(1L).pathId(2L).method("POST").targetGroupId(2L).createdBy(2L)
-            .build();
-        Endpoint endpoint3 = Endpoint.builder()
-            .id(3L).namespaceId(1L).pathId(3L).method("PUT").targetGroupId(3L).createdBy(3L)
-            .build();
-        when(endpointService.findByNamespaceId(1L)).thenReturn(Flux.just(endpoint1, endpoint2, endpoint3));
+        EndpointDetail endpointDetail1 = EndpointDetail.builder()
+            .id(2L).namespaceId(2L).pathId(2L).pathRegex("/billing-service/v1/")
+            .targetGroupId(2L).targetGroupName("target-group-2").method("POST")
+            .createdBy(2L).build();
+        EndpointDetail endpointDetail2 = EndpointDetail.builder()
+            .id(3L).namespaceId(2L).pathId(3L).pathRegex("/inventory-service/v2/")
+            .targetGroupId(3L).targetGroupName("target-group-3").method("PUT")
+            .createdBy(3L).build();
+        when(endpointDetailService.findByNamespaceId(2L))
+            .thenReturn(Flux.just(endpointDetail1, endpointDetail2));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/endpoints?namespace-id=1")
+            .uri("/rbac-service/v1/endpoints?namespace-id=2")
             .exchange()
             .expectStatus().isOk()
-            .expectBodyList(Endpoint.class)
-            .hasSize(3)
+            .expectBodyList(EndpointDetail.class)
+            .hasSize(2)
             .consumeWith(result ->
                 assertThat(result.getResponseBody())
-                    .extracting(Endpoint::getId, Endpoint::getNamespaceId,
-                        Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
+                    .extracting(
+                        EndpointDetail::getId,
+                        EndpointDetail::getNamespaceId,
+                        EndpointDetail::getPathId, EndpointDetail::getPathRegex,
+                        EndpointDetail::getTargetGroupId, EndpointDetail::getTargetGroupName,
+                        EndpointDetail::getMethod,
+                        EndpointDetail::getCreatedBy)
                     .containsExactly(
-                        tuple(1L, 1L, 1L, "GET", 1L, 1L),
-                        tuple(2L, 1L, 2L, "POST", 2L, 2L),
-                        tuple(3L, 1L, 3L, "PUT", 3L, 3L)
+                        tuple(2L, 2L, 2L, "/billing-service/v1/", 2L, "target-group-2", "POST", 2L),
+                        tuple(3L, 2L, 3L, "/inventory-service/v2/", 3L, "target-group-3", "PUT", 3L)
+                    )
+            );
+      }
+
+      @Test
+      @DisplayName("エンドポイントをnamespaceIDとroleIDで取得できる")
+      void canFindByNamespaceIdAndRoleId() {
+        // given
+        EndpointDetail endpointDetail1 = EndpointDetail.builder()
+            .id(2L).namespaceId(2L).pathId(2L).pathRegex("/billing-service/v1/")
+            .targetGroupId(2L).targetGroupName("target-group-2").method("POST")
+            .createdBy(2L).build();
+        EndpointDetail endpointDetail2 = EndpointDetail.builder()
+            .id(3L).namespaceId(2L).pathId(3L).pathRegex("/inventory-service/v2/")
+            .targetGroupId(3L).targetGroupName("target-group-3").method("PUT")
+            .createdBy(3L).build();
+        when(endpointDetailService.findByNamespaceIdAndRoleId(2L, 2L))
+            .thenReturn(Flux.just(endpointDetail1, endpointDetail2));
+        // when, then
+        webTestClient.get()
+            .uri("/rbac-service/v1/endpoints?namespace-id=2&role-id=2")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBodyList(EndpointDetail.class)
+            .hasSize(2)
+            .consumeWith(result ->
+                assertThat(result.getResponseBody())
+                    .extracting(
+                        EndpointDetail::getId,
+                        EndpointDetail::getNamespaceId,
+                        EndpointDetail::getPathId, EndpointDetail::getPathRegex,
+                        EndpointDetail::getTargetGroupId, EndpointDetail::getTargetGroupName,
+                        EndpointDetail::getMethod,
+                        EndpointDetail::getCreatedBy)
+                    .containsExactly(
+                        tuple(2L, 2L, 2L, "/billing-service/v1/", 2L, "target-group-2", "POST", 2L),
+                        tuple(3L, 2L, 3L, "/inventory-service/v2/", 3L, "target-group-3", "PUT", 3L)
                     )
             );
       }

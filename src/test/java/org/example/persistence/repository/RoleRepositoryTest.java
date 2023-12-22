@@ -124,6 +124,30 @@ class RoleRepositoryTest {
     }
   }
 
+  @Order(1)
+  @Nested
+  class FindByNamespaceIdAndUserGroupId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ロールをnamespaceIdとuserGroupIdで取得できる")
+      void canFindByNamespaceIdAndUserGroupId() {
+        // when
+        Flux<Role> roleFlux = roleRepository.findByNamespaceIdAndUserGroupId(2L, 2L);
+        // then
+        StepVerifier.create(roleFlux)
+            .assertNext(
+                role -> assertThat(role)
+                    .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
+                    .containsExactly(2L, 2L, "operations", 2L))
+            .verifyComplete();
+      }
+    }
+  }
+
   @Order(2)
   @Nested
   @TestExecutionListeners(listeners = {

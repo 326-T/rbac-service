@@ -77,8 +77,8 @@ public class TargetAPITest {
     class Regular {
 
       @Test
-      @DisplayName("ターゲットを全件取得できる")
-      void findAllTheIndexes() {
+      @DisplayName("ターゲットをnamespaceIdで取得できる")
+      void findByNamespaceId() {
         // when, then
         webTestClient.get()
             .uri("/rbac-service/v1/targets?namespace-id=2")
@@ -94,6 +94,25 @@ public class TargetAPITest {
                   .containsExactly(
 
                       tuple(2L, 2L, "object-id-2", 2L),
+                      tuple(3L, 2L, "object-id-3", 3L));
+            });
+      }
+
+      @Test
+      @DisplayName("ターゲットをnamespaceIdとtargetGroupIdで取得できる")
+      void findByNamespaceIdAndTargetGroupId() {
+        // when, then
+        webTestClient.get()
+            .uri("/rbac-service/v1/targets?namespace-id=2&target-group-id=3")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBodyList(Target.class)
+            .consumeWith(response -> {
+              assertThat(response.getResponseBody()).hasSize(1);
+              assertThat(response.getResponseBody())
+                  .extracting(Target::getId, Target::getNamespaceId, Target::getObjectIdRegex, Target::getCreatedBy)
+                  .containsExactly(
                       tuple(3L, 2L, "object-id-3", 3L));
             });
       }

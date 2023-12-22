@@ -38,6 +38,10 @@ public class UserService {
     return userRepository.findByEmail(email);
   }
 
+  public Flux<User> findByUserGroupId(Long userGroupId) {
+    return userRepository.findByUserGroupId(userGroupId);
+  }
+
   /**
    * 1. 重複がないか確認する
    * 2. パスワードをハッシュ化する

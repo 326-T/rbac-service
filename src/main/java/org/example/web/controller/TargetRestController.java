@@ -34,8 +34,13 @@ public class TargetRestController {
   }
 
   @GetMapping
-  public Flux<Target> index(@RequestParam("namespace-id") Long namespaceId) {
-    return targetService.findByNamespaceId(namespaceId);
+  public Flux<Target> index(
+      @RequestParam("namespace-id") Long namespaceId,
+      @RequestParam(value = "target-group-id", required = false) Long targetGroupId) {
+    if (targetGroupId == null) {
+      return targetService.findByNamespaceId(namespaceId);
+    }
+    return targetService.findByNamespaceIdAndTargetGroupId(namespaceId, targetGroupId);
   }
 
   @GetMapping("/count")

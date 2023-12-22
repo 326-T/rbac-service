@@ -58,16 +58,19 @@ class TargetRepositoryTest {
         // when
         Flux<Target> targetFlux = targetRepository.findAll();
         // then
-        StepVerifier.create(targetFlux).assertNext(
-            target -> assertThat(target).extracting(Target::getId, Target::getNamespaceId,
-                    Target::getObjectIdRegex, Target::getCreatedBy)
-                .containsExactly(1L, 1L, "object-id-1", 1L)).assertNext(
-            target -> assertThat(target).extracting(Target::getId, Target::getNamespaceId,
-                    Target::getObjectIdRegex, Target::getCreatedBy)
-                .containsExactly(2L, 2L, "object-id-2", 2L)).assertNext(
-            target -> assertThat(target).extracting(Target::getId, Target::getNamespaceId,
-                    Target::getObjectIdRegex, Target::getCreatedBy)
-                .containsExactly(3L, 2L, "object-id-3", 3L)).verifyComplete();
+        StepVerifier.create(targetFlux)
+            .assertNext(target ->
+                assertThat(target)
+                    .extracting(Target::getId, Target::getNamespaceId, Target::getObjectIdRegex, Target::getCreatedBy)
+                    .containsExactly(1L, 1L, "object-id-1", 1L))
+            .assertNext(target ->
+                assertThat(target)
+                    .extracting(Target::getId, Target::getNamespaceId, Target::getObjectIdRegex, Target::getCreatedBy)
+                    .containsExactly(2L, 2L, "object-id-2", 2L))
+            .assertNext(target ->
+                assertThat(target)
+                    .extracting(Target::getId, Target::getNamespaceId, Target::getObjectIdRegex, Target::getCreatedBy)
+                    .containsExactly(3L, 2L, "object-id-3", 3L)).verifyComplete();
       }
     }
   }
@@ -96,7 +99,7 @@ class TargetRepositoryTest {
 
   @Order(1)
   @Nested
-  class FindAllByNamespaceId {
+  class findByNamespaceId {
 
     @Nested
     @DisplayName("正常系")
@@ -114,6 +117,29 @@ class TargetRepositoryTest {
                     .extracting(Target::getId, Target::getNamespaceId, Target::getObjectIdRegex, Target::getCreatedBy)
                     .containsExactly(1L, 1L, "object-id-1", 1L))
             .verifyComplete();
+      }
+    }
+  }
+
+  @Order(1)
+  @Nested
+  class FindByNamespaceIdAndTargetGroupId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ターゲットをnamespaceIdとtargetGroupIdで全件取得できる")
+      void canFindByNamespaceIdAndTargetGroupId() {
+        // when
+        Flux<Target> targetFlux = targetRepository.findByNamespaceIdAndTargetGroupId(2L, 2L);
+        // then
+        StepVerifier.create(targetFlux)
+            .assertNext(target ->
+                assertThat(target)
+                    .extracting(Target::getId, Target::getNamespaceId, Target::getObjectIdRegex, Target::getCreatedBy)
+                    .containsExactly(2L, 2L, "object-id-2", 2L));
       }
     }
   }

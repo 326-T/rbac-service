@@ -221,4 +221,27 @@ class UserGroupRoleAssignmentRestControllerTest {
       }
     }
   }
+
+  @Nested
+  class DeleteByUniqueKeys {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ユーザグループとロールの関係をユニークキーで削除できる")
+      void canDeleteTheUserGroupRoleAssignmentByUniqueKeys() {
+        // given
+        when(userGroupRoleAssignmentService.deleteByUniqueKeys(1L, 1L, 1L))
+            .thenReturn(Mono.empty());
+        // when, then
+        webTestClient.delete()
+            .uri("/rbac-service/v1/group-role-assignments?namespace-id=1&user-group-id=1&role-id=1")
+            .exchange()
+            .expectStatus().isNoContent()
+            .expectBody().isEmpty();
+      }
+    }
+  }
 }

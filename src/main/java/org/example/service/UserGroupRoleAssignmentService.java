@@ -58,4 +58,8 @@ public class UserGroupRoleAssignmentService {
   public Mono<Void> deleteById(Long id) {
     return userGroupRoleAssignmentRepository.deleteById(id);
   }
+
+  public Mono<Void> deleteByUniqueKeys(Long namespaceId, Long userGroupId, Long roleId) {
+    return userGroupRoleAssignmentRepository.deleteByUniqueKeys(namespaceId, userGroupId, roleId);
+  }
 }

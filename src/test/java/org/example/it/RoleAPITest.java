@@ -77,8 +77,8 @@ public class RoleAPITest {
     class Regular {
 
       @Test
-      @DisplayName("ロールを全件取得できる")
-      void findAllTheIndexes() {
+      @DisplayName("ロールをnamespaceIdで取得できる")
+      void canFindByNamespaceId() {
         // when, then
         webTestClient.get()
             .uri("/rbac-service/v1/roles?namespace-id=2")
@@ -93,6 +93,26 @@ public class RoleAPITest {
                   .containsExactly(
                       tuple(2L, 2L, "operations", 2L),
                       tuple(3L, 2L, "security", 3L)
+                  );
+            });
+      }
+
+      @Test
+      @DisplayName("ロールをnamespaceIdとuserGroupIdで取得できる")
+      void canFindByNamespaceIdAndUserGroupId() {
+        // when, then
+        webTestClient.get()
+            .uri("/rbac-service/v1/roles?namespace-id=2&user-group-id=2")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBodyList(Role.class)
+            .consumeWith(response -> {
+              assertThat(response.getResponseBody()).hasSize(1);
+              assertThat(response.getResponseBody())
+                  .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
+                  .containsExactly(
+                      tuple(2L, 2L, "operations", 2L)
                   );
             });
       }

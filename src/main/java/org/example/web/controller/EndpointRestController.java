@@ -1,7 +1,9 @@
 package org.example.web.controller;
 
 import jakarta.validation.Valid;
+import org.example.persistence.dto.EndpointDetail;
 import org.example.persistence.entity.Endpoint;
+import org.example.service.EndpointDetailService;
 import org.example.service.EndpointService;
 import org.example.service.ReactiveContextService;
 import org.example.web.request.EndpointInsertRequest;
@@ -25,16 +27,24 @@ import reactor.core.publisher.Mono;
 public class EndpointRestController {
 
   private final EndpointService endpointService;
+  private final EndpointDetailService endpointDetailService;
   private final ReactiveContextService reactiveContextService;
 
-  public EndpointRestController(EndpointService endpointService, ReactiveContextService reactiveContextService) {
+  public EndpointRestController(EndpointService endpointService, EndpointDetailService endpointDetailService,
+      ReactiveContextService reactiveContextService) {
     this.endpointService = endpointService;
+    this.endpointDetailService = endpointDetailService;
     this.reactiveContextService = reactiveContextService;
   }
 
   @GetMapping
-  public Flux<Endpoint> index(@RequestParam("namespace-id") Long namespaceId) {
-    return endpointService.findByNamespaceId(namespaceId);
+  public Flux<EndpointDetail> index(
+      @RequestParam("namespace-id") Long namespaceId,
+      @RequestParam(value = "role-id", required = false) Long roleId) {
+    if (roleId == null) {
+      return endpointDetailService.findByNamespaceId(namespaceId);
+    }
+    return endpointDetailService.findByNamespaceIdAndRoleId(namespaceId, roleId);
   }
 
   @GetMapping("/count")

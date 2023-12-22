@@ -234,6 +234,28 @@ class UserGroupBelongingRepositoryTest {
     }
   }
 
+  @Order(2)
+  @Nested
+  @TestExecutionListeners(listeners = {
+      FlywayTestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+  class DeleteByUniqueKeys {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ユーザとグループの関係情報をユニークキーで削除できる")
+      void deleteByUniqueKeys() {
+        // when
+        Mono<Void> voidMono = userGroupBelongingRepository.deleteByUniqueKeys(2L, 4L, 3L);
+        // then
+        StepVerifier.create(voidMono).verifyComplete();
+        userGroupBelongingRepository.findById(3L).as(StepVerifier::create).verifyComplete();
+      }
+    }
+  }
+
   @Order(1)
   @Nested
   class FindDuplicate {

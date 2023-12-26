@@ -3,13 +3,16 @@ package org.example.it;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 
+import org.assertj.core.api.Assertions;
 import org.example.Application;
 import org.example.error.response.ErrorResponse;
 import org.example.listener.FlywayTestExecutionListener;
 import org.example.persistence.entity.Namespace;
+import org.example.persistence.entity.SystemRole;
 import org.example.persistence.entity.User;
 import org.example.service.Base64Service;
 import org.example.service.JwtService;
+import org.example.web.response.UserResponse;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayName;
@@ -265,21 +268,63 @@ public class NamespaceAPITest {
             .exchange()
             .expectStatus().isOk()
             .expectBody(Namespace.class)
-            .consumeWith(response -> {
-              assertThat(response.getResponseBody())
-                  .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                  .containsExactly(4L, "integration", 2L);
-            });
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
+                    .containsExactly(4L, "integration", 2L)
+            );
         webTestClient.get()
             .uri("/rbac-service/v1/namespaces/4")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBody(Namespace.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
+                    .containsExactly(4L, "integration", 2L)
+            );
+        // システムロールが自動作成されている
+        webTestClient.get()
+            .uri("/rbac-service/v1/system-roles?namespace-id=4")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBodyList(SystemRole.class)
+            .hasSize(2)
+            .consumeWith(result ->
+                assertThat(result.getResponseBody())
+                    .extracting(
+                        SystemRole::getId, SystemRole::getName,
+                        SystemRole::getNamespaceId, SystemRole::getPermission)
+                    .containsExactly(
+                        Assertions.tuple(7L, "integration_参照権限", 4L, "READ"),
+                        Assertions.tuple(8L, "integration_編集権限", 4L, "WRITE")
+                    )
+            );
+        // システムロールに作成者と特権管理者が紐づいている
+        webTestClient.get()
+            .uri("/rbac-service/v1/users/system?system-role-id=7")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBodyList(UserResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody()).hasSize(0)
+            );
+        webTestClient.get()
+            .uri("/rbac-service/v1/users/system?system-role-id=8")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBodyList(UserResponse.class)
             .consumeWith(response -> {
+              assertThat(response.getResponseBody()).hasSize(2);
               assertThat(response.getResponseBody())
-                  .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                  .containsExactly(4L, "integration", 2L);
+                  .extracting(UserResponse::getId, UserResponse::getName, UserResponse::getEmail)
+                  .containsExactly(
+                      tuple(1L, "privilege", "privilege@example.org"),
+                      tuple(2L, "user1", "xxx@example.org"));
             });
       }
     }

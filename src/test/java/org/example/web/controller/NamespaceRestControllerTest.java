@@ -3,12 +3,14 @@ package org.example.web.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import org.example.persistence.entity.Namespace;
 import org.example.persistence.entity.User;
 import org.example.service.NamespaceService;
 import org.example.service.ReactiveContextService;
+import org.example.service.SystemRoleService;
 import org.example.web.filter.AuthenticationWebFilter;
 import org.example.web.request.NamespaceUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -35,6 +37,8 @@ class NamespaceRestControllerTest {
 
   @MockBean
   private NamespaceService namespaceService;
+  @MockBean
+  private SystemRoleService systemRoleService;
   @MockBean
   private ReactiveContextService reactiveContextService;
   @Autowired
@@ -198,6 +202,7 @@ class NamespaceRestControllerTest {
         Namespace namespace = Namespace.builder()
             .id(4L).name("vault").createdBy(1L).build();
         when(namespaceService.insert(any(Namespace.class))).thenReturn(Mono.just(namespace));
+        when(systemRoleService.createSystemRole(any(Namespace.class), eq(1L))).thenReturn(Mono.empty());
         when(reactiveContextService.getCurrentUser()).thenReturn(Mono.just(User.builder().id(1L).build()));
         // when, then
         webTestClient.post()

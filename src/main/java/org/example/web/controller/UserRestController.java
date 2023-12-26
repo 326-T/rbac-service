@@ -48,6 +48,11 @@ public class UserRestController {
     return userService.findById(id).map(UserResponse::new);
   }
 
+  @GetMapping("/system")
+  public Flux<UserResponse> findBySystemRoleId(@RequestParam("system-role-id") Long systemRoleId) {
+    return userService.findBySystemRoleId(systemRoleId).map(UserResponse::new);
+  }
+
   @PostMapping
   public Mono<UserResponse> save(@Valid @RequestBody UserInsertRequest request) {
     return userService.insert(request.exportEntity()).map(UserResponse::new);

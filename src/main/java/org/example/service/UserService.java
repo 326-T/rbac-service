@@ -42,6 +42,10 @@ public class UserService {
     return userRepository.findByUserGroupId(userGroupId);
   }
 
+  public Flux<User> findBySystemRoleId(Long systemRoleId) {
+    return userRepository.findBySystemRoleId(systemRoleId);
+  }
+
   /**
    * 1. 重複がないか確認する
    * 2. パスワードをハッシュ化する

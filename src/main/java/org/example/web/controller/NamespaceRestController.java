@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.example.persistence.entity.Namespace;
 import org.example.service.NamespaceService;
 import org.example.service.ReactiveContextService;
+import org.example.service.SystemRoleService;
 import org.example.web.request.NamespaceInsertRequest;
 import org.example.web.request.NamespaceUpdateRequest;
 import org.springframework.http.HttpStatus;
@@ -24,10 +25,13 @@ import reactor.core.publisher.Mono;
 public class NamespaceRestController {
 
   private final NamespaceService namespaceService;
+  private final SystemRoleService systemRoleService;
   private final ReactiveContextService reactiveContextService;
 
-  public NamespaceRestController(NamespaceService namespaceService, ReactiveContextService reactiveContextService) {
+  public NamespaceRestController(NamespaceService namespaceService, SystemRoleService systemRoleService,
+      ReactiveContextService reactiveContextService) {
     this.namespaceService = namespaceService;
+    this.systemRoleService = systemRoleService;
     this.reactiveContextService = reactiveContextService;
   }
 
@@ -54,7 +58,11 @@ public class NamespaceRestController {
           namespace.setCreatedBy(u.getId());
           return Mono.just(namespace);
         })
-        .flatMap(namespaceService::insert);
+        .flatMap(namespaceService::insert)
+        .flatMap(namespace ->
+            systemRoleService.createSystemRole(namespace, namespace.getCreatedBy())
+                .thenReturn(namespace)
+        );
   }
 
   @PutMapping("/{id}")

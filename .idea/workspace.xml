@@ -4,11 +4,32 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[add]EndpointはJOINした情報を返すように修正">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/MethodController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/web/response/MethodResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/MethodControllerTest.java" afterDir="false" />
+    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[add]Methodのコントローラーを作成">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/entity/SystemRole.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/entity/UserSystemRolePermission.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/SystemRoleRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/UserSystemRolePermissionRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/SystemRoleService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/util/constant/SystemRolePermission.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/SystemRoleRestController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V1.0.13__system_roles_schema.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V1.0.14__user_system_role_permissions.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/it/SystemRoleAPITest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/SystemRoleRepositoryTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/service/SystemRoleServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/SystemRoleRestControllerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.113__system_roles_data.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.114__user_system_role_perssions_data.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/UserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/NamespaceRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/NamespaceRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/NamespaceAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/NamespaceAPITest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/UserAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/UserAPITest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/UserRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/UserRepositoryTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/UserServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/UserServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/NamespaceRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/NamespaceRestControllerTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,8 +45,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Interface" />
-        <option value="Class" />
         <option value="JUnit5 Test Class" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -127,8 +148,8 @@
       <recent name="org.example.web.controller" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.MethodControllerTest$Index$Regular.CanGetTheListOfMethods">
-    <configuration name="EndpointAPITest$Index" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="JUnit.NamespaceAPITest$Save$Regular.insertTargetNamespace">
+    <configuration name="NamespaceAPITest$Save$Regular" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
@@ -136,14 +157,61 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.it.EndpointAPITest" />
-      <option name="MAIN_CLASS_NAME" value="org.example.it.EndpointAPITest$Index" />
+      <option name="PACKAGE_NAME" value="org.example.it.NamespaceAPITest.Save" />
+      <option name="MAIN_CLASS_NAME" value="org.example.it.NamespaceAPITest$Save$Regular" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="EndpointDetailDetailRepositoryTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="NamespaceAPITest$Save$Regular.insertTargetNamespace" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rbac-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.it.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.it.NamespaceAPITest.Save" />
+      <option name="MAIN_CLASS_NAME" value="org.example.it.NamespaceAPITest$Save$Regular" />
+      <option name="METHOD_NAME" value="insertTargetNamespace" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="NamespaceAPITest$Save" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rbac-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.it.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.it.NamespaceAPITest" />
+      <option name="MAIN_CLASS_NAME" value="org.example.it.NamespaceAPITest$Save" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SystemRoleAPITest$FindByNamespaceId$Regular.findByNamespaceId" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rbac-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.it.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.it.SystemRoleAPITest.FindByNamespaceId" />
+      <option name="MAIN_CLASS_NAME" value="org.example.it.SystemRoleAPITest$FindByNamespaceId$Regular" />
+      <option name="METHOD_NAME" value="findByNamespaceId" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SystemRoleRepositoryTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
@@ -152,65 +220,19 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="org.example.persistence.repository" />
-      <option name="MAIN_CLASS_NAME" value="org.example.persistence.repository.EndpointDetailDetailRepositoryTest" />
+      <option name="MAIN_CLASS_NAME" value="org.example.persistence.repository.SystemRoleRepositoryTest" />
       <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="EndpointDetailServiceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="rbac-service" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.service.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.service" />
-      <option name="MAIN_CLASS_NAME" value="org.example.service.EndpointDetailServiceTest" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="EndpointRestControllerTest$Index" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="rbac-service" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.web.controller.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.web.controller.EndpointRestControllerTest" />
-      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.EndpointRestControllerTest$Index" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="MethodControllerTest$Index$Regular.CanGetTheListOfMethods" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="rbac-service" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.web.controller.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.web.controller.MethodControllerTest.Index" />
-      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.MethodControllerTest$Index$Regular" />
-      <option name="METHOD_NAME" value="CanGetTheListOfMethods" />
-      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.MethodControllerTest$Index$Regular.CanGetTheListOfMethods" />
-        <item itemvalue="JUnit.EndpointAPITest$Index" />
-        <item itemvalue="JUnit.EndpointRestControllerTest$Index" />
-        <item itemvalue="JUnit.EndpointDetailServiceTest" />
-        <item itemvalue="JUnit.EndpointDetailDetailRepositoryTest" />
+        <item itemvalue="JUnit.NamespaceAPITest$Save$Regular.insertTargetNamespace" />
+        <item itemvalue="JUnit.NamespaceAPITest$Save$Regular" />
+        <item itemvalue="JUnit.SystemRoleRepositoryTest" />
+        <item itemvalue="JUnit.SystemRoleAPITest$FindByNamespaceId$Regular.findByNamespaceId" />
+        <item itemvalue="JUnit.NamespaceAPITest$Save" />
       </list>
     </recent_temporary>
   </component>
@@ -435,7 +457,6 @@
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="[add]永続化層の実装" />
     <MESSAGE value="[add]Service, Controller, 結合テストの実装" />
     <MESSAGE value="[update]命名の変更" />
     <MESSAGE value="[add]NamespaceをUser以外の全てに含めるように修正" />
@@ -460,7 +481,8 @@
     <MESSAGE value="[add]RoleEndpointPermissionをUnique制約で削除できるように。EndpointをRoleIdで絞り込めるように。" />
     <MESSAGE value="[add]UserGroupRoleAssignmentをUnique制約で削除できるように。&#10;RoleをUserGroupIdで絞り込めるように。" />
     <MESSAGE value="[add]EndpointはJOINした情報を返すように修正" />
-    <option name="LAST_COMMIT_MESSAGE" value="[add]EndpointはJOINした情報を返すように修正" />
+    <MESSAGE value="[add]Methodのコントローラーを作成" />
+    <option name="LAST_COMMIT_MESSAGE" value="[add]Methodのコントローラーを作成" />
   </component>
   <component name="XDebuggerManager">
     <pin-to-top-manager>

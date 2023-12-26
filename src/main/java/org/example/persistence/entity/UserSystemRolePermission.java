@@ -19,6 +19,7 @@ public class UserSystemRolePermission {
   private Long id;
   private Long userId;
   private Long systemRoleId;
+  private Long createdBy;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 }

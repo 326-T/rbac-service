@@ -237,7 +237,11 @@ class UserGroupBelongingRestControllerTest {
             .thenReturn(Mono.empty());
         // when, then
         webTestClient.delete()
-            .uri("/rbac-service/v1/user-group-belongings?namespace-id=1&user-id=2&user-group-id=3")
+            .uri(uriBuilder -> uriBuilder.path("/rbac-service/v1/user-group-belongings")
+                .queryParam("namespace-id", 1L)
+                .queryParam("user-id", 2L)
+                .queryParam("user-group-id", 3L)
+                .build())
             .exchange()
             .expectStatus().isNoContent()
             .expectBody().isEmpty();

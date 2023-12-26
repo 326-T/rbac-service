@@ -17,4 +17,11 @@ public interface UserSystemRolePermissionRepository extends ReactiveCrudReposito
         AND system_role_id = :systemRoleId;
       """)
   Mono<Void> deleteByUniqueKeys(Long userId, Long systemRoleId);
+
+  @Query("""
+      SELECT * FROM rbac_user_system_role_permissions
+      WHERE user_id = :userId
+        AND system_role_id = :systemRoleId;
+      """)
+  Mono<UserSystemRolePermission> findDuplicate(Long userId, Long systemRoleId);
 }

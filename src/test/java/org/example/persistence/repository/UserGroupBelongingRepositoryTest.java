@@ -141,6 +141,7 @@ class UserGroupBelongingRepositoryTest {
   class Save {
 
     @Nested
+    @DisplayName("正常系")
     class Regular {
 
       @Test

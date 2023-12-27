@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.example.persistence.entity.Role;
 import org.example.service.ReactiveContextService;
 import org.example.service.RoleService;
+import org.example.util.constant.AccessPath;
 import org.example.web.request.RoleInsertRequest;
 import org.example.web.request.RoleUpdateRequest;
 import org.springframework.http.HttpStatus;
@@ -17,11 +18,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/rbac-service/v1/roles")
+@RequestMapping(AccessPath.ROLES)
 public class RoleRestController {
 
   private final RoleService roleService;
@@ -35,7 +37,7 @@ public class RoleRestController {
 
   @GetMapping
   public Flux<Role> index(
-      @RequestParam("namespace-id") Long namespaceId,
+      @PathVariable("namespace-id") Long namespaceId,
       @RequestParam(value = "user-group-id", required = false) Long userGroupId) {
     if (userGroupId == null) {
       return roleService.findByNamespaceId(namespaceId);
@@ -54,14 +56,14 @@ public class RoleRestController {
   }
 
   @PostMapping
-  public Mono<Role> save(@Valid @RequestBody RoleInsertRequest request) {
-    return reactiveContextService.getCurrentUser()
-        .flatMap(u -> {
-          Role role = request.exportEntity();
-          role.setCreatedBy(u.getId());
-          return Mono.just(role);
-        })
-        .flatMap(roleService::insert);
+  public Mono<Role> save(
+      ServerWebExchange exchange,
+      @PathVariable("namespace-id") Long namespaceId,
+      @Valid @RequestBody RoleInsertRequest request) {
+    Role role = request.exportEntity();
+    role.setNamespaceId(namespaceId);
+    role.setCreatedBy(reactiveContextService.extractCurrentUser(exchange).getId());
+    return roleService.insert(role);
   }
 
   @PutMapping("/{id}")

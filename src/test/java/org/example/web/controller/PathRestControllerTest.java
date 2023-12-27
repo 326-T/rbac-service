@@ -10,13 +10,13 @@ import org.example.persistence.entity.User;
 import org.example.service.PathService;
 import org.example.service.ReactiveContextService;
 import org.example.web.filter.AuthenticationWebFilter;
+import org.example.web.filter.AuthorizationWebFilter;
 import org.example.web.request.PathInsertRequest;
 import org.example.web.request.PathUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
@@ -26,12 +26,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @WebFluxTest(
     controllers = PathRestController.class,
-    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AuthenticationWebFilter.class)})
+    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+        classes = {AuthenticationWebFilter.class, AuthorizationWebFilter.class})})
 @AutoConfigureWebTestClient
 class PathRestControllerTest {
 
@@ -56,7 +58,7 @@ class PathRestControllerTest {
         when(pathService.count()).thenReturn(Mono.just(3L));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/paths/count")
+            .uri("/rbac-service/v1/1/paths/count")
             .exchange()
             .expectStatus().isOk()
             .expectBody(Long.class).isEqualTo(3L);
@@ -84,7 +86,7 @@ class PathRestControllerTest {
         when(pathService.findByNamespaceId(1L)).thenReturn(Flux.just(path1, path2, path3));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/paths?namespace-id=1")
+            .uri("/rbac-service/v1/1/paths")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(Path.class)
@@ -119,7 +121,7 @@ class PathRestControllerTest {
         when(pathService.findById(1L)).thenReturn(Mono.just(path));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/paths/1")
+            .uri("/rbac-service/v1/1/paths/1")
             .exchange()
             .expectStatus().isOk()
             .expectBody(Path.class)
@@ -148,7 +150,7 @@ class PathRestControllerTest {
         when(pathService.update(any(Path.class))).thenReturn(Mono.just(path));
         // when, then
         webTestClient.put()
-            .uri("/rbac-service/v1/paths/2")
+            .uri("/rbac-service/v1/1/paths/2")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
@@ -173,21 +175,14 @@ class PathRestControllerTest {
 
       @DisplayName("バリデーションエラーが発生する")
       @ParameterizedTest
-      @CsvSource({
-          ", /user-service/v1/",
-          "0, /user-service/v1/",
-          "1, ",
-          "1, ''",
-          "1, ' '",
-      })
-      void validationErrorOccurs(Long namespaceId, String regex) {
+      @ValueSource(strings = {"", " "})
+      void validationErrorOccurs(String regex) {
         // given
         PathInsertRequest pathInsertRequest = new PathInsertRequest();
-        pathInsertRequest.setNamespaceId(namespaceId);
         pathInsertRequest.setRegex(regex);
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/paths")
+            .uri("/rbac-service/v1/1/paths")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(pathInsertRequest)
             .exchange()
@@ -210,14 +205,13 @@ class PathRestControllerTest {
         Path path = Path.builder()
             .id(4L).namespaceId(1L).regex("/next-service/v1/").createdBy(1L).build();
         when(pathService.insert(any(Path.class))).thenReturn(Mono.just(path));
-        when(reactiveContextService.getCurrentUser()).thenReturn(Mono.just(User.builder().id(1L).build()));
+        when(reactiveContextService.extractCurrentUser(any(ServerWebExchange.class))).thenReturn(User.builder().id(1L).build());
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/paths")
+            .uri("/rbac-service/v1/1/paths")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "namespaceId": 1,
                   "regex": "/next-service/v1/"
                 }
                 """
@@ -246,7 +240,7 @@ class PathRestControllerTest {
         pathUpdateRequest.setRegex(regex);
         // when, then
         webTestClient.put()
-            .uri("/rbac-service/v1/paths/2")
+            .uri("/rbac-service/v1/1/paths/2")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(pathUpdateRequest)
             .exchange()
@@ -269,7 +263,7 @@ class PathRestControllerTest {
         when(pathService.deleteById(3L)).thenReturn(Mono.empty());
         // when, then
         webTestClient.delete()
-            .uri("/rbac-service/v1/paths/3")
+            .uri("/rbac-service/v1/1/paths/3")
             .exchange()
             .expectStatus().isNoContent()
             .expectBody().isEmpty();

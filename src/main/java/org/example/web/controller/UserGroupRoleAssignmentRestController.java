@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.example.persistence.entity.UserGroupRoleAssignment;
 import org.example.service.ReactiveContextService;
 import org.example.service.UserGroupRoleAssignmentService;
+import org.example.util.constant.AccessPath;
 import org.example.web.request.UserGroupRoleAssignmentInsertRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,11 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/rbac-service/v1/group-role-assignments")
+@RequestMapping(AccessPath.USER_GROUP_ROLE_ASSIGNMENTS)
 public class UserGroupRoleAssignmentRestController {
 
   private final UserGroupRoleAssignmentService userGroupRoleAssignmentService;
@@ -32,7 +34,7 @@ public class UserGroupRoleAssignmentRestController {
   }
 
   @GetMapping
-  public Flux<UserGroupRoleAssignment> index(@RequestParam("namespace-id") Long namespaceId) {
+  public Flux<UserGroupRoleAssignment> index(@PathVariable("namespace-id") Long namespaceId) {
     return userGroupRoleAssignmentService.findByNamespaceId(namespaceId);
   }
 
@@ -48,14 +50,13 @@ public class UserGroupRoleAssignmentRestController {
 
   @PostMapping
   public Mono<UserGroupRoleAssignment> save(
+      ServerWebExchange exchange,
+      @PathVariable("namespace-id") Long namespaceId,
       @Valid @RequestBody UserGroupRoleAssignmentInsertRequest request) {
-    return reactiveContextService.getCurrentUser()
-        .flatMap(u -> {
-          UserGroupRoleAssignment userGroupRoleAssignment = request.exportEntity();
-          userGroupRoleAssignment.setCreatedBy(u.getId());
-          return Mono.just(userGroupRoleAssignment);
-        })
-        .flatMap(userGroupRoleAssignmentService::insert);
+    UserGroupRoleAssignment userGroupRoleAssignment = request.exportEntity();
+    userGroupRoleAssignment.setNamespaceId(namespaceId);
+    userGroupRoleAssignment.setCreatedBy(reactiveContextService.extractCurrentUser(exchange).getId());
+    return userGroupRoleAssignmentService.insert(userGroupRoleAssignment);
   }
 
   @DeleteMapping("/{id}")
@@ -67,7 +68,7 @@ public class UserGroupRoleAssignmentRestController {
   @DeleteMapping
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public Mono<Void> deleteByUniqueKeys(
-      @RequestParam("namespace-id") Long namespaceId,
+      @PathVariable("namespace-id") Long namespaceId,
       @RequestParam("user-group-id") Long userGroupId,
       @RequestParam("role-id") Long roleId) {
     return userGroupRoleAssignmentService.deleteByUniqueKeys(namespaceId, userGroupId, roleId);

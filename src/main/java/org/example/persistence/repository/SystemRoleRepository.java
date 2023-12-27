@@ -20,9 +20,10 @@ public interface SystemRoleRepository extends ReactiveCrudRepository<SystemRole,
       SELECT * FROM rbac_system_roles AS sr
       INNER JOIN rbac_user_system_role_permissions AS srp
       ON sr.id = srp.system_role_id
-      WHERE srp.user_id = :userId;
+      WHERE srp.user_id = :userId
+      AND sr.namespace_id = :namespaceId;
       """)
-  Flux<SystemRole> findByUserId(Long userId);
+  Flux<SystemRole> findByUserIdAndNamespaceId(Long userId, Long namespaceId);
 
   Mono<SystemRole> save(SystemRole systemRole);
 }

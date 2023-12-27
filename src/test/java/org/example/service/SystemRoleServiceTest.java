@@ -105,10 +105,10 @@ class SystemRoleServiceTest {
             .namespaceId(1L)
             .permission("WRITE")
             .build();
-        when(systemRoleRepository.findByUserId(1L))
+        when(systemRoleRepository.findByUserIdAndNamespaceId(1L, 1L))
             .thenReturn(Flux.just(developRead, developWrite));
         // when
-        Flux<SystemRole> systemRoleFlux = systemRoleRepository.findByUserId(1L);
+        Flux<SystemRole> systemRoleFlux = systemRoleRepository.findByUserIdAndNamespaceId(1L, 1L);
         // then
         StepVerifier.create(systemRoleFlux)
             .assertNext(systemRole ->

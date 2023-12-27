@@ -1,5 +1,6 @@
 package org.example.util.constant;
 
+import java.util.Arrays;
 import lombok.Getter;
 
 @Getter
@@ -12,5 +13,11 @@ public enum SystemRolePermission {
   SystemRolePermission(String name, String permission) {
     this.name = name;
     this.permission = permission;
+  }
+
+  public static SystemRolePermission of(String permission) {
+    return Arrays.stream(SystemRolePermission.values())
+        .filter(systemRolePermission -> systemRolePermission.getPermission().equals(permission))
+        .findFirst().orElse(READ);
   }
 }

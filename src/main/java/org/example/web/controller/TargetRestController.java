@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.example.persistence.entity.Target;
 import org.example.service.ReactiveContextService;
 import org.example.service.TargetService;
+import org.example.util.constant.AccessPath;
 import org.example.web.request.TargetInsertRequest;
 import org.example.web.request.TargetUpdateRequest;
 import org.springframework.http.HttpStatus;
@@ -17,11 +18,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/rbac-service/v1/targets")
+@RequestMapping(AccessPath.TARGETS)
 public class TargetRestController {
 
   private final TargetService targetService;
@@ -35,7 +37,7 @@ public class TargetRestController {
 
   @GetMapping
   public Flux<Target> index(
-      @RequestParam("namespace-id") Long namespaceId,
+      @PathVariable("namespace-id") Long namespaceId,
       @RequestParam(value = "target-group-id", required = false) Long targetGroupId) {
     if (targetGroupId == null) {
       return targetService.findByNamespaceId(namespaceId);
@@ -54,14 +56,14 @@ public class TargetRestController {
   }
 
   @PostMapping
-  public Mono<Target> save(@Valid @RequestBody TargetInsertRequest request) {
-    return reactiveContextService.getCurrentUser()
-        .flatMap(u -> {
-          Target target = request.exportEntity();
-          target.setCreatedBy(u.getId());
-          return Mono.just(target);
-        })
-        .flatMap(targetService::insert);
+  public Mono<Target> save(
+      ServerWebExchange exchange,
+      @PathVariable("namespace-id") Long namespaceId,
+      @Valid @RequestBody TargetInsertRequest request) {
+    Target target = request.exportEntity();
+    target.setNamespaceId(namespaceId);
+    target.setCreatedBy(reactiveContextService.extractCurrentUser(exchange).getId());
+    return targetService.insert(target);
   }
 
   @PutMapping("/{id}")

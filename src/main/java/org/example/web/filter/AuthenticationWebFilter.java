@@ -2,11 +2,12 @@ package org.example.web.filter;
 
 import io.netty.util.internal.StringUtil;
 import lombok.NonNull;
-import org.example.error.exception.UnAuthorizedException;
+import org.example.error.exception.UnAuthenticatedException;
 import org.example.persistence.entity.User;
 import org.example.service.Base64Service;
 import org.example.service.JwtService;
 import org.example.service.UserService;
+import org.example.util.constant.ContextKeys;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -15,7 +16,6 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
-import reactor.util.context.Context;
 
 @Order(1)
 @Component
@@ -48,13 +48,14 @@ public class AuthenticationWebFilter implements WebFilter {
     }
     String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
     if (StringUtil.isNullOrEmpty(token)) {
-      return Mono.error(new UnAuthorizedException("Authorization headerがありません。"));
+      return Mono.error(new UnAuthenticatedException("Authorization headerがありません。"));
     }
     return Mono.just(token)
         .filter(t -> t.startsWith("Basic "))
         .flatMap(this::basicChain)
         .switchIfEmpty(jwtChain(token))
-        .flatMap(u -> chain.filter(exchange).contextWrite(Context.of(User.class, u)));
+        .doOnNext(u -> exchange.getAttributes().put(ContextKeys.USER_KEY, u))
+        .then(chain.filter(exchange));
   }
 
   /**
@@ -69,8 +70,8 @@ public class AuthenticationWebFilter implements WebFilter {
         .map(base64Service::decode)
         .map(jwtService::decode)
         .flatMap(u -> userService.findByEmail(u.getEmail()))
-        .switchIfEmpty(Mono.error(new UnAuthorizedException("存在しないユーザです。")))
-        .onErrorMap(e -> new UnAuthorizedException("Authorization headerが不正です。"));
+        .switchIfEmpty(Mono.error(new UnAuthenticatedException("存在しないユーザです。")))
+        .onErrorMap(e -> new UnAuthenticatedException("Authorization headerが不正です。"));
   }
 
   /**
@@ -83,7 +84,7 @@ public class AuthenticationWebFilter implements WebFilter {
   private Mono<User> basicChain(String token) {
     String[] decoded = base64Service.decode(token.substring("Basic ".length()).trim()).split(":");
     if (decoded.length != 2) {
-      return Mono.error(new UnAuthorizedException("Authorization headerが不正です。"));
+      return Mono.error(new UnAuthenticatedException("Authorization headerが不正です。"));
     }
     return userService.login(decoded[0], decoded[1]);
   }

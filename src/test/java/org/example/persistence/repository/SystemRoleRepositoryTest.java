@@ -78,7 +78,7 @@ class SystemRoleRepositoryTest {
       @DisplayName("ユーザーIDに紐づくシステムロールを取得できる")
       void findByUserId() {
         // when
-        Flux<SystemRole> systemRoleFlux = systemRoleRepository.findByUserId(2L);
+        Flux<SystemRole> systemRoleFlux = systemRoleRepository.findByUserIdAndNamespaceId(2L, 2L);
         // then
         StepVerifier.create(systemRoleFlux)
             .assertNext(systemRole ->

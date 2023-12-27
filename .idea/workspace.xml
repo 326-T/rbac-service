@@ -5,21 +5,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[add]Namespace作成時にシステムロールの作成と紐付けを自動で行うように。ロールとユーザを参照できるように。">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/service/UserSystemRolePermissionService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserSystemRolePermissionRestController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/UserSystemRolePermissionInsertRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/it/UserSystemRolePermissionAPITest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/UserSystemRolePermissionRepositoryTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/service/UserSystemRolePermissionServiceTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserSystemRolePermissionRestControllerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/util/PathUtil.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/util/constant/AccessPath.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/web/filter/AuthorizationWebFilter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/util/PathUtilTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/persistence/entity/UserSystemRolePermission.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/entity/UserSystemRolePermission.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/UserSystemRolePermissionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/UserSystemRolePermissionRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/error/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/error/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/SystemRoleRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/SystemRoleRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/ReactiveContextService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/ReactiveContextService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/SystemRoleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/SystemRoleService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/db/migration/V1.0.14__user_system_role_permissions.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V1.0.14__user_system_role_permissions.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/UserGroupBelongingRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/UserGroupBelongingRepositoryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserGroupBelongingRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserGroupBelongingRestControllerTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.114__user_system_role_perssions_data.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/db/migration/V1.0.114__user_system_role_perssions_data.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/util/constant/ContextKeys.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/util/constant/ContextKeys.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/util/constant/SystemRolePermission.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/util/constant/SystemRolePermission.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/TargetRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/TargetRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/filter/AuthenticationWebFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/filter/AuthenticationWebFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/TargetInsertRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/TargetInsertRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/TargetAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/TargetAPITest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/SystemRoleRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/SystemRoleRepositoryTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/SystemRoleServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/SystemRoleServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/TargetRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/TargetRestControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/filter/AuthenticationWebFilterTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/filter/AuthenticationWebFilterTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,8 +39,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Interface" />
-        <option value="JUnit5 Test Class" />
         <option value="Class" />
+        <option value="JUnit5 Test Class" />
       </list>
     </option>
   </component>
@@ -124,11 +128,11 @@
       <recent name="org.example.persistence.repository" />
     </key>
     <key name="CreateTestDialog.RecentsKey">
+      <recent name="org.example.util" />
       <recent name="org.example.web.controller" />
       <recent name="org.example.service" />
       <recent name="org.example.persistence.repository" />
       <recent name="org.example.web.filter" />
-      <recent name="org.example.it.persistence.repository" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="org.example.web.request" />
@@ -138,8 +142,8 @@
       <recent name="org.example.web.controller" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.example in rbac-service">
-    <configuration name="UserSystemRolePermissionAPITest$Save$Error.cannotCreateDuplicate" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="JUnit.TargetRestControllerTest$Save$Regular.canSaveTheTarget">
+    <configuration name="TargetAPITest$Count$Error.notAuthorizedCauseException" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
@@ -147,46 +151,15 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.it.UserSystemRolePermissionAPITest.Save" />
-      <option name="MAIN_CLASS_NAME" value="org.example.it.UserSystemRolePermissionAPITest$Save$Error" />
-      <option name="METHOD_NAME" value="cannotCreateDuplicate" />
+      <option name="PACKAGE_NAME" value="org.example.it.TargetAPITest.Count" />
+      <option name="MAIN_CLASS_NAME" value="org.example.it.TargetAPITest$Count$Error" />
+      <option name="METHOD_NAME" value="notAuthorizedCauseException" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="UserSystemRolePermissionAPITest$Save$Regular.canSaveUserSystemRolePermission" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="rbac-service" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.it.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.it.UserSystemRolePermissionAPITest.Save" />
-      <option name="MAIN_CLASS_NAME" value="org.example.it.UserSystemRolePermissionAPITest$Save$Regular" />
-      <option name="METHOD_NAME" value="canSaveUserSystemRolePermission" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="UserSystemRolePermissionAPITest$Save" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="rbac-service" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.it.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.it.UserSystemRolePermissionAPITest" />
-      <option name="MAIN_CLASS_NAME" value="org.example.it.UserSystemRolePermissionAPITest$Save" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="UserSystemRolePermissionAPITest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="TargetAPITest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
@@ -195,27 +168,66 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="org.example.it" />
-      <option name="MAIN_CLASS_NAME" value="org.example.it.UserSystemRolePermissionAPITest" />
+      <option name="MAIN_CLASS_NAME" value="org.example.it.TargetAPITest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="example in rbac-service" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="TargetRestControllerTest$Save$Error.validationErrorOccurs" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
-      <option name="TEST_OBJECT" value="directory" />
-      <dir value="$PROJECT_DIR$/src/test/java/org/example" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.web.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.web.controller.TargetRestControllerTest.Save" />
+      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.TargetRestControllerTest$Save$Error" />
+      <option name="METHOD_NAME" value="validationErrorOccurs(java.lang.String)" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TargetRestControllerTest$Save$Regular.canSaveTheTarget" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rbac-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.web.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.web.controller.TargetRestControllerTest.Save" />
+      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.TargetRestControllerTest$Save$Regular" />
+      <option name="METHOD_NAME" value="canSaveTheTarget" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TargetRestControllerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rbac-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.web.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.web.controller" />
+      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.TargetRestControllerTest" />
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.example in rbac-service" />
-        <item itemvalue="JUnit.UserSystemRolePermissionAPITest$Save" />
-        <item itemvalue="JUnit.UserSystemRolePermissionAPITest$Save$Error.cannotCreateDuplicate" />
-        <item itemvalue="JUnit.UserSystemRolePermissionAPITest$Save$Regular.canSaveUserSystemRolePermission" />
-        <item itemvalue="JUnit.UserSystemRolePermissionAPITest" />
+        <item itemvalue="JUnit.TargetRestControllerTest$Save$Regular.canSaveTheTarget" />
+        <item itemvalue="JUnit.TargetRestControllerTest$Save$Error.validationErrorOccurs" />
+        <item itemvalue="JUnit.TargetRestControllerTest" />
+        <item itemvalue="JUnit.TargetAPITest" />
+        <item itemvalue="JUnit.TargetAPITest$Count$Error.notAuthorizedCauseException" />
       </list>
     </recent_temporary>
   </component>

@@ -10,13 +10,13 @@ import org.example.persistence.entity.User;
 import org.example.service.ReactiveContextService;
 import org.example.service.TargetService;
 import org.example.web.filter.AuthenticationWebFilter;
+import org.example.web.filter.AuthorizationWebFilter;
 import org.example.web.request.TargetInsertRequest;
 import org.example.web.request.TargetUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
@@ -26,12 +26,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @WebFluxTest(
     controllers = TargetRestController.class,
-    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AuthenticationWebFilter.class)})
+    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+        classes = {AuthenticationWebFilter.class, AuthorizationWebFilter.class})})
 @AutoConfigureWebTestClient
 class TargetRestControllerTest {
 
@@ -56,7 +58,7 @@ class TargetRestControllerTest {
         when(targetService.count()).thenReturn(Mono.just(3L));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/targets/count")
+            .uri("/rbac-service/v1/1/targets/count")
             .exchange()
             .expectStatus().isOk()
             .expectBody(Long.class).isEqualTo(3L);
@@ -84,7 +86,7 @@ class TargetRestControllerTest {
         when(targetService.findByNamespaceId(1L)).thenReturn(Flux.just(target1, target2, target3));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/targets?namespace-id=1")
+            .uri("/rbac-service/v1/1/targets")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(Target.class)
@@ -115,7 +117,7 @@ class TargetRestControllerTest {
             .thenReturn(Flux.just(target1, target2, target3));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/targets?namespace-id=1&target-group-id=1")
+            .uri("/rbac-service/v1/1/targets?target-group-id=1")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(Target.class)
@@ -150,7 +152,7 @@ class TargetRestControllerTest {
         when(targetService.findById(1L)).thenReturn(Mono.just(target));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/targets/1")
+            .uri("/rbac-service/v1/1/targets/1")
             .exchange()
             .expectStatus().isOk()
             .expectBody(Target.class)
@@ -179,7 +181,7 @@ class TargetRestControllerTest {
         when(targetService.update(any(Target.class))).thenReturn(Mono.just(target));
         // when, then
         webTestClient.put()
-            .uri("/rbac-service/v1/targets/2")
+            .uri("/rbac-service/v1/2/targets/2")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
@@ -211,7 +213,7 @@ class TargetRestControllerTest {
         targetUpdateRequest.setObjectIdRegex(objectIdRegex);
         // when, then
         webTestClient.put()
-            .uri("/rbac-service/v1/targets/2")
+            .uri("/rbac-service/v1/2/targets/2")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(targetUpdateRequest)
             .exchange()
@@ -234,14 +236,13 @@ class TargetRestControllerTest {
         Target target = Target.builder()
             .id(4L).namespaceId(1L).objectIdRegex("object-id-4").createdBy(1L).build();
         when(targetService.insert(any(Target.class))).thenReturn(Mono.just(target));
-        when(reactiveContextService.getCurrentUser()).thenReturn(Mono.just(User.builder().id(1L).build()));
+        when(reactiveContextService.extractCurrentUser(any(ServerWebExchange.class))).thenReturn(User.builder().id(1L).build());
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/targets")
+            .uri("/rbac-service/v1/1/targets")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "namespaceId": 1,
                   "objectIdRegex": "object-id-4"
                 }
                 """
@@ -263,21 +264,14 @@ class TargetRestControllerTest {
 
       @DisplayName("バリデーションエラーが発生する")
       @ParameterizedTest
-      @CsvSource({
-          ", object-id-1",
-          "0, object-id-1",
-          "1, ",
-          "1, ''",
-          "1, ' '",
-      })
-      void validationErrorOccurs(Long namespaceId, String objectIdRegex) {
+      @ValueSource(strings = {"", " "})
+      void validationErrorOccurs(String objectIdRegex) {
         // given
         TargetInsertRequest targetInsertRequest = new TargetInsertRequest();
-        targetInsertRequest.setNamespaceId(namespaceId);
         targetInsertRequest.setObjectIdRegex(objectIdRegex);
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/targets")
+            .uri("/rbac-service/v1/1/targets")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(targetInsertRequest)
             .exchange()
@@ -300,7 +294,7 @@ class TargetRestControllerTest {
         when(targetService.deleteById(3L)).thenReturn(Mono.empty());
         // when, then
         webTestClient.delete()
-            .uri("/rbac-service/v1/targets/3")
+            .uri("/rbac-service/v1/1/targets/3")
             .exchange()
             .expectStatus().isNoContent()
             .expectBody().isEmpty();

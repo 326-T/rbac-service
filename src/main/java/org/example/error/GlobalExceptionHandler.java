@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
+import org.example.error.exception.UnAuthenticatedException;
 import org.example.error.exception.UnAuthorizedException;
 import org.example.error.response.ErrorResponse;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
@@ -26,13 +27,23 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
 
   @Override
   public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
-    if (ex instanceof UnAuthorizedException) {
+    if (ex instanceof UnAuthenticatedException) {
       return setResponse(exchange, HttpStatus.UNAUTHORIZED,
           ErrorResponse.builder()
               .status(HttpStatus.UNAUTHORIZED.value())
               .summary("クライアント側の認証切れ")
               .detail(ex.toString())
               .message("JWTが有効ではありません。")
+              .build());
+    }
+
+    if (ex instanceof UnAuthorizedException) {
+      return setResponse(exchange, HttpStatus.FORBIDDEN,
+          ErrorResponse.builder()
+              .status(HttpStatus.FORBIDDEN.value())
+              .summary("エンドポイントへのアクセス権がない")
+              .detail(ex.toString())
+              .message("この操作は許可されていません。")
               .build());
     }
 

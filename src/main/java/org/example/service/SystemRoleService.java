@@ -26,8 +26,8 @@ public class SystemRoleService {
     return systemRoleRepository.findByNamespaceId(namespaceId);
   }
 
-  public Flux<SystemRole> findByUserId(Long userId) {
-    return systemRoleRepository.findByUserId(userId);
+  public Flux<SystemRole> findByUserIdAndNamespaceId(Long userId, Long namespaceId) {
+    return systemRoleRepository.findByUserIdAndNamespaceId(userId, namespaceId);
   }
 
   /**

@@ -4,19 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[add]TargetGroupに認可機能を追加">
+    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[add]NamespaceとUserとSystemRoleを認可に対応">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/util/constant/AccessPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/util/constant/AccessPath.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/NamespaceRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/NamespaceRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/SystemRoleRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/SystemRoleRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/filter/AuthorizationWebFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/filter/AuthorizationWebFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/NamespaceAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/NamespaceAPITest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/SystemRoleAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/SystemRoleAPITest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserGroupRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/UserGroupRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/UserGroupInsertRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/UserGroupInsertRequest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/TargetAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/TargetAPITest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/NamespaceRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/NamespaceRestControllerTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserRestControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/UserGroupAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/UserGroupAPITest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserGroupRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/UserGroupRestControllerTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -135,7 +130,7 @@
       <recent name="org.example.web.controller" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.NamespaceAPITest$Save">
+  <component name="RunManager" selected="JUnit.UserGroupRestControllerTest">
     <configuration name="NamespaceAPITest$Save" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
@@ -147,37 +142,6 @@
       <option name="PACKAGE_NAME" value="org.example.it.NamespaceAPITest" />
       <option name="MAIN_CLASS_NAME" value="org.example.it.NamespaceAPITest$Save" />
       <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="NamespaceAPITest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="rbac-service" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.it.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.it" />
-      <option name="MAIN_CLASS_NAME" value="org.example.it.NamespaceAPITest" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="SystemRoleAPITest$FindByNamespaceId$Error.notAuthorizedCauseException" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="rbac-service" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.it.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.it.SystemRoleAPITest.FindByNamespaceId" />
-      <option name="MAIN_CLASS_NAME" value="org.example.it.SystemRoleAPITest$FindByNamespaceId$Error" />
-      <option name="METHOD_NAME" value="notAuthorizedCauseException" />
-      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -212,13 +176,43 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="UserGroupAPITest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rbac-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.it.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.it" />
+      <option name="MAIN_CLASS_NAME" value="org.example.it.UserGroupAPITest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UserGroupRestControllerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rbac-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.web.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.web.controller" />
+      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.UserGroupRestControllerTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.UserGroupRestControllerTest" />
+        <item itemvalue="JUnit.UserGroupAPITest" />
         <item itemvalue="JUnit.NamespaceAPITest$Save" />
         <item itemvalue="JUnit.SystemRoleRestControllerTest$FindByNamespaceId$Regular" />
         <item itemvalue="JUnit.SystemRoleAPITest$FindByNamespaceId" />
-        <item itemvalue="JUnit.SystemRoleAPITest$FindByNamespaceId$Error.notAuthorizedCauseException" />
-        <item itemvalue="JUnit.NamespaceAPITest" />
       </list>
     </recent_temporary>
   </component>
@@ -463,11 +457,18 @@
       <option name="project" value="LOCAL" />
       <updated>1703688682472</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="[add]NamespaceとUserとSystemRoleを認可に対応">
+      <option name="closed" value="true" />
+      <created>1703691434613</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1703691434613</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="[add]権限の一覧と権限があるか確認するAPIとそのテストの実装" />
     <MESSAGE value="[add]サービスのテストの実装" />
     <MESSAGE value="[update]サービスのテストのリファクタ" />
     <MESSAGE value="[add]controllerのテストの追加" />
@@ -492,7 +493,8 @@
     <MESSAGE value="[add]Namespace作成時にシステムロールの作成と紐付けを自動で行うように。ロールとユーザを参照できるように。" />
     <MESSAGE value="[add]Targetに認可機能を追加" />
     <MESSAGE value="[add]TargetGroupに認可機能を追加" />
-    <option name="LAST_COMMIT_MESSAGE" value="[add]TargetGroupに認可機能を追加" />
+    <MESSAGE value="[add]NamespaceとUserとSystemRoleを認可に対応" />
+    <option name="LAST_COMMIT_MESSAGE" value="[add]NamespaceとUserとSystemRoleを認可に対応" />
   </component>
   <component name="XDebuggerManager">
     <pin-to-top-manager>

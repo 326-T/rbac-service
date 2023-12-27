@@ -26,6 +26,10 @@ public class SystemRoleService {
     return systemRoleRepository.findByNamespaceId(namespaceId);
   }
 
+  public Flux<SystemRole> findByUserId(Long userId) {
+    return systemRoleRepository.findByUserId(userId);
+  }
+
   /**
    * 1. 参照権限を作成する
    * 2. 編集権限を作成する

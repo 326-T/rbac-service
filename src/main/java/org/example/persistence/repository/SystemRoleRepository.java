@@ -16,5 +16,13 @@ public interface SystemRoleRepository extends ReactiveCrudRepository<SystemRole,
       """)
   Flux<SystemRole> findByNamespaceId(Long namespaceId);
 
+  @Query("""
+      SELECT * FROM rbac_system_roles AS sr
+      INNER JOIN rbac_user_system_role_permissions AS srp
+      ON sr.id = srp.system_role_id
+      WHERE srp.user_id = :userId;
+      """)
+  Flux<SystemRole> findByUserId(Long userId);
+
   Mono<SystemRole> save(SystemRole systemRole);
 }

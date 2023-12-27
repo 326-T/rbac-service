@@ -2,10 +2,13 @@ package org.example.web.filter;
 
 import static org.mockito.Mockito.when;
 
+import org.example.persistence.entity.SystemRole;
 import org.example.persistence.entity.User;
 import org.example.service.Base64Service;
 import org.example.service.JwtService;
+import org.example.service.SystemRoleService;
 import org.example.service.UserService;
+import org.example.util.constant.ContextKeys;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -15,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
 import org.springframework.web.server.WebFilterChain;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -29,6 +33,8 @@ class AuthenticationWebFilterTest {
   private Base64Service base64Service;
   @Mock
   private UserService userService;
+  @Mock
+  private SystemRoleService systemRoleService;
 
   @Nested
   class Filter {
@@ -49,13 +55,18 @@ class AuthenticationWebFilterTest {
             .thenReturn(User.builder().id(1L).email("aaa@example.org").name("test").build());
         when(userService.findByEmail("aaa@example.org"))
             .thenReturn(Mono.just(User.builder().id(1L).email("aaa@example.org").name("test").build()));
+        when(systemRoleService.findByUserId(1L))
+            .thenReturn(Flux.just(
+                SystemRole.builder().id(1L).namespaceId(1L).permission("READ").build(),
+                SystemRole.builder().id(2L).namespaceId(2L).permission("WRITE").build()));
         WebFilterChain chain = filter -> Mono.empty();
         // when
         authenticationWebFilter.filter(exchange, chain).block();
         // then
         StepVerifier.create(Mono.empty())
             .expectAccessibleContext()
-            .hasKey(User.class);
+            .hasKey(ContextKeys.USER_KEY)
+            .hasKey(ContextKeys.ROLE_KEYS);
       }
 
       @Test
@@ -68,13 +79,18 @@ class AuthenticationWebFilterTest {
             .thenReturn("aaa@example.org:password");
         when(userService.login("aaa@example.org", "password"))
             .thenReturn(Mono.just(User.builder().id(1L).email("aaa@example.org").name("test").build()));
+        when(systemRoleService.findByUserId(1L))
+            .thenReturn(Flux.just(
+                SystemRole.builder().id(1L).namespaceId(1L).permission("READ").build(),
+                SystemRole.builder().id(2L).namespaceId(2L).permission("WRITE").build()));
         WebFilterChain chain = filter -> Mono.empty();
         // when
         authenticationWebFilter.filter(exchange, chain).block();
         // then
         StepVerifier.create(Mono.empty())
             .expectAccessibleContext()
-            .hasKey(User.class);
+            .hasKey(ContextKeys.USER_KEY)
+            .hasKey(ContextKeys.ROLE_KEYS);
       }
     }
   }

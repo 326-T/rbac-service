@@ -83,6 +83,58 @@ class SystemRoleServiceTest {
   }
 
   @Nested
+  class FindByUserId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ユーザーIDに紐づくシステムロールを取得できる")
+      void findByUserId() {
+        // given
+        SystemRole developRead = SystemRole.builder()
+            .id(1L)
+            .name("develop_READ")
+            .namespaceId(1L)
+            .permission("READ")
+            .build();
+        SystemRole developWrite = SystemRole.builder()
+            .id(2L)
+            .name("develop_WRITE")
+            .namespaceId(1L)
+            .permission("WRITE")
+            .build();
+        when(systemRoleRepository.findByUserId(1L))
+            .thenReturn(Flux.just(developRead, developWrite));
+        // when
+        Flux<SystemRole> systemRoleFlux = systemRoleRepository.findByUserId(1L);
+        // then
+        StepVerifier.create(systemRoleFlux)
+            .assertNext(systemRole ->
+                assertThat(systemRole)
+                    .extracting(
+                        SystemRole::getId, SystemRole::getName,
+                        SystemRole::getNamespaceId, SystemRole::getPermission)
+                    .containsExactly(
+                        1L, "develop_READ",
+                        1L, "READ")
+            )
+            .assertNext(systemRole ->
+                assertThat(systemRole)
+                    .extracting(
+                        SystemRole::getId, SystemRole::getName,
+                        SystemRole::getNamespaceId, SystemRole::getPermission)
+                    .containsExactly(
+                        2L, "develop_WRITE",
+                        1L, "WRITE")
+            )
+            .verifyComplete();
+      }
+    }
+  }
+
+  @Nested
   class CreateSystemRole {
 
     @Nested

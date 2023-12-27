@@ -218,7 +218,7 @@ class TargetGroupServiceTest {
         when(targetGroupRepository.findDuplicate(2L, "CLUSTER2")).thenReturn(Mono.empty());
         when(targetGroupRepository.save(any(TargetGroup.class))).thenReturn(Mono.just(after));
         // when
-        Mono<TargetGroup> clusterMono = targetGroupService.update(after);
+        Mono<TargetGroup> clusterMono = targetGroupService.update(after, 2L);
         // then
         StepVerifier.create(clusterMono)
             .assertNext(cluster -> assertThat(cluster)
@@ -243,7 +243,7 @@ class TargetGroupServiceTest {
         when(targetGroupRepository.findDuplicate(2L, "CLUSTER2")).thenReturn(Mono.empty());
         when(targetGroupRepository.save(any(TargetGroup.class))).thenReturn(Mono.just(after));
         // when
-        Mono<TargetGroup> clusterMono = targetGroupService.update(after);
+        Mono<TargetGroup> clusterMono = targetGroupService.update(after, 1L);
         // then
         StepVerifier.create(clusterMono).expectError(NotExistingException.class).verify();
       }
@@ -262,7 +262,7 @@ class TargetGroupServiceTest {
         when(targetGroupRepository.findDuplicate(2L, "CLUSTER2")).thenReturn(Mono.just(duplicate));
         when(targetGroupRepository.save(any(TargetGroup.class))).thenReturn(Mono.just(after));
         // when
-        Mono<TargetGroup> clusterMono = targetGroupService.update(after);
+        Mono<TargetGroup> clusterMono = targetGroupService.update(after, 2L);
         // then
         StepVerifier.create(clusterMono).expectError(RedundantException.class).verify();
       }
@@ -280,9 +280,12 @@ class TargetGroupServiceTest {
       @DisplayName("クラスターを削除できる")
       void deleteTheIndex() {
         // given
+        TargetGroup targetGroup = TargetGroup.builder()
+            .id(1L).namespaceId(1L).name("cluster1").createdBy(1L).build();
         when(targetGroupRepository.deleteById(1L)).thenReturn(Mono.empty());
+        when(targetGroupRepository.findById(1L)).thenReturn(Mono.just(targetGroup));
         // when
-        Mono<Void> clusterMono = targetGroupService.deleteById(1L);
+        Mono<Void> clusterMono = targetGroupService.deleteById(1L, 1L);
         // then
         StepVerifier.create(clusterMono).verifyComplete();
       }

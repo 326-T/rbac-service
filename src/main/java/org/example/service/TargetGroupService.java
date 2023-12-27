@@ -56,9 +56,10 @@ public class TargetGroupService {
 
   /**
    * 1. IDが存在してるか確認する
-   * 2. 変更内容をセットする
-   * 3. 重複がないか確認する
-   * 4. 保存する
+   * 2. NamespaceIdが一致しているか確認する
+   * 3. 変更内容をセットする
+   * 4. 重複がないか確認する
+   * 5. 保存する
    *
    * @param targetGroup nameのみ変更可能
    *
@@ -67,8 +68,9 @@ public class TargetGroupService {
    * @throws NotExistingException IDが存在しない場合
    * @throws RedundantException   重複した場合
    */
-  public Mono<TargetGroup> update(TargetGroup targetGroup) {
+  public Mono<TargetGroup> update(TargetGroup targetGroup, Long namespaceId) {
     Mono<TargetGroup> targetGroupMono = targetGroupRepository.findById(targetGroup.getId())
+        .filter(t -> t.getNamespaceId().equals(namespaceId))
         .switchIfEmpty(Mono.error(new NotExistingException("TargetGroup not found")))
         .flatMap(present -> {
           present.setName(targetGroup.getName());
@@ -82,7 +84,20 @@ public class TargetGroupService {
         .flatMap(targetGroupRepository::save);
   }
 
-  public Mono<Void> deleteById(Long id) {
-    return targetGroupRepository.deleteById(id);
+  /**
+   * 1. IDが存在してるか確認する
+   * 2. NamespaceIdが一致しているか確認する
+   * 3. 削除する
+   *
+   * @param id          TargetGroupのID
+   * @param namespaceId TargetGroupのNamespaceId
+   *
+   * @return Void
+   */
+  public Mono<Void> deleteById(Long id, Long namespaceId) {
+    return targetGroupRepository.findById(id)
+        .filter(t -> t.getNamespaceId().equals(namespaceId))
+        .switchIfEmpty(Mono.error(new NotExistingException("TargetGroup not found")))
+        .flatMap(tg -> targetGroupRepository.deleteById(tg.getId()));
   }
 }

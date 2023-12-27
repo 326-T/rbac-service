@@ -519,27 +519,32 @@ public class TargetAPITest {
             .expectBody(Void.class);
       }
 
-      @Test
-      @DisplayName("権限がない場合はエラーになる")
-      void notAuthorizedCauseException() {
-        // when, then
-        webTestClient.delete()
-            .uri("/rbac-service/v1/2/targets/3")
-            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
-            .exchange()
-            .expectStatus().isForbidden()
-            .expectBody(ErrorResponse.class)
-            .consumeWith(response ->
-                assertThat(response.getResponseBody())
-                    .extracting(
-                        ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
-                    .containsExactly(
-                        403, null,
-                        "エンドポイントへのアクセス権がない",
-                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
-                        "この操作は許可されていません。")
-            );
+      @Nested
+      @DisplayName("異常系")
+      class Error {
+
+        @Test
+        @DisplayName("権限がない場合はエラーになる")
+        void notAuthorizedCauseException() {
+          // when, then
+          webTestClient.delete()
+              .uri("/rbac-service/v1/2/targets/3")
+              .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+              .exchange()
+              .expectStatus().isForbidden()
+              .expectBody(ErrorResponse.class)
+              .consumeWith(response ->
+                  assertThat(response.getResponseBody())
+                      .extracting(
+                          ErrorResponse::getStatus, ErrorResponse::getCode,
+                          ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                      .containsExactly(
+                          403, null,
+                          "エンドポイントへのアクセス権がない",
+                          "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                          "この操作は許可されていません。")
+              );
+        }
       }
     }
   }

@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.example.persistence.entity.TargetGroup;
 import org.example.service.ReactiveContextService;
 import org.example.service.TargetGroupService;
+import org.example.util.constant.AccessPath;
 import org.example.web.request.TargetGroupInsertRequest;
 import org.example.web.request.TargetGroupUpdateRequest;
 import org.springframework.http.HttpStatus;
@@ -14,14 +15,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/rbac-service/v1/target-groups")
+@RequestMapping(AccessPath.TARGET_GROUPS)
 public class TargetGroupRestController {
 
   private final TargetGroupService targetGroupService;
@@ -34,7 +35,7 @@ public class TargetGroupRestController {
   }
 
   @GetMapping
-  public Flux<TargetGroup> index(@RequestParam("namespace-id") Long namespaceId) {
+  public Flux<TargetGroup> index(@PathVariable("namespace-id") Long namespaceId) {
     return targetGroupService.findByNamespaceId(namespaceId);
   }
 
@@ -44,31 +45,39 @@ public class TargetGroupRestController {
   }
 
   @GetMapping("/{id}")
-  public Mono<TargetGroup> findById(@PathVariable Long id) {
-    return targetGroupService.findById(id);
+  public Mono<TargetGroup> findById(
+      @PathVariable("namespace-id") Long namespaceId,
+      @PathVariable Long id) {
+    return targetGroupService.findById(id)
+        .filter(t -> t.getNamespaceId().equals(namespaceId));
   }
 
   @PostMapping
-  public Mono<TargetGroup> save(@Valid @RequestBody TargetGroupInsertRequest request) {
-    return reactiveContextService.getCurrentUser()
-        .flatMap(u -> {
-          TargetGroup targetGroup = request.exportEntity();
-          targetGroup.setCreatedBy(u.getId());
-          return Mono.just(targetGroup);
-        })
-        .flatMap(targetGroupService::insert);
+  public Mono<TargetGroup> save(
+      ServerWebExchange exchange,
+      @PathVariable("namespace-id") Long namespaceId,
+      @Valid @RequestBody TargetGroupInsertRequest request) {
+    TargetGroup targetGroup = request.exportEntity();
+    targetGroup.setNamespaceId(namespaceId);
+    targetGroup.setCreatedBy(reactiveContextService.extractCurrentUser(exchange).getId());
+    return targetGroupService.insert(targetGroup);
   }
 
   @PutMapping("/{id}")
-  public Mono<TargetGroup> update(@PathVariable Long id, @Valid @RequestBody TargetGroupUpdateRequest request) {
+  public Mono<TargetGroup> update(
+      @PathVariable("namespace-id") Long namespaceId,
+      @PathVariable Long id,
+      @Valid @RequestBody TargetGroupUpdateRequest request) {
     TargetGroup targetGroup = request.exportEntity();
     targetGroup.setId(id);
-    return targetGroupService.update(targetGroup);
+    return targetGroupService.update(targetGroup, namespaceId);
   }
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public Mono<Void> deleteById(@PathVariable Long id) {
-    return targetGroupService.deleteById(id);
+  public Mono<Void> deleteById(
+      @PathVariable("namespace-id") Long namespaceId,
+      @PathVariable Long id) {
+    return targetGroupService.deleteById(id, namespaceId);
   }
 }

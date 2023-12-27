@@ -4,26 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[add]Namespace作成時にシステムロールの作成と紐付けを自動で行うように。ロールとユーザを参照できるように。">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/util/PathUtil.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/util/constant/AccessPath.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/web/filter/AuthorizationWebFilter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/util/PathUtilTest.java" afterDir="false" />
+    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[add]Targetに認可機能を追加">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/error/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/error/GlobalExceptionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/SystemRoleRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/persistence/repository/SystemRoleRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/ReactiveContextService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/ReactiveContextService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/SystemRoleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/SystemRoleService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/util/constant/ContextKeys.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/util/constant/ContextKeys.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/util/constant/SystemRolePermission.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/util/constant/SystemRolePermission.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/TargetRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/TargetRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/filter/AuthenticationWebFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/filter/AuthenticationWebFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/TargetInsertRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/TargetInsertRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/TargetGroupService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/TargetGroupService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/util/constant/AccessPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/util/constant/AccessPath.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/TargetGroupRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/TargetGroupRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/TargetGroupInsertRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/TargetGroupInsertRequest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/TargetAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/TargetAPITest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/SystemRoleRepositoryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/persistence/repository/SystemRoleRepositoryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/SystemRoleServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/SystemRoleServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/TargetRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/TargetRestControllerTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/filter/AuthenticationWebFilterTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/filter/AuthenticationWebFilterTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/TargetGroupAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/TargetGroupAPITest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/TargetGroupServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/TargetGroupServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/TargetGroupRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/TargetGroupRestControllerTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -142,24 +132,8 @@
       <recent name="org.example.web.controller" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.TargetRestControllerTest$Save$Regular.canSaveTheTarget">
-    <configuration name="TargetAPITest$Count$Error.notAuthorizedCauseException" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="rbac-service" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.it.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.it.TargetAPITest.Count" />
-      <option name="MAIN_CLASS_NAME" value="org.example.it.TargetAPITest$Count$Error" />
-      <option name="METHOD_NAME" value="notAuthorizedCauseException" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="TargetAPITest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="JUnit.TargetGroupServiceTest">
+    <configuration name="TargetGroupAPITest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
@@ -168,45 +142,28 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="org.example.it" />
-      <option name="MAIN_CLASS_NAME" value="org.example.it.TargetAPITest" />
+      <option name="MAIN_CLASS_NAME" value="org.example.it.TargetGroupAPITest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TargetRestControllerTest$Save$Error.validationErrorOccurs" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="TargetGroupRepositoryTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.web.controller.*" />
+          <option name="PATTERN" value="org.example.persistence.repository.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.web.controller.TargetRestControllerTest.Save" />
-      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.TargetRestControllerTest$Save$Error" />
-      <option name="METHOD_NAME" value="validationErrorOccurs(java.lang.String)" />
-      <option name="TEST_OBJECT" value="method" />
+      <option name="PACKAGE_NAME" value="org.example.persistence.repository" />
+      <option name="MAIN_CLASS_NAME" value="org.example.persistence.repository.TargetGroupRepositoryTest" />
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TargetRestControllerTest$Save$Regular.canSaveTheTarget" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="rbac-service" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.web.controller.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.web.controller.TargetRestControllerTest.Save" />
-      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.TargetRestControllerTest$Save$Regular" />
-      <option name="METHOD_NAME" value="canSaveTheTarget" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="TargetRestControllerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="TargetGroupRestControllerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
@@ -215,7 +172,37 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="org.example.web.controller" />
-      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.TargetRestControllerTest" />
+      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.TargetGroupRestControllerTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TargetGroupServiceTest$Count" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rbac-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.service.TargetGroupServiceTest" />
+      <option name="MAIN_CLASS_NAME" value="org.example.service.TargetGroupServiceTest$Count" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TargetGroupServiceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rbac-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.service" />
+      <option name="MAIN_CLASS_NAME" value="org.example.service.TargetGroupServiceTest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -223,11 +210,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.TargetRestControllerTest$Save$Regular.canSaveTheTarget" />
-        <item itemvalue="JUnit.TargetRestControllerTest$Save$Error.validationErrorOccurs" />
-        <item itemvalue="JUnit.TargetRestControllerTest" />
-        <item itemvalue="JUnit.TargetAPITest" />
-        <item itemvalue="JUnit.TargetAPITest$Count$Error.notAuthorizedCauseException" />
+        <item itemvalue="JUnit.TargetGroupServiceTest" />
+        <item itemvalue="JUnit.TargetGroupServiceTest$Count" />
+        <item itemvalue="JUnit.TargetGroupRepositoryTest" />
+        <item itemvalue="JUnit.TargetGroupRestControllerTest" />
+        <item itemvalue="JUnit.TargetGroupAPITest" />
       </list>
     </recent_temporary>
   </component>
@@ -456,11 +443,18 @@
       <option name="project" value="LOCAL" />
       <updated>1703553284082</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="[add]Targetに認可機能を追加">
+      <option name="closed" value="true" />
+      <created>1703678851464</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1703678851464</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="[update]命名の変更" />
     <MESSAGE value="[add]NamespaceをUser以外の全てに含めるように修正" />
     <MESSAGE value="[add]権限の一覧と権限があるか確認するAPIとそのテストの実装" />
     <MESSAGE value="[add]サービスのテストの実装" />
@@ -485,7 +479,8 @@
     <MESSAGE value="[add]EndpointはJOINした情報を返すように修正" />
     <MESSAGE value="[add]Methodのコントローラーを作成" />
     <MESSAGE value="[add]Namespace作成時にシステムロールの作成と紐付けを自動で行うように。ロールとユーザを参照できるように。" />
-    <option name="LAST_COMMIT_MESSAGE" value="[add]Namespace作成時にシステムロールの作成と紐付けを自動で行うように。ロールとユーザを参照できるように。" />
+    <MESSAGE value="[add]Targetに認可機能を追加" />
+    <option name="LAST_COMMIT_MESSAGE" value="[add]Targetに認可機能を追加" />
   </component>
   <component name="XDebuggerManager">
     <pin-to-top-manager>

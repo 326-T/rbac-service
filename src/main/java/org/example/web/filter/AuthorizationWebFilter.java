@@ -6,6 +6,7 @@ import org.example.error.exception.UnAuthorizedException;
 import org.example.persistence.entity.User;
 import org.example.service.SystemRoleService;
 import org.example.util.PathUtil;
+import org.example.util.constant.AccessPath;
 import org.example.util.constant.ContextKeys;
 import org.example.util.constant.SystemRolePermission;
 import org.springframework.core.annotation.Order;
@@ -26,6 +27,21 @@ public class AuthorizationWebFilter implements WebFilter {
     this.systemRoleService = systemRoleService;
   }
 
+  /**
+   * 認可を行う
+   * 1. ユーザーが存在しない場合は例外を返す
+   * 2. OPTIONSメソッドの場合は認可を行わない
+   * 3. ユーザAPIの場合は認可を行わない
+   * 4. NamespaceAPIの場合は認可を行わない
+   * 5. ユーザーの権限を取得する
+   * 6. 権限がWRITEの場合は全てのメソッドを許可する
+   * 7. 権限がWRITEでない場合はGETメソッドのみ許可する
+   *
+   * @param exchange the current server exchange
+   * @param chain    provides a way to delegate to the next filter
+   *
+   * @return {@code Mono<Void>} to indicate when request handling is complete
+   */
   @Override
   @NonNull
   public Mono<Void> filter(ServerWebExchange exchange, @NonNull WebFilterChain chain) {
@@ -34,8 +50,11 @@ public class AuthorizationWebFilter implements WebFilter {
       return Mono.error(new UnAuthenticatedException("ユーザーが認証されていません。"));
     }
     HttpMethod method = exchange.getRequest().getMethod();
-    String path = exchange.getRequest().getPath().value();
     if (HttpMethod.OPTIONS.equals(method)) {
+      return chain.filter(exchange);
+    }
+    String path = exchange.getRequest().getPath().value();
+    if (path.startsWith(AccessPath.USERS) || path.startsWith(AccessPath.NAMESPACES)) {
       return chain.filter(exchange);
     }
     return systemRoleService.findByUserIdAndNamespaceId(user.getId(), PathUtil.getNamespaceId(path))

@@ -12,6 +12,7 @@ import org.example.service.NamespaceService;
 import org.example.service.ReactiveContextService;
 import org.example.service.SystemRoleService;
 import org.example.web.filter.AuthenticationWebFilter;
+import org.example.web.filter.AuthorizationWebFilter;
 import org.example.web.request.NamespaceUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -26,12 +27,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @WebFluxTest(
     controllers = NamespaceRestController.class,
-    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AuthenticationWebFilter.class)})
+    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+        classes = {AuthenticationWebFilter.class, AuthorizationWebFilter.class})})
 @AutoConfigureWebTestClient
 class NamespaceRestControllerTest {
 
@@ -203,7 +206,7 @@ class NamespaceRestControllerTest {
             .id(4L).name("vault").createdBy(1L).build();
         when(namespaceService.insert(any(Namespace.class))).thenReturn(Mono.just(namespace));
         when(systemRoleService.createSystemRole(any(Namespace.class), eq(1L))).thenReturn(Mono.empty());
-        when(reactiveContextService.getCurrentUser()).thenReturn(Mono.just(User.builder().id(1L).build()));
+        when(reactiveContextService.extractCurrentUser(any(ServerWebExchange.class))).thenReturn(User.builder().id(1L).build());
         // when, then
         webTestClient.post()
             .uri("/rbac-service/v1/namespaces")

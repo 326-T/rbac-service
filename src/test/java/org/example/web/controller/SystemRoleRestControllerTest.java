@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import org.example.persistence.entity.SystemRole;
 import org.example.service.SystemRoleService;
 import org.example.web.filter.AuthenticationWebFilter;
+import org.example.web.filter.AuthorizationWebFilter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,8 @@ import reactor.core.publisher.Flux;
 
 @WebFluxTest(
     controllers = SystemRoleRestController.class,
-    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AuthenticationWebFilter.class)})
+    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+        classes = {AuthenticationWebFilter.class, AuthorizationWebFilter.class})})
 @AutoConfigureWebTestClient
 class SystemRoleRestControllerTest {
 
@@ -57,7 +59,7 @@ class SystemRoleRestControllerTest {
             .thenReturn(Flux.just(developRead, developWrite));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/system-roles?namespace-id=1")
+            .uri("/rbac-service/v1/1/system-roles")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(SystemRole.class)

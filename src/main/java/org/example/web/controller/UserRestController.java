@@ -3,6 +3,7 @@ package org.example.web.controller;
 import jakarta.validation.Valid;
 import org.example.persistence.entity.User;
 import org.example.service.UserService;
+import org.example.util.constant.AccessPath;
 import org.example.web.request.UserInsertRequest;
 import org.example.web.request.UserUpdateRequest;
 import org.example.web.response.UserResponse;
@@ -21,7 +22,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/rbac-service/v1/users")
+@RequestMapping(AccessPath.USERS)
 public class UserRestController {
 
   private final UserService userService;

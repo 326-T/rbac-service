@@ -44,8 +44,8 @@ public class TargetAPITest {
 
   @BeforeAll
   void beforeAll() {
-    jwt = base64Service.encode(jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build()));
-    unAuthorizedJwt = base64Service.encode(jwtService.encode(User.builder().id(2L).name("user3").email("zzz@example.org").build()));
+    jwt = base64Service.encode(jwtService.encode(User.builder().id(2L).name("user1").email("xxx@example.org").build()));
+    unAuthorizedJwt = base64Service.encode(jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
   }
 
   @Nested

@@ -46,7 +46,7 @@ public class NamespaceAPITest {
 
   @BeforeAll
   void beforeAll() {
-    jwt = base64Service.encode(jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build()));
+    jwt = base64Service.encode(jwtService.encode(User.builder().id(2L).name("user1").email("xxx@example.org").build()));
   }
 
   @Nested
@@ -286,7 +286,7 @@ public class NamespaceAPITest {
             );
         // システムロールが自動作成されている
         webTestClient.get()
-            .uri("/rbac-service/v1/system-roles?namespace-id=4")
+            .uri("/rbac-service/v1/4/system-roles")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
@@ -310,7 +310,7 @@ public class NamespaceAPITest {
             .expectStatus().isOk()
             .expectBodyList(UserResponse.class)
             .consumeWith(response ->
-                assertThat(response.getResponseBody()).hasSize(0)
+                assertThat(response.getResponseBody()).isEmpty()
             );
         webTestClient.get()
             .uri("/rbac-service/v1/users/system?system-role-id=8")

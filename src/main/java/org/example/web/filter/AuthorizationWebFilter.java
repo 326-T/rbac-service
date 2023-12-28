@@ -54,7 +54,7 @@ public class AuthorizationWebFilter implements WebFilter {
       return chain.filter(exchange);
     }
     String path = exchange.getRequest().getPath().value();
-    if (path.startsWith(AccessPath.USERS) || path.startsWith(AccessPath.NAMESPACES)) {
+    if (path.startsWith(AccessPath.USERS) || path.startsWith(AccessPath.NAMESPACES) || path.startsWith(AccessPath.METHODS)) {
       return chain.filter(exchange);
     }
     return systemRoleService.findByUserIdAndNamespaceId(user.getId(), PathUtil.getNamespaceId(path))

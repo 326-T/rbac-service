@@ -2,6 +2,7 @@ package org.example.web.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import org.example.persistence.entity.User;
@@ -9,6 +10,7 @@ import org.example.persistence.entity.UserSystemRolePermission;
 import org.example.service.ReactiveContextService;
 import org.example.service.UserSystemRolePermissionService;
 import org.example.web.filter.AuthenticationWebFilter;
+import org.example.web.filter.AuthorizationWebFilter;
 import org.example.web.request.UserSystemRolePermissionInsertRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -23,11 +25,13 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 @WebFluxTest(
     controllers = UserSystemRolePermissionRestController.class,
-    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AuthenticationWebFilter.class)})
+    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+        classes = {AuthenticationWebFilter.class, AuthorizationWebFilter.class})})
 @AutoConfigureWebTestClient
 class UserSystemRolePermissionRestControllerTest {
 
@@ -51,12 +55,12 @@ class UserSystemRolePermissionRestControllerTest {
         // given
         UserSystemRolePermission userSystemRolePermission = UserSystemRolePermission.builder()
             .id(1L).userId(2L).systemRoleId(3L).createdBy(4L).build();
-        when(userSystemRolePermissionService.insert(any(UserSystemRolePermission.class)))
+        when(userSystemRolePermissionService.insert(any(UserSystemRolePermission.class), eq(1L)))
             .thenReturn(Mono.just(userSystemRolePermission));
-        when(reactiveContextService.getCurrentUser()).thenReturn(Mono.just(User.builder().id(3L).build()));
+        when(reactiveContextService.extractCurrentUser(any(ServerWebExchange.class))).thenReturn(User.builder().id(3L).build());
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/user-system-role-permissions")
+            .uri("/rbac-service/v1/1/user-system-role-permissions")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
@@ -94,7 +98,7 @@ class UserSystemRolePermissionRestControllerTest {
         request.setSystemRoleId(systemRoleId);
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/user-system-role-permissions")
+            .uri("/rbac-service/v1/1/user-system-role-permissions")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(request)
             .exchange()
@@ -114,10 +118,10 @@ class UserSystemRolePermissionRestControllerTest {
       @DisplayName("ユーザに付与されたシステムロール権限を削除できる")
       void canDeleteUserSystemRolePermission() {
         // given
-        when(userSystemRolePermissionService.deleteByUniqueKeys(3L, 9L)).thenReturn(Mono.empty());
+        when(userSystemRolePermissionService.deleteByUniqueKeys(3L, 9L, 1L)).thenReturn(Mono.empty());
         // when, then
         webTestClient.delete()
-            .uri(uriBuilder -> uriBuilder.path("/rbac-service/v1/user-system-role-permissions")
+            .uri(uriBuilder -> uriBuilder.path("/rbac-service/v1/1/user-system-role-permissions")
                 .queryParam("user-id", 3L)
                 .queryParam("system-role-id", 9L)
                 .build())

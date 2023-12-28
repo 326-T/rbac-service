@@ -22,6 +22,10 @@ public class SystemRoleService {
     this.userSystemRolePermissionRepository = userSystemRolePermissionRepository;
   }
 
+  public Mono<SystemRole> findById(Long id) {
+    return systemRoleRepository.findById(id);
+  }
+
   public Flux<SystemRole> findByNamespaceId(Long namespaceId) {
     return systemRoleRepository.findByNamespaceId(namespaceId);
   }

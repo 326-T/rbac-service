@@ -13,9 +13,6 @@ public class EndpointInsertRequest {
 
   @NotNull
   @Min(1)
-  private Long namespaceId;
-  @NotNull
-  @Min(1)
   private Long pathId;
   @NotNull
   @Min(1)
@@ -25,7 +22,6 @@ public class EndpointInsertRequest {
 
   public Endpoint exportEntity() {
     return Endpoint.builder()
-        .namespaceId(namespaceId)
         .pathId(pathId)
         .targetGroupId(targetGroupId)
         .method(method)

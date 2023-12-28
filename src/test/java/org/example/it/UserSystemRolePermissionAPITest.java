@@ -43,10 +43,12 @@ public class UserSystemRolePermissionAPITest {
   private UserSystemRolePermissionRepository userSystemRolePermissionRepository;
 
   private String jwt;
+  private String unAuthorizedJwt;
 
   @BeforeAll
   void beforeAll() {
     jwt = base64Service.encode(jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build()));
+    unAuthorizedJwt = base64Service.encode(jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
   }
 
 
@@ -65,7 +67,7 @@ public class UserSystemRolePermissionAPITest {
       void canSaveUserSystemRolePermission() {
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/user-system-role-permissions")
+            .uri("/rbac-service/v1/3/user-system-role-permissions")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
@@ -100,7 +102,7 @@ public class UserSystemRolePermissionAPITest {
       void cannotCreateDuplicate() {
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/user-system-role-permissions")
+            .uri("/rbac-service/v1/1/user-system-role-permissions")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
@@ -124,6 +126,96 @@ public class UserSystemRolePermissionAPITest {
                         "作成済みのリソースと重複しています。")
             );
       }
+
+      @Test
+      @DisplayName("権限がない場合はエラーになる")
+      void notAuthorizedCauseException() {
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/3/user-system-role-permissions")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "userId": 4,
+                  "systemRoleId": 5
+                }
+                """)
+            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .exchange()
+            .expectStatus().isForbidden()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        403, null,
+                        "エンドポイントへのアクセス権がない",
+                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "この操作は許可されていません。")
+            );
+      }
+
+      @Test
+      @DisplayName("システムロールが存在しない場合はエラーになる")
+      void cannotCreateIfSystemRoleNotFound() {
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/3/user-system-role-permissions")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "userId": 4,
+                  "systemRoleId": 99
+                }
+                """)
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .exchange()
+            .expectStatus().isNotFound()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        404, null,
+                        "idに該当するリソースが存在しない",
+                        "org.example.error.exception.NotExistingException: SystemRole not found",
+                        "指定されたリソースは存在しません。")
+            );
+      }
+
+      @Test
+      @DisplayName("システムロールが異なるNamespaceIdの場合はエラーになる")
+      void cannotCreateIfSystemRoleIsNotInNamespace() {
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/2/user-system-role-permissions")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "userId": 4,
+                  "systemRoleId": 5
+                }
+                """)
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .exchange()
+            .expectStatus().isNotFound()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        404, null,
+                        "idに該当するリソースが存在しない",
+                        "org.example.error.exception.NotExistingException: SystemRole not found",
+                        "指定されたリソースは存在しません。")
+            );
+      }
     }
   }
 
@@ -143,17 +235,103 @@ public class UserSystemRolePermissionAPITest {
         // when, then
         webTestClient.delete()
             .uri(uriBuilder -> uriBuilder
-                .path("/rbac-service/v1/user-system-role-permissions")
+                .path("/rbac-service/v1/3/user-system-role-permissions")
                 .queryParam("user-id", 3L)
-                .queryParam("system-role-id", 9L)
+                .queryParam("system-role-id", 6L)
                 .build())
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isNoContent()
             .expectBody(Void.class);
-        userSystemRolePermissionRepository.findDuplicate(3L, 9L)
+        userSystemRolePermissionRepository.findDuplicate(3L, 6L)
             .as(StepVerifier::create)
             .verifyComplete();
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @Test
+      @DisplayName("権限がない場合はエラーになる")
+      void notAuthorizedCauseException() {
+        // when, then
+        webTestClient.delete()
+            .uri(uriBuilder -> uriBuilder
+                .path("/rbac-service/v1/3/user-system-role-permissions")
+                .queryParam("user-id", 3L)
+                .queryParam("system-role-id", 6L)
+                .build())
+            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .exchange()
+            .expectStatus().isForbidden()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        403, null,
+                        "エンドポイントへのアクセス権がない",
+                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "この操作は許可されていません。")
+            );
+      }
+
+      @Test
+      @DisplayName("システムロールが存在しない場合はエラーになる")
+      void cannotCreateIfSystemRoleNotFound() {
+        // when, then
+        webTestClient.delete()
+            .uri(uriBuilder -> uriBuilder
+                .path("/rbac-service/v1/3/user-system-role-permissions")
+                .queryParam("user-id", 3L)
+                .queryParam("system-role-id", 99L)
+                .build())
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .exchange()
+            .expectStatus().isNotFound()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        404, null,
+                        "idに該当するリソースが存在しない",
+                        "org.example.error.exception.NotExistingException: SystemRole not found",
+                        "指定されたリソースは存在しません。")
+            );
+      }
+
+      @Test
+      @DisplayName("システムロールが異なるNamespaceIdの場合はエラーになる")
+      void cannotCreateIfSystemRoleIsNotInNamespace() {
+        // when, then
+        webTestClient.delete()
+            .uri(uriBuilder -> uriBuilder
+                .path("/rbac-service/v1/1/user-system-role-permissions")
+                .queryParam("user-id", 3L)
+                .queryParam("system-role-id", 6L)
+                .build())
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .exchange()
+            .expectStatus().isNotFound()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        404, null,
+                        "idに該当するリソースが存在しない",
+                        "org.example.error.exception.NotExistingException: SystemRole not found",
+                        "指定されたリソースは存在しません。")
+            );
       }
     }
   }

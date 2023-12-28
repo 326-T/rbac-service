@@ -12,9 +12,6 @@ public class RoleEndpointPermissionInsertRequest {
 
   @NotNull
   @Min(1)
-  private Long namespaceId;
-  @NotNull
-  @Min(1)
   private Long roleId;
   @NotNull
   @Min(1)
@@ -22,7 +19,6 @@ public class RoleEndpointPermissionInsertRequest {
 
   public RoleEndpointPermission exportEntity() {
     return RoleEndpointPermission.builder()
-        .namespaceId(namespaceId)
         .roleId(roleId)
         .endpointId(endpointId)
         .build();

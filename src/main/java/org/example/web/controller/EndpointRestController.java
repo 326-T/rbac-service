@@ -6,6 +6,7 @@ import org.example.persistence.entity.Endpoint;
 import org.example.service.EndpointDetailService;
 import org.example.service.EndpointService;
 import org.example.service.ReactiveContextService;
+import org.example.util.constant.AccessPath;
 import org.example.web.request.EndpointInsertRequest;
 import org.example.web.request.EndpointUpdateRequest;
 import org.springframework.http.HttpStatus;
@@ -19,11 +20,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/rbac-service/v1/endpoints")
+@RequestMapping(AccessPath.ENDPOINTS)
 public class EndpointRestController {
 
   private final EndpointService endpointService;
@@ -39,7 +41,7 @@ public class EndpointRestController {
 
   @GetMapping
   public Flux<EndpointDetail> index(
-      @RequestParam("namespace-id") Long namespaceId,
+      @PathVariable("namespace-id") Long namespaceId,
       @RequestParam(value = "role-id", required = false) Long roleId) {
     if (roleId == null) {
       return endpointDetailService.findByNamespaceId(namespaceId);
@@ -58,14 +60,14 @@ public class EndpointRestController {
   }
 
   @PostMapping
-  public Mono<Endpoint> save(@Valid @RequestBody EndpointInsertRequest request) {
-    return reactiveContextService.getCurrentUser()
-        .flatMap(u -> {
-          Endpoint endpoint = request.exportEntity();
-          endpoint.setCreatedBy(u.getId());
-          return Mono.just(endpoint);
-        })
-        .flatMap(endpointService::insert);
+  public Mono<Endpoint> save(
+      ServerWebExchange exchange,
+      @PathVariable("namespace-id") Long namespaceId,
+      @Valid @RequestBody EndpointInsertRequest request) {
+    Endpoint endpoint = request.exportEntity();
+    endpoint.setNamespaceId(namespaceId);
+    endpoint.setCreatedBy(reactiveContextService.extractCurrentUser(exchange).getId());
+    return endpointService.insert(endpoint);
   }
 
   @PutMapping("/{id}")

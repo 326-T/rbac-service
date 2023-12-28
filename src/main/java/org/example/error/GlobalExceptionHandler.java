@@ -2,6 +2,7 @@ package org.example.error;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
@@ -10,6 +11,7 @@ import org.example.error.exception.UnAuthorizedException;
 import org.example.error.response.ErrorResponse;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -83,6 +85,10 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
   private Mono<Void> setResponse(ServerWebExchange exchange, HttpStatusCode status, Object body) {
     ServerHttpResponse response = exchange.getResponse();
     response.setStatusCode(status);
+    response.getHeaders().setAccessControlAllowOrigin("*");
+    response.getHeaders().setAccessControlAllowHeaders(List.of("*"));
+    response.getHeaders()
+        .setAccessControlAllowMethods(List.of(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE, HttpMethod.OPTIONS));
     response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
     Flux<DataBuffer> buffer = Mono.just(body)
         .flatMap(this::writeValueAsBytes)

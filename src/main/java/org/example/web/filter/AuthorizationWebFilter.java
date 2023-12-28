@@ -29,8 +29,8 @@ public class AuthorizationWebFilter implements WebFilter {
 
   /**
    * 認可を行う
-   * 1. ユーザーが存在しない場合は例外を返す
-   * 2. OPTIONSメソッドの場合は認可を行わない
+   * 1. OPTIONSメソッドの場合は認可を行わない
+   * 2. ユーザーが存在しない場合は例外を返す
    * 3. ユーザAPIの場合は認可を行わない
    * 4. NamespaceAPIの場合は認可を行わない
    * 5. ユーザーの権限を取得する
@@ -45,13 +45,13 @@ public class AuthorizationWebFilter implements WebFilter {
   @Override
   @NonNull
   public Mono<Void> filter(ServerWebExchange exchange, @NonNull WebFilterChain chain) {
-    User user = exchange.getAttribute(ContextKeys.USER_KEY);
-    if (user == null) {
-      return Mono.error(new UnAuthenticatedException("ユーザーが認証されていません。"));
-    }
     HttpMethod method = exchange.getRequest().getMethod();
     if (HttpMethod.OPTIONS.equals(method)) {
       return chain.filter(exchange);
+    }
+    User user = exchange.getAttribute(ContextKeys.USER_KEY);
+    if (user == null) {
+      return Mono.error(new UnAuthenticatedException("ユーザーが認証されていません。"));
     }
     String path = exchange.getRequest().getPath().value();
     if (path.startsWith(AccessPath.USERS) || path.startsWith(AccessPath.NAMESPACES) || path.startsWith(AccessPath.METHODS)) {

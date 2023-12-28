@@ -4,15 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[add]Endpoint, Method, RoleEndpointPermission, TargetGroupBelonging, UserSystemRolePermissionを認可に対応">
+    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[add]AccessPrivilegeを認可に対応">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/AccessPrivilegeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/AccessPrivilegeService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/util/constant/AccessPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/util/constant/AccessPath.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/controller/AccessPrivilegeRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/AccessPrivilegeRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/request/AccessPrivilegeRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/request/AccessPrivilegeRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/it/AccessPrivilegeAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/it/AccessPrivilegeAPITest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/AccessPrivilegeServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/AccessPrivilegeServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/web/controller/AccessPrivilegeRestControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/AccessPrivilegeRestControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/config/CorsGlobalConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/config/CorsGlobalConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/error/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/error/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/filter/AuthorizationWebFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/filter/AuthorizationWebFilter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,6 +35,12 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "326-T"
+  }
+}]]></component>
   <component name="GitToolBoxStore">
     <option name="projectConfigVersion" value="5" />
     <option name="recentBranches">
@@ -67,6 +69,14 @@
           </list>
         </option>
       </RecentBranches>
+    </option>
+  </component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="e880ca99-d15b-425a-a3fd-90208b9f7b7e" />
+        <option name="url" value="git@github.com:326-T/rbac-service.git" />
+      </UrlAndAccount>
     </option>
   </component>
   <component name="MarkdownSettingsMigration">
@@ -490,11 +500,18 @@
       <option name="project" value="LOCAL" />
       <updated>1703731465488</updated>
     </task>
-    <option name="localTasksCounter" value="34" />
+    <task id="LOCAL-00034" summary="[add]AccessPrivilegeを認可に対応">
+      <option name="closed" value="true" />
+      <created>1703732474515</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1703732474515</updated>
+    </task>
+    <option name="localTasksCounter" value="35" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="[add]認証の追加。UserとEndpointを更新" />
     <MESSAGE value="[fix]Namespaceを更新" />
     <MESSAGE value="[fix]Pathを更新" />
     <MESSAGE value="[fix]Roleを更新" />
@@ -519,7 +536,8 @@
     <MESSAGE value="[add]UserGroupを認可に対応" />
     <MESSAGE value="[add]Path, Role, UserGroupBelongings, UserGroupRoleAssignmentsを認可に対応" />
     <MESSAGE value="[add]Endpoint, Method, RoleEndpointPermission, TargetGroupBelonging, UserSystemRolePermissionを認可に対応" />
-    <option name="LAST_COMMIT_MESSAGE" value="[add]Endpoint, Method, RoleEndpointPermission, TargetGroupBelonging, UserSystemRolePermissionを認可に対応" />
+    <MESSAGE value="[add]AccessPrivilegeを認可に対応" />
+    <option name="LAST_COMMIT_MESSAGE" value="[add]AccessPrivilegeを認可に対応" />
   </component>
   <component name="XDebuggerManager">
     <pin-to-top-manager>

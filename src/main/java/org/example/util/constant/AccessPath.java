@@ -17,6 +17,7 @@ public class AccessPath {
   public static final String ROLE_ENDPOINT_PERMISSIONS = "/rbac-service/v1/{namespace-id}/role-endpoint-permissions";
   public static final String SYSTEM_ROLES = "/rbac-service/v1/{namespace-id}/system-roles";
   public static final String USER_SYSTEM_ROLE_PERMISSIONS = "/rbac-service/v1/{namespace-id}/user-system-role-permissions";
+  public static final String ACCESS_PRIVILEGES = "/rbac-service/v1/{namespace-id}/access-privileges";
 
   private AccessPath() {
   }

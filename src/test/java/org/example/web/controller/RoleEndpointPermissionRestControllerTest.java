@@ -10,6 +10,7 @@ import org.example.persistence.entity.User;
 import org.example.service.ReactiveContextService;
 import org.example.service.RoleEndpointPermissionService;
 import org.example.web.filter.AuthenticationWebFilter;
+import org.example.web.filter.AuthorizationWebFilter;
 import org.example.web.request.RoleEndpointPermissionInsertRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -24,12 +25,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @WebFluxTest(
     controllers = RoleEndpointPermissionRestController.class,
-    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AuthenticationWebFilter.class)})
+    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+        classes = {AuthenticationWebFilter.class, AuthorizationWebFilter.class})})
 @AutoConfigureWebTestClient
 class RoleEndpointPermissionRestControllerTest {
 
@@ -54,7 +57,7 @@ class RoleEndpointPermissionRestControllerTest {
         when(roleEndpointPermissionService.count()).thenReturn(Mono.just(3L));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/role-endpoint-permissions/count")
+            .uri("/rbac-service/v1/1/role-endpoint-permissions/count")
             .exchange()
             .expectStatus().isOk()
             .expectBody(Long.class).isEqualTo(3L);
@@ -83,7 +86,7 @@ class RoleEndpointPermissionRestControllerTest {
             .thenReturn(Flux.just(roleEndpointPermission1, roleEndpointPermission2, roleEndpointPermission3));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/role-endpoint-permissions?namespace-id=1")
+            .uri("/rbac-service/v1/1/role-endpoint-permissions")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(RoleEndpointPermission.class)
@@ -118,7 +121,7 @@ class RoleEndpointPermissionRestControllerTest {
         when(roleEndpointPermissionService.findById(1L)).thenReturn(Mono.just(roleEndpointPermission));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/role-endpoint-permissions/1")
+            .uri("/rbac-service/v1/1/role-endpoint-permissions/1")
             .exchange()
             .expectStatus().isOk()
             .expectBody(RoleEndpointPermission.class)
@@ -145,14 +148,13 @@ class RoleEndpointPermissionRestControllerTest {
         RoleEndpointPermission roleEndpointPermission = RoleEndpointPermission.builder()
             .id(4L).namespaceId(1L).roleId(1L).endpointId(3L).createdBy(1L).build();
         when(roleEndpointPermissionService.insert(any(RoleEndpointPermission.class))).thenReturn(Mono.just(roleEndpointPermission));
-        when(reactiveContextService.getCurrentUser()).thenReturn(Mono.just(User.builder().id(1L).build()));
+        when(reactiveContextService.extractCurrentUser(any(ServerWebExchange.class))).thenReturn(User.builder().id(1L).build());
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/role-endpoint-permissions")
+            .uri("/rbac-service/v1/1/role-endpoint-permissions")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "namespaceId": 1,
                   "roleId": 1,
                   "endpointId": 3
                 }
@@ -176,22 +178,19 @@ class RoleEndpointPermissionRestControllerTest {
       @DisplayName("バリデーションエラーが発生する")
       @ParameterizedTest
       @CsvSource({
-          ", 1, 1",
-          "0, 1, 1",
-          "1, , 1",
-          "1, 0, 1",
-          "1, 1, ",
-          "1, 1, 0",
+          ", 1",
+          "0, 1",
+          "1, ",
+          "1, 0",
       })
-      void validationErrorOccurs(Long namespaceId, Long roleId, Long endpointId) {
+      void validationErrorOccurs(Long roleId, Long endpointId) {
         // given
         RoleEndpointPermissionInsertRequest roleEndpointPermissionInsertRequest = new RoleEndpointPermissionInsertRequest();
-        roleEndpointPermissionInsertRequest.setNamespaceId(namespaceId);
         roleEndpointPermissionInsertRequest.setRoleId(roleId);
         roleEndpointPermissionInsertRequest.setEndpointId(endpointId);
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/role-endpoint-permissions")
+            .uri("/rbac-service/v1/1/role-endpoint-permissions")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(roleEndpointPermissionInsertRequest)
             .exchange()
@@ -214,7 +213,7 @@ class RoleEndpointPermissionRestControllerTest {
         when(roleEndpointPermissionService.deleteById(3L)).thenReturn(Mono.empty());
         // when, then
         webTestClient.delete()
-            .uri("/rbac-service/v1/role-endpoint-permissions/3")
+            .uri("/rbac-service/v1/1/role-endpoint-permissions/3")
             .exchange()
             .expectStatus().isNoContent()
             .expectBody().isEmpty();
@@ -237,7 +236,7 @@ class RoleEndpointPermissionRestControllerTest {
             .thenReturn(Mono.empty());
         // when, then
         webTestClient.delete()
-            .uri("/rbac-service/v1/role-endpoint-permissions?namespace-id=1&role-id=1&endpoint-id=1")
+            .uri("/rbac-service/v1/1/role-endpoint-permissions?role-id=1&endpoint-id=1")
             .exchange()
             .expectStatus().isNoContent()
             .expectBody().isEmpty();

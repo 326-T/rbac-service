@@ -12,9 +12,6 @@ public class UserGroupRoleAssignmentInsertRequest {
 
   @NotNull
   @Min(1)
-  private Long namespaceId;
-  @NotNull
-  @Min(1)
   private Long userGroupId;
   @NotNull
   @Min(1)
@@ -22,7 +19,6 @@ public class UserGroupRoleAssignmentInsertRequest {
 
   public UserGroupRoleAssignment exportEntity() {
     return UserGroupRoleAssignment.builder()
-        .namespaceId(namespaceId)
         .userGroupId(userGroupId)
         .roleId(roleId)
         .build();

@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.example.persistence.entity.TargetGroupBelonging;
 import org.example.service.ReactiveContextService;
 import org.example.service.TargetGroupBelongingService;
+import org.example.util.constant.AccessPath;
 import org.example.web.request.TargetGroupBelongingInsertRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,11 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/rbac-service/v1/target-group-belongings")
+@RequestMapping(AccessPath.TARGET_GROUP_BELONGINGS)
 public class TargetGroupBelongingRestController {
 
   private final TargetGroupBelongingService targetGroupBelongingService;
@@ -32,7 +34,7 @@ public class TargetGroupBelongingRestController {
   }
 
   @GetMapping
-  public Flux<TargetGroupBelonging> index(@RequestParam("namespace-id") Long namespaceId) {
+  public Flux<TargetGroupBelonging> index(@PathVariable("namespace-id") Long namespaceId) {
     return targetGroupBelongingService.findByNamespaceId(namespaceId);
   }
 
@@ -48,14 +50,13 @@ public class TargetGroupBelongingRestController {
 
   @PostMapping
   public Mono<TargetGroupBelonging> save(
+      ServerWebExchange exchange,
+      @PathVariable("namespace-id") Long namespaceId,
       @Valid @RequestBody TargetGroupBelongingInsertRequest request) {
-    return reactiveContextService.getCurrentUser()
-        .flatMap(u -> {
-          TargetGroupBelonging targetGroupBelonging = request.exportEntity();
-          targetGroupBelonging.setCreatedBy(u.getId());
-          return Mono.just(targetGroupBelonging);
-        })
-        .flatMap(targetGroupBelongingService::insert);
+    TargetGroupBelonging targetGroupBelonging = request.exportEntity();
+    targetGroupBelonging.setNamespaceId(namespaceId);
+    targetGroupBelonging.setCreatedBy(reactiveContextService.extractCurrentUser(exchange).getId());
+    return targetGroupBelongingService.insert(targetGroupBelonging);
   }
 
   @DeleteMapping("/{id}")
@@ -67,7 +68,7 @@ public class TargetGroupBelongingRestController {
   @DeleteMapping
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public Mono<Void> deleteAll(
-      @RequestParam("namespace-id") Long namespaceId,
+      @PathVariable("namespace-id") Long namespaceId,
       @RequestParam("target-id") Long targetId,
       @RequestParam("target-group-id") Long targetGroupId) {
     return targetGroupBelongingService.deleteByUniqueKeys(namespaceId, targetId, targetGroupId);

@@ -4,11 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[add]EndpointはJOINした情報を返すように修正">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/web/controller/MethodController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/web/response/MethodResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/web/controller/MethodControllerTest.java" afterDir="false" />
+    <list default="true" id="da7d2d21-5483-43bc-8df6-9039931ba40f" name="Changes" comment="[add]AccessPrivilegeを認可に対応">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/config/CorsGlobalConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/config/CorsGlobalConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/error/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/error/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/web/filter/AuthorizationWebFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/web/filter/AuthorizationWebFilter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,6 +35,12 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "326-T"
+  }
+}]]></component>
   <component name="GitToolBoxStore">
     <option name="projectConfigVersion" value="5" />
     <option name="recentBranches">
@@ -63,6 +69,14 @@
           </list>
         </option>
       </RecentBranches>
+    </option>
+  </component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="e880ca99-d15b-425a-a3fd-90208b9f7b7e" />
+        <option name="url" value="git@github.com:326-T/rbac-service.git" />
+      </UrlAndAccount>
     </option>
   </component>
   <component name="MarkdownSettingsMigration">
@@ -113,22 +127,22 @@
       <recent name="org.example.persistence.repository" />
     </key>
     <key name="CreateTestDialog.RecentsKey">
+      <recent name="org.example.util" />
       <recent name="org.example.web.controller" />
       <recent name="org.example.service" />
       <recent name="org.example.persistence.repository" />
       <recent name="org.example.web.filter" />
-      <recent name="org.example.it.persistence.repository" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="org.example.web.request" />
       <recent name="org.example.persistence.repository" />
       <recent name="org.example.error.exception" />
-      <recent name="org.example.web.request" />
       <recent name="org.example.web.filter" />
       <recent name="org.example.web.controller" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.MethodControllerTest$Index$Regular.CanGetTheListOfMethods">
-    <configuration name="EndpointAPITest$Index" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="JUnit.AccessPrivilegeAPITest">
+    <configuration name="AccessPrivilegeAPITest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
@@ -136,29 +150,29 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.it.EndpointAPITest" />
-      <option name="MAIN_CLASS_NAME" value="org.example.it.EndpointAPITest$Index" />
+      <option name="PACKAGE_NAME" value="org.example.it" />
+      <option name="MAIN_CLASS_NAME" value="org.example.it.AccessPrivilegeAPITest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="EndpointDetailDetailRepositoryTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="AccessPrivilegeRestControllerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.persistence.repository.*" />
+          <option name="PATTERN" value="org.example.web.controller.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.persistence.repository" />
-      <option name="MAIN_CLASS_NAME" value="org.example.persistence.repository.EndpointDetailDetailRepositoryTest" />
+      <option name="PACKAGE_NAME" value="org.example.web.controller" />
+      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.AccessPrivilegeRestControllerTest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="EndpointDetailServiceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="AccessPrivilegeServiceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
@@ -167,50 +181,49 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="org.example.service" />
-      <option name="MAIN_CLASS_NAME" value="org.example.service.EndpointDetailServiceTest" />
+      <option name="MAIN_CLASS_NAME" value="org.example.service.AccessPrivilegeServiceTest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="EndpointRestControllerTest$Index" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="UserSystemRolePermissionAPITest$DeleteByUniqueKeys$Error" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.web.controller.*" />
+          <option name="PATTERN" value="org.example.it.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.web.controller.EndpointRestControllerTest" />
-      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.EndpointRestControllerTest$Index" />
+      <option name="PACKAGE_NAME" value="org.example.it.UserSystemRolePermissionAPITest.DeleteByUniqueKeys" />
+      <option name="MAIN_CLASS_NAME" value="org.example.it.UserSystemRolePermissionAPITest$DeleteByUniqueKeys$Error" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="MethodControllerTest$Index$Regular.CanGetTheListOfMethods" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="UserSystemRolePermissionAPITest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rbac-service" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.web.controller.*" />
+          <option name="PATTERN" value="org.example.it.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.web.controller.MethodControllerTest.Index" />
-      <option name="MAIN_CLASS_NAME" value="org.example.web.controller.MethodControllerTest$Index$Regular" />
-      <option name="METHOD_NAME" value="CanGetTheListOfMethods" />
-      <option name="TEST_OBJECT" value="method" />
+      <option name="PACKAGE_NAME" value="org.example.it" />
+      <option name="MAIN_CLASS_NAME" value="org.example.it.UserSystemRolePermissionAPITest" />
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.MethodControllerTest$Index$Regular.CanGetTheListOfMethods" />
-        <item itemvalue="JUnit.EndpointAPITest$Index" />
-        <item itemvalue="JUnit.EndpointRestControllerTest$Index" />
-        <item itemvalue="JUnit.EndpointDetailServiceTest" />
-        <item itemvalue="JUnit.EndpointDetailDetailRepositoryTest" />
+        <item itemvalue="JUnit.AccessPrivilegeAPITest" />
+        <item itemvalue="JUnit.AccessPrivilegeServiceTest" />
+        <item itemvalue="JUnit.AccessPrivilegeRestControllerTest" />
+        <item itemvalue="JUnit.UserSystemRolePermissionAPITest" />
+        <item itemvalue="JUnit.UserSystemRolePermissionAPITest$DeleteByUniqueKeys$Error" />
       </list>
     </recent_temporary>
   </component>
@@ -431,19 +444,74 @@
       <option name="project" value="LOCAL" />
       <updated>1703153299817</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="[add]Namespace作成時にシステムロールの作成と紐付けを自動で行うように。ロールとユーザを参照できるように。">
+      <option name="closed" value="true" />
+      <created>1703553284082</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1703553284082</updated>
+    </task>
+    <task id="LOCAL-00028" summary="[add]Targetに認可機能を追加">
+      <option name="closed" value="true" />
+      <created>1703678851464</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1703678851464</updated>
+    </task>
+    <task id="LOCAL-00029" summary="[add]TargetGroupに認可機能を追加">
+      <option name="closed" value="true" />
+      <created>1703688682472</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1703688682472</updated>
+    </task>
+    <task id="LOCAL-00030" summary="[add]NamespaceとUserとSystemRoleを認可に対応">
+      <option name="closed" value="true" />
+      <created>1703691434613</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1703691434613</updated>
+    </task>
+    <task id="LOCAL-00031" summary="[add]UserGroupを認可に対応">
+      <option name="closed" value="true" />
+      <created>1703695546239</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1703695546239</updated>
+    </task>
+    <task id="LOCAL-00032" summary="[add]Path, Role, UserGroupBelongings, UserGroupRoleAssignmentsを認可に対応">
+      <option name="closed" value="true" />
+      <created>1703698566048</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1703698566048</updated>
+    </task>
+    <task id="LOCAL-00033" summary="[add]Endpoint, Method, RoleEndpointPermission, TargetGroupBelonging, UserSystemRolePermissionを認可に対応">
+      <option name="closed" value="true" />
+      <created>1703731465488</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1703731465488</updated>
+    </task>
+    <task id="LOCAL-00034" summary="[add]AccessPrivilegeを認可に対応">
+      <option name="closed" value="true" />
+      <created>1703732474515</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1703732474515</updated>
+    </task>
+    <option name="localTasksCounter" value="35" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="[add]永続化層の実装" />
-    <MESSAGE value="[add]Service, Controller, 結合テストの実装" />
-    <MESSAGE value="[update]命名の変更" />
-    <MESSAGE value="[add]NamespaceをUser以外の全てに含めるように修正" />
-    <MESSAGE value="[add]権限の一覧と権限があるか確認するAPIとそのテストの実装" />
-    <MESSAGE value="[add]サービスのテストの実装" />
-    <MESSAGE value="[update]サービスのテストのリファクタ" />
-    <MESSAGE value="[add]controllerのテストの追加" />
-    <MESSAGE value="[add]認証の追加。UserとEndpointを更新" />
     <MESSAGE value="[fix]Namespaceを更新" />
     <MESSAGE value="[fix]Pathを更新" />
     <MESSAGE value="[fix]Roleを更新" />
@@ -460,7 +528,16 @@
     <MESSAGE value="[add]RoleEndpointPermissionをUnique制約で削除できるように。EndpointをRoleIdで絞り込めるように。" />
     <MESSAGE value="[add]UserGroupRoleAssignmentをUnique制約で削除できるように。&#10;RoleをUserGroupIdで絞り込めるように。" />
     <MESSAGE value="[add]EndpointはJOINした情報を返すように修正" />
-    <option name="LAST_COMMIT_MESSAGE" value="[add]EndpointはJOINした情報を返すように修正" />
+    <MESSAGE value="[add]Methodのコントローラーを作成" />
+    <MESSAGE value="[add]Namespace作成時にシステムロールの作成と紐付けを自動で行うように。ロールとユーザを参照できるように。" />
+    <MESSAGE value="[add]Targetに認可機能を追加" />
+    <MESSAGE value="[add]TargetGroupに認可機能を追加" />
+    <MESSAGE value="[add]NamespaceとUserとSystemRoleを認可に対応" />
+    <MESSAGE value="[add]UserGroupを認可に対応" />
+    <MESSAGE value="[add]Path, Role, UserGroupBelongings, UserGroupRoleAssignmentsを認可に対応" />
+    <MESSAGE value="[add]Endpoint, Method, RoleEndpointPermission, TargetGroupBelonging, UserSystemRolePermissionを認可に対応" />
+    <MESSAGE value="[add]AccessPrivilegeを認可に対応" />
+    <option name="LAST_COMMIT_MESSAGE" value="[add]AccessPrivilegeを認可に対応" />
   </component>
   <component name="XDebuggerManager">
     <pin-to-top-manager>

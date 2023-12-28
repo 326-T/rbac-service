@@ -6,6 +6,7 @@ import org.example.persistence.entity.User;
 import org.example.service.Base64Service;
 import org.example.service.JwtService;
 import org.example.service.UserService;
+import org.example.util.constant.ContextKeys;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -55,7 +56,8 @@ class AuthenticationWebFilterTest {
         // then
         StepVerifier.create(Mono.empty())
             .expectAccessibleContext()
-            .hasKey(User.class);
+            .hasKey(ContextKeys.USER_KEY)
+            .hasKey(ContextKeys.ROLE_KEYS);
       }
 
       @Test
@@ -74,7 +76,8 @@ class AuthenticationWebFilterTest {
         // then
         StepVerifier.create(Mono.empty())
             .expectAccessibleContext()
-            .hasKey(User.class);
+            .hasKey(ContextKeys.USER_KEY)
+            .hasKey(ContextKeys.ROLE_KEYS);
       }
     }
   }

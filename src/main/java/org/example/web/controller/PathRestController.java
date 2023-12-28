@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.example.persistence.entity.Path;
 import org.example.service.PathService;
 import org.example.service.ReactiveContextService;
+import org.example.util.constant.AccessPath;
 import org.example.web.request.PathInsertRequest;
 import org.example.web.request.PathUpdateRequest;
 import org.springframework.http.HttpStatus;
@@ -14,14 +15,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/rbac-service/v1/paths")
+@RequestMapping(AccessPath.PATHS)
 public class PathRestController {
 
   private final PathService pathService;
@@ -33,7 +34,7 @@ public class PathRestController {
   }
 
   @GetMapping
-  public Flux<Path> index(@RequestParam("namespace-id") Long namespaceId) {
+  public Flux<Path> index(@PathVariable("namespace-id") Long namespaceId) {
     return pathService.findByNamespaceId(namespaceId);
   }
 
@@ -48,14 +49,14 @@ public class PathRestController {
   }
 
   @PostMapping
-  public Mono<Path> save(@Valid @RequestBody PathInsertRequest request) {
-    return reactiveContextService.getCurrentUser()
-        .flatMap(u -> {
-          Path path = request.exportEntity();
-          path.setCreatedBy(u.getId());
-          return Mono.just(path);
-        })
-        .flatMap(pathService::insert);
+  public Mono<Path> save(
+      ServerWebExchange exchange,
+      @PathVariable("namespace-id") Long namespaceId,
+      @Valid @RequestBody PathInsertRequest request) {
+    Path path = request.exportEntity();
+    path.setNamespaceId(namespaceId);
+    path.setCreatedBy(reactiveContextService.extractCurrentUser(exchange).getId());
+    return pathService.insert(path);
   }
 
   @PutMapping("/{id}")

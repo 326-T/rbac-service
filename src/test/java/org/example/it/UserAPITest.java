@@ -121,6 +121,36 @@ public class UserAPITest {
 
   @Order(1)
   @Nested
+  class FindBySystemRoleId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ユーザをシステムロールIDで取得できる")
+      void findBySystemRoleId() {
+        // when, then
+        webTestClient.get()
+            .uri("/rbac-service/v1/users/system?system-role-id=2")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBodyList(UserResponse.class)
+            .consumeWith(response -> {
+              assertThat(response.getResponseBody()).hasSize(2);
+              assertThat(response.getResponseBody())
+                  .extracting(UserResponse::getId, UserResponse::getName, UserResponse::getEmail)
+                  .containsExactly(
+                      tuple(1L, "privilege", "privilege@example.org"),
+                      tuple(2L, "user1", "xxx@example.org"));
+            });
+      }
+    }
+  }
+
+  @Order(1)
+  @Nested
   class FindById {
 
     @Nested

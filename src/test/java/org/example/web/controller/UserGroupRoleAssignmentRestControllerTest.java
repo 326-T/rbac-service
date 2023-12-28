@@ -10,6 +10,7 @@ import org.example.persistence.entity.UserGroupRoleAssignment;
 import org.example.service.ReactiveContextService;
 import org.example.service.UserGroupRoleAssignmentService;
 import org.example.web.filter.AuthenticationWebFilter;
+import org.example.web.filter.AuthorizationWebFilter;
 import org.example.web.request.UserGroupRoleAssignmentInsertRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -24,12 +25,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @WebFluxTest(
     controllers = UserGroupRoleAssignmentRestController.class,
-    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AuthenticationWebFilter.class)})
+    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+        classes = {AuthenticationWebFilter.class, AuthorizationWebFilter.class})})
 @AutoConfigureWebTestClient
 class UserGroupRoleAssignmentRestControllerTest {
 
@@ -54,7 +57,7 @@ class UserGroupRoleAssignmentRestControllerTest {
         when(userGroupRoleAssignmentService.count()).thenReturn(Mono.just(3L));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/group-role-assignments/count")
+            .uri("/rbac-service/v1/1/group-role-assignments/count")
             .exchange()
             .expectStatus().isOk()
             .expectBody(Long.class).isEqualTo(3L);
@@ -83,7 +86,7 @@ class UserGroupRoleAssignmentRestControllerTest {
             .thenReturn(Flux.just(userGroupRoleAssignment1, userGroupRoleAssignment2, userGroupRoleAssignment3));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/group-role-assignments?namespace-id=1")
+            .uri("/rbac-service/v1/1/group-role-assignments")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(UserGroupRoleAssignment.class)
@@ -118,7 +121,7 @@ class UserGroupRoleAssignmentRestControllerTest {
         when(userGroupRoleAssignmentService.findById(1L)).thenReturn(Mono.just(userGroupRoleAssignment));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/group-role-assignments/1")
+            .uri("/rbac-service/v1/1/group-role-assignments/1")
             .exchange()
             .expectStatus().isOk()
             .expectBody(UserGroupRoleAssignment.class)
@@ -145,14 +148,13 @@ class UserGroupRoleAssignmentRestControllerTest {
         UserGroupRoleAssignment userGroupRoleAssignment = UserGroupRoleAssignment.builder()
             .id(4L).namespaceId(1L).userGroupId(1L).roleId(3L).createdBy(1L).build();
         when(userGroupRoleAssignmentService.insert(any(UserGroupRoleAssignment.class))).thenReturn(Mono.just(userGroupRoleAssignment));
-        when(reactiveContextService.getCurrentUser()).thenReturn(Mono.just(User.builder().id(1L).build()));
+        when(reactiveContextService.extractCurrentUser(any(ServerWebExchange.class))).thenReturn(User.builder().id(1L).build());
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/group-role-assignments")
+            .uri("/rbac-service/v1/1/group-role-assignments")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "namespaceId": 1,
                   "userGroupId": 1,
                   "roleId": 3
                 }
@@ -176,22 +178,19 @@ class UserGroupRoleAssignmentRestControllerTest {
       @DisplayName("バリデーションエラーが発生する")
       @ParameterizedTest
       @CsvSource({
-          ", 1, 1",
-          "0, 1, 1",
-          "1, , 1",
-          "1, 0, 1",
-          "1, 1, ",
-          "1, 1, 0",
+          ", 1",
+          "0, 1",
+          "1, ",
+          "1, 0",
       })
-      void validationErrorOccurs(Long namespaceId, Long userGroupId, Long roleId) {
+      void validationErrorOccurs(Long userGroupId, Long roleId) {
         // given
         UserGroupRoleAssignmentInsertRequest userGroupRoleAssignmentInsertRequest = new UserGroupRoleAssignmentInsertRequest();
-        userGroupRoleAssignmentInsertRequest.setNamespaceId(namespaceId);
         userGroupRoleAssignmentInsertRequest.setUserGroupId(userGroupId);
         userGroupRoleAssignmentInsertRequest.setRoleId(roleId);
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/group-role-assignments")
+            .uri("/rbac-service/v1/1/group-role-assignments")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(userGroupRoleAssignmentInsertRequest)
             .exchange()
@@ -214,7 +213,7 @@ class UserGroupRoleAssignmentRestControllerTest {
         when(userGroupRoleAssignmentService.deleteById(3L)).thenReturn(Mono.empty());
         // when, then
         webTestClient.delete()
-            .uri("/rbac-service/v1/group-role-assignments/3")
+            .uri("/rbac-service/v1/1/group-role-assignments/3")
             .exchange()
             .expectStatus().isNoContent()
             .expectBody().isEmpty();
@@ -237,7 +236,7 @@ class UserGroupRoleAssignmentRestControllerTest {
             .thenReturn(Mono.empty());
         // when, then
         webTestClient.delete()
-            .uri("/rbac-service/v1/group-role-assignments?namespace-id=1&user-group-id=1&role-id=1")
+            .uri("/rbac-service/v1/1/group-role-assignments?user-group-id=1&role-id=1")
             .exchange()
             .expectStatus().isNoContent()
             .expectBody().isEmpty();

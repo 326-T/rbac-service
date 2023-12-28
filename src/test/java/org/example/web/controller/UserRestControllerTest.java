@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import org.example.persistence.entity.User;
 import org.example.service.UserService;
 import org.example.web.filter.AuthenticationWebFilter;
+import org.example.web.filter.AuthorizationWebFilter;
 import org.example.web.request.UserInsertRequest;
 import org.example.web.request.UserUpdateRequest;
 import org.example.web.response.UserResponse;
@@ -29,7 +30,8 @@ import reactor.core.publisher.Mono;
 
 @WebFluxTest(
     controllers = UserRestController.class,
-    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AuthenticationWebFilter.class)})
+    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+        classes = {AuthenticationWebFilter.class, AuthorizationWebFilter.class})})
 @AutoConfigureWebTestClient
 class UserRestControllerTest {
 

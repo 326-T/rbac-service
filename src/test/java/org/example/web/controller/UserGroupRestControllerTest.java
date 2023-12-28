@@ -10,12 +10,12 @@ import org.example.persistence.entity.UserGroup;
 import org.example.service.ReactiveContextService;
 import org.example.service.UserGroupService;
 import org.example.web.filter.AuthenticationWebFilter;
+import org.example.web.filter.AuthorizationWebFilter;
 import org.example.web.request.UserGroupInsertRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
@@ -25,12 +25,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @WebFluxTest(
     controllers = UserGroupRestController.class,
-    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AuthenticationWebFilter.class)})
+    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+        classes = {AuthenticationWebFilter.class, AuthorizationWebFilter.class})})
 @AutoConfigureWebTestClient
 class UserGroupRestControllerTest {
 
@@ -55,7 +57,7 @@ class UserGroupRestControllerTest {
         when(userGroupService.count()).thenReturn(Mono.just(3L));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/user-groups/count")
+            .uri("/rbac-service/v1/2/user-groups/count")
             .exchange()
             .expectStatus().isOk()
             .expectBody(Long.class).isEqualTo(3L);
@@ -84,7 +86,7 @@ class UserGroupRestControllerTest {
             .thenReturn(Flux.just(userGroup1, userGroup2, userGroup3));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/user-groups?namespace-id=1")
+            .uri("/rbac-service/v1/1/user-groups")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(UserGroup.class)
@@ -119,7 +121,7 @@ class UserGroupRestControllerTest {
         when(userGroupService.findById(1L)).thenReturn(Mono.just(userGroup));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/user-groups/1")
+            .uri("/rbac-service/v1/1/user-groups/1")
             .exchange()
             .expectStatus().isOk()
             .expectBody(UserGroup.class)
@@ -148,7 +150,7 @@ class UserGroupRestControllerTest {
         when(userGroupService.update(any(UserGroup.class))).thenReturn(Mono.just(userGroup));
         // when, then
         webTestClient.put()
-            .uri("/rbac-service/v1/user-groups/2")
+            .uri("/rbac-service/v1/1/user-groups/2")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
@@ -180,7 +182,7 @@ class UserGroupRestControllerTest {
         userGroupInsertRequest.setName(name);
         // when, then
         webTestClient.put()
-            .uri("/rbac-service/v1/user-groups/2")
+            .uri("/rbac-service/v1/1/user-groups/2")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(userGroupInsertRequest)
             .exchange()
@@ -203,14 +205,13 @@ class UserGroupRestControllerTest {
         UserGroup userGroup = UserGroup.builder()
             .id(4L).namespaceId(1L).name("group-4").createdBy(1L).build();
         when(userGroupService.insert(any(UserGroup.class))).thenReturn(Mono.just(userGroup));
-        when(reactiveContextService.getCurrentUser()).thenReturn(Mono.just(User.builder().id(1L).build()));
+        when(reactiveContextService.extractCurrentUser(any(ServerWebExchange.class))).thenReturn(User.builder().id(1L).build());
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/user-groups")
+            .uri("/rbac-service/v1/1/user-groups")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "namespaceId": 1,
                   "name": "group-4"
                 }
                 """
@@ -232,21 +233,14 @@ class UserGroupRestControllerTest {
 
       @DisplayName("バリデーションエラーが発生する")
       @ParameterizedTest
-      @CsvSource({
-          ", user-group-1",
-          "0, user-group-1",
-          "1, ",
-          "1, ''",
-          "1, ' '",
-      })
-      void validationErrorOccurs(Long namespaceId, String name) {
+      @ValueSource(strings = {"", " "})
+      void validationErrorOccurs(String name) {
         // given
         UserGroupInsertRequest userGroupInsertRequest = new UserGroupInsertRequest();
-        userGroupInsertRequest.setNamespaceId(namespaceId);
         userGroupInsertRequest.setName(name);
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/user-groups")
+            .uri("/rbac-service/v1/1/user-groups")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(userGroupInsertRequest)
             .exchange()
@@ -269,7 +263,7 @@ class UserGroupRestControllerTest {
         when(userGroupService.deleteById(3L)).thenReturn(Mono.empty());
         // when, then
         webTestClient.delete()
-            .uri("/rbac-service/v1/user-groups/3")
+            .uri("/rbac-service/v1/1/user-groups/3")
             .exchange()
             .expectStatus().isNoContent()
             .expectBody().isEmpty();

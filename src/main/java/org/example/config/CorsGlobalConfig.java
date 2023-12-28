@@ -1,30 +1,19 @@
 package org.example.config;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.reactive.CorsWebFilter;
-import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import org.springframework.web.reactive.config.EnableWebFlux;
+import org.springframework.web.reactive.config.WebFluxConfigurer;
 
 @Configuration
-public class CorsGlobalConfig {
+@EnableWebFlux
+public class CorsGlobalConfig implements WebFluxConfigurer {
 
-  @Bean
-  CorsWebFilter corsWebFilter() {
-    CorsConfiguration corsConfig = new CorsConfiguration();
-    corsConfig.addAllowedOriginPattern("http://localhost:*");
-    corsConfig.addAllowedMethod(HttpMethod.GET);
-    corsConfig.addAllowedMethod(HttpMethod.POST);
-    corsConfig.addAllowedMethod(HttpMethod.PUT);
-    corsConfig.addAllowedMethod(HttpMethod.DELETE);
-    corsConfig.addAllowedMethod(HttpMethod.OPTIONS);
-    corsConfig.addAllowedHeader("*");
-
-    UrlBasedCorsConfigurationSource source =
-        new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", corsConfig);
-
-    return new CorsWebFilter(source);
+  @Override
+  public void addCorsMappings(org.springframework.web.reactive.config.CorsRegistry registry) {
+    registry.addMapping("/**")
+        .allowedOriginPatterns("http://localhost:*")
+        .allowedMethods(HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PUT.name(), HttpMethod.DELETE.name(), HttpMethod.OPTIONS.name())
+        .allowedHeaders("*");
   }
 }

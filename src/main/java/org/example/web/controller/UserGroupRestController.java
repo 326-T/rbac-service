@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.example.persistence.entity.UserGroup;
 import org.example.service.ReactiveContextService;
 import org.example.service.UserGroupService;
+import org.example.util.constant.AccessPath;
 import org.example.web.request.UserGroupInsertRequest;
 import org.example.web.request.UserGroupUpdateRequest;
 import org.springframework.http.HttpStatus;
@@ -14,14 +15,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/rbac-service/v1/user-groups")
+@RequestMapping(AccessPath.USER_GROUPS)
 public class UserGroupRestController {
 
   private final UserGroupService userGroupService;
@@ -33,7 +34,7 @@ public class UserGroupRestController {
   }
 
   @GetMapping
-  public Flux<UserGroup> index(@RequestParam("namespace-id") Long namespaceId) {
+  public Flux<UserGroup> index(@PathVariable("namespace-id") Long namespaceId) {
     return userGroupService.findByNamespaceId(namespaceId);
   }
 
@@ -48,14 +49,14 @@ public class UserGroupRestController {
   }
 
   @PostMapping
-  public Mono<UserGroup> save(@Valid @RequestBody UserGroupInsertRequest request) {
-    return reactiveContextService.getCurrentUser()
-        .flatMap(u -> {
-          UserGroup userGroup = request.exportEntity();
-          userGroup.setCreatedBy(u.getId());
-          return Mono.just(userGroup);
-        })
-        .flatMap(userGroupService::insert);
+  public Mono<UserGroup> save(
+      ServerWebExchange exchange,
+      @PathVariable("namespace-id") Long namespaceId,
+      @Valid @RequestBody UserGroupInsertRequest request) {
+    UserGroup userGroup = request.exportEntity();
+    userGroup.setNamespaceId(namespaceId);
+    userGroup.setCreatedBy(reactiveContextService.extractCurrentUser(exchange).getId());
+    return userGroupService.insert(userGroup);
   }
 
   @PutMapping("/{id}")

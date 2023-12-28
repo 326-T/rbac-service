@@ -29,8 +29,8 @@ public class AccessPrivilegeService {
    *
    * @return 権限があるかどうか
    */
-  public Mono<Boolean> canAccess(Long userId, AccessPrivilegeRequest accessPrivilegeRequest) {
-    return accessPrivilegeRepository.findByUserAndNamespace(userId, accessPrivilegeRequest.getNamespaceId())
+  public Mono<Boolean> canAccess(Long userId, Long namespaceId, AccessPrivilegeRequest accessPrivilegeRequest) {
+    return accessPrivilegeRepository.findByUserAndNamespace(userId, namespaceId)
         .any(truth ->
             accessPrivilegeRequest.getMethod().matches(truth.getMethod())
                 && accessPrivilegeRequest.getPath().matches(truth.getPathRegex())

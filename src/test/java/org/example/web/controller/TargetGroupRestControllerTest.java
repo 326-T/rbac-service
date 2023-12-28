@@ -3,6 +3,7 @@ package org.example.web.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import org.example.persistence.entity.TargetGroup;
@@ -10,13 +11,13 @@ import org.example.persistence.entity.User;
 import org.example.service.ReactiveContextService;
 import org.example.service.TargetGroupService;
 import org.example.web.filter.AuthenticationWebFilter;
+import org.example.web.filter.AuthorizationWebFilter;
 import org.example.web.request.TargetGroupInsertRequest;
 import org.example.web.request.TargetGroupUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
@@ -26,12 +27,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @WebFluxTest(
     controllers = TargetGroupRestController.class,
-    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AuthenticationWebFilter.class)})
+    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+        classes = {AuthenticationWebFilter.class, AuthorizationWebFilter.class})})
 @AutoConfigureWebTestClient
 class TargetGroupRestControllerTest {
 
@@ -56,7 +59,7 @@ class TargetGroupRestControllerTest {
         when(targetGroupService.count()).thenReturn(Mono.just(3L));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/target-groups/count")
+            .uri("/rbac-service/v1/1/target-groups/count")
             .exchange()
             .expectStatus().isOk()
             .expectBody(Long.class).isEqualTo(3L);
@@ -85,7 +88,7 @@ class TargetGroupRestControllerTest {
             .thenReturn(Flux.just(targetGroup1, targetGroup2, targetGroup3));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/target-groups?namespace-id=1")
+            .uri("/rbac-service/v1/1/target-groups")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(TargetGroup.class)
@@ -120,7 +123,7 @@ class TargetGroupRestControllerTest {
         when(targetGroupService.findById(1L)).thenReturn(Mono.just(targetGroup));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/target-groups/1")
+            .uri("/rbac-service/v1/1/target-groups/1")
             .exchange()
             .expectStatus().isOk()
             .expectBody(TargetGroup.class)
@@ -146,10 +149,10 @@ class TargetGroupRestControllerTest {
         // given
         TargetGroup targetGroup = TargetGroup.builder()
             .id(2L).namespaceId(1L).name("OBJECT-ID-2").createdBy(1L).build();
-        when(targetGroupService.update(any(TargetGroup.class))).thenReturn(Mono.just(targetGroup));
+        when(targetGroupService.update(any(TargetGroup.class), eq(1L))).thenReturn(Mono.just(targetGroup));
         // when, then
         webTestClient.put()
-            .uri("/rbac-service/v1/target-groups/2")
+            .uri("/rbac-service/v1/1/target-groups/2")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
@@ -181,7 +184,7 @@ class TargetGroupRestControllerTest {
         targetGroupUpdateRequest.setName(name);
         // when, then
         webTestClient.put()
-            .uri("/rbac-service/v1/target-groups/2")
+            .uri("/rbac-service/v1/2/target-groups/2")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(targetGroupUpdateRequest)
             .exchange()
@@ -205,13 +208,13 @@ class TargetGroupRestControllerTest {
             .id(4L).namespaceId(1L).name("target-group-4").createdBy(1L).build();
         when(targetGroupService.insert(any(TargetGroup.class))).thenReturn(Mono.just(targetGroup));
         when(reactiveContextService.getCurrentUser()).thenReturn(Mono.just(User.builder().id(1L).build()));
+        when(reactiveContextService.extractCurrentUser(any(ServerWebExchange.class))).thenReturn(User.builder().id(1L).build());
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/target-groups")
+            .uri("/rbac-service/v1/1/target-groups")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "namespaceId": 1,
                   "name": "target-group-4"
                 }
                 """
@@ -233,21 +236,14 @@ class TargetGroupRestControllerTest {
 
       @DisplayName("バリデーションエラーが発生する")
       @ParameterizedTest
-      @CsvSource({
-          ", target-group-1",
-          "0, target-group-1",
-          "1, ",
-          "1, ''",
-          "1, ' '",
-      })
-      void validationErrorOccurs(Long namespaceId, String name) {
+      @ValueSource(strings = {"", " "})
+      void validationErrorOccurs(String name) {
         // given
         TargetGroupInsertRequest targetGroupInsertRequest = new TargetGroupInsertRequest();
-        targetGroupInsertRequest.setNamespaceId(namespaceId);
         targetGroupInsertRequest.setName(name);
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/target-groups")
+            .uri("/rbac-service/v1/1/target-groups")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(targetGroupInsertRequest)
             .exchange()
@@ -267,10 +263,10 @@ class TargetGroupRestControllerTest {
       @DisplayName("ターゲットグループを削除できる")
       void canDeleteTheTargetGroupById() {
         // given
-        when(targetGroupService.deleteById(3L)).thenReturn(Mono.empty());
+        when(targetGroupService.deleteById(3L, 2L)).thenReturn(Mono.empty());
         // when, then
         webTestClient.delete()
-            .uri("/rbac-service/v1/target-groups/3")
+            .uri("/rbac-service/v1/2/target-groups/3")
             .exchange()
             .expectStatus().isNoContent()
             .expectBody().isEmpty();

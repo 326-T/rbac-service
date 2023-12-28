@@ -3,6 +3,7 @@ package org.example.web.controller;
 import jakarta.validation.Valid;
 import org.example.persistence.entity.User;
 import org.example.service.UserService;
+import org.example.util.constant.AccessPath;
 import org.example.web.request.UserInsertRequest;
 import org.example.web.request.UserUpdateRequest;
 import org.example.web.response.UserResponse;
@@ -21,7 +22,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/rbac-service/v1/users")
+@RequestMapping(AccessPath.USERS)
 public class UserRestController {
 
   private final UserService userService;
@@ -46,6 +47,11 @@ public class UserRestController {
   @GetMapping("/{id}")
   public Mono<UserResponse> findById(@PathVariable Long id) {
     return userService.findById(id).map(UserResponse::new);
+  }
+
+  @GetMapping("/system")
+  public Flux<UserResponse> findBySystemRoleId(@RequestParam("system-role-id") Long systemRoleId) {
+    return userService.findBySystemRoleId(systemRoleId).map(UserResponse::new);
   }
 
   @PostMapping

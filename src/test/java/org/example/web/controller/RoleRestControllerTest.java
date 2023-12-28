@@ -10,13 +10,13 @@ import org.example.persistence.entity.User;
 import org.example.service.ReactiveContextService;
 import org.example.service.RoleService;
 import org.example.web.filter.AuthenticationWebFilter;
+import org.example.web.filter.AuthorizationWebFilter;
 import org.example.web.request.RoleInsertRequest;
 import org.example.web.request.RoleUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
@@ -26,12 +26,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @WebFluxTest(
     controllers = RoleRestController.class,
-    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AuthenticationWebFilter.class)})
+    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+        classes = {AuthenticationWebFilter.class, AuthorizationWebFilter.class})})
 @AutoConfigureWebTestClient
 class RoleRestControllerTest {
 
@@ -56,7 +58,7 @@ class RoleRestControllerTest {
         when(roleService.count()).thenReturn(Mono.just(3L));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/roles/count")
+            .uri("/rbac-service/v1/1/roles/count")
             .exchange()
             .expectStatus().isOk()
             .expectBody(Long.class).isEqualTo(3L);
@@ -84,7 +86,7 @@ class RoleRestControllerTest {
         when(roleService.findByNamespaceId(1L)).thenReturn(Flux.just(role1, role2, role3));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/roles?namespace-id=1")
+            .uri("/rbac-service/v1/1/roles")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(Role.class)
@@ -115,7 +117,7 @@ class RoleRestControllerTest {
             .thenReturn(Flux.just(role1, role2, role3));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/roles?namespace-id=1&user-group-id=1")
+            .uri("/rbac-service/v1/1/roles?user-group-id=1")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(Role.class)
@@ -150,7 +152,7 @@ class RoleRestControllerTest {
         when(roleService.findById(1L)).thenReturn(Mono.just(role));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/roles/1")
+            .uri("/rbac-service/v1/1/roles/1")
             .exchange()
             .expectStatus().isOk()
             .expectBody(Role.class)
@@ -168,21 +170,14 @@ class RoleRestControllerTest {
 
       @DisplayName("バリデーションエラーが発生する")
       @ParameterizedTest
-      @CsvSource({
-          ", developer",
-          "0, developer",
-          "1, ",
-          "1, ''",
-          "1, ' '",
-      })
-      void validationErrorOccurs(Long namespaceId, String name) {
+      @ValueSource(strings = {"", " "})
+      void validationErrorOccurs(String name) {
         // given
         RoleInsertRequest roleInsertRequest = new RoleInsertRequest();
-        roleInsertRequest.setNamespaceId(namespaceId);
         roleInsertRequest.setName(name);
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/roles")
+            .uri("/rbac-service/v1/1/roles")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(roleInsertRequest)
             .exchange()
@@ -207,11 +202,10 @@ class RoleRestControllerTest {
         when(roleService.update(any(Role.class))).thenReturn(Mono.just(role));
         // when, then
         webTestClient.put()
-            .uri("/rbac-service/v1/roles/2")
+            .uri("/rbac-service/v1/1/roles/2")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "namespaceId": 1,
                   "name": "admin",
                   "createdBy": 1
                 }
@@ -241,7 +235,7 @@ class RoleRestControllerTest {
         roleUpdateRequest.setName(name);
         // when, then
         webTestClient.put()
-            .uri("/rbac-service/v1/roles/2")
+            .uri("/rbac-service/v1/1/roles/2")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(roleUpdateRequest)
             .exchange()
@@ -264,14 +258,13 @@ class RoleRestControllerTest {
         Role role = Role.builder()
             .id(4L).namespaceId(1L).name("network").createdBy(1L).build();
         when(roleService.insert(any(Role.class))).thenReturn(Mono.just(role));
-        when(reactiveContextService.getCurrentUser()).thenReturn(Mono.just(User.builder().id(1L).build()));
+        when(reactiveContextService.extractCurrentUser(any(ServerWebExchange.class))).thenReturn(User.builder().id(1L).build());
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/roles")
+            .uri("/rbac-service/v1/1/roles")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "namespaceId": 1,
                   "name": "network",
                   "createdBy": 1
                 }
@@ -303,7 +296,7 @@ class RoleRestControllerTest {
         when(roleService.deleteById(3L)).thenReturn(Mono.empty());
         // when, then
         webTestClient.delete()
-            .uri("/rbac-service/v1/roles/3")
+            .uri("/rbac-service/v1/1/roles/3")
             .exchange()
             .expectStatus().isNoContent()
             .expectBody().isEmpty();

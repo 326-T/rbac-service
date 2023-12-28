@@ -12,9 +12,6 @@ public class UserGroupBelongingInsertRequest {
 
   @NotNull
   @Min(1)
-  private Long namespaceId;
-  @NotNull
-  @Min(1)
   private Long userId;
   @NotNull
   @Min(1)
@@ -22,7 +19,6 @@ public class UserGroupBelongingInsertRequest {
 
   public UserGroupBelonging exportEntity() {
     return UserGroupBelonging.builder()
-        .namespaceId(namespaceId)
         .userId(userId)
         .userGroupId(userGroupId)
         .build();

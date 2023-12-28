@@ -40,10 +40,12 @@ public class UserGroupAPITest {
   private Base64Service base64Service;
 
   private String jwt;
+  private String unAuthorizedJwt;
 
   @BeforeAll
   void beforeAll() {
     jwt = base64Service.encode(jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build()));
+    unAuthorizedJwt = base64Service.encode(jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
   }
 
   @Nested
@@ -59,11 +61,39 @@ public class UserGroupAPITest {
       void countTheIndexes() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/user-groups/count")
+            .uri("/rbac-service/v1/1/user-groups/count")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBody(Long.class).isEqualTo(3L);
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @Test
+      @DisplayName("権限がない場合はエラーになる")
+      void notAuthorizedCauseException() {
+        // when, then
+        webTestClient.get()
+            .uri("/rbac-service/v1/1/user-groups/count")
+            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .exchange()
+            .expectStatus().isForbidden()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        403, null,
+                        "エンドポイントへのアクセス権がない",
+                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "この操作は許可されていません。")
+            );
       }
     }
   }
@@ -81,7 +111,7 @@ public class UserGroupAPITest {
       void findAllTheIndexes() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/user-groups?namespace-id=2")
+            .uri("/rbac-service/v1/2/user-groups")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
@@ -95,6 +125,34 @@ public class UserGroupAPITest {
                       tuple(2L, 2L, "group2", 2L),
                       tuple(3L, 2L, "group3", 3L));
             });
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @Test
+      @DisplayName("権限がない場合はエラーになる")
+      void notAuthorizedCauseException() {
+        // when, then
+        webTestClient.get()
+            .uri("/rbac-service/v1/2/user-groups")
+            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .exchange()
+            .expectStatus().isForbidden()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        403, null,
+                        "エンドポイントへのアクセス権がない",
+                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "この操作は許可されていません。")
+            );
       }
     }
   }
@@ -112,7 +170,7 @@ public class UserGroupAPITest {
       void findUserById() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/user-groups/1")
+            .uri("/rbac-service/v1/1/user-groups/1")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
@@ -123,6 +181,34 @@ public class UserGroupAPITest {
                       UserGroup::getName, UserGroup::getCreatedBy)
                   .containsExactly(1L, 1L, "group1", 1L);
             });
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @Test
+      @DisplayName("権限がない場合はエラーになる")
+      void notAuthorizedCauseException() {
+        // when, then
+        webTestClient.get()
+            .uri("/rbac-service/v1/1/user-groups/1")
+            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .exchange()
+            .expectStatus().isForbidden()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        403, null,
+                        "エンドポイントへのアクセス権がない",
+                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "この操作は許可されていません。")
+            );
       }
     }
   }
@@ -142,7 +228,7 @@ public class UserGroupAPITest {
       void updateUserGroup() {
         // when, then
         webTestClient.put()
-            .uri("/rbac-service/v1/user-groups/2")
+            .uri("/rbac-service/v1/2/user-groups/2")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
@@ -160,7 +246,7 @@ public class UserGroupAPITest {
                   .containsExactly(2L, 2L, "GROUP2", 2L);
             });
         webTestClient.get()
-            .uri("/rbac-service/v1/user-groups/2")
+            .uri("/rbac-service/v1/2/user-groups/2")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
@@ -171,35 +257,6 @@ public class UserGroupAPITest {
                       UserGroup::getName, UserGroup::getCreatedBy)
                   .containsExactly(2L, 2L, "GROUP2", 2L);
             });
-      }
-
-      @Test
-      @DisplayName("すでに登録済みの場合はエラーになる")
-      void cannotUpdateWithDuplicate() {
-        // when, then
-        webTestClient.put()
-            .uri("/rbac-service/v1/user-groups/2")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue("""
-                {
-                  "name": "group3"
-                }
-                """)
-            .exchange()
-            .expectStatus().is4xxClientError()
-            .expectBody(ErrorResponse.class)
-            .consumeWith(response ->
-                assertThat(response.getResponseBody())
-                    .extracting(
-                        ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
-                    .containsExactly(
-                        409, null,
-                        "Unique制約に違反している",
-                        "org.example.error.exception.RedundantException: UserGroup already exists",
-                        "作成済みのリソースと重複しています。")
-            );
       }
     }
 
@@ -212,7 +269,7 @@ public class UserGroupAPITest {
       void notExistingUserGroupCauseException() {
         // when, then
         webTestClient.put()
-            .uri("/rbac-service/v1/user-groups/999")
+            .uri("/rbac-service/v1/3/user-groups/999")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
@@ -235,6 +292,64 @@ public class UserGroupAPITest {
                         "指定されたリソースは存在しません。")
             );
       }
+
+      @Test
+      @DisplayName("すでに登録済みの場合はエラーになる")
+      void cannotUpdateWithDuplicate() {
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/2/user-groups/2")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "name": "group3"
+                }
+                """)
+            .exchange()
+            .expectStatus().is4xxClientError()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        409, null,
+                        "Unique制約に違反している",
+                        "org.example.error.exception.RedundantException: UserGroup already exists",
+                        "作成済みのリソースと重複しています。")
+            );
+      }
+
+      @Test
+      @DisplayName("権限がない場合はエラーになる")
+      void notAuthorizedCauseException() {
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/2/user-groups/2")
+            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "name": "GROUP2"
+                }
+                """)
+            .exchange()
+            .expectStatus().isForbidden()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        403, null,
+                        "エンドポイントへのアクセス権がない",
+                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "この操作は許可されていません。")
+            );
+      }
     }
   }
 
@@ -253,12 +368,11 @@ public class UserGroupAPITest {
       void insertUserGroup() {
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/user-groups")
+            .uri("/rbac-service/v1/1/user-groups")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "namespaceId": 1,
                   "name": "group4"
                 }
                 """)
@@ -272,7 +386,7 @@ public class UserGroupAPITest {
                   .containsExactly(4L, 1L, "group4", 2L);
             });
         webTestClient.get()
-            .uri("/rbac-service/v1/user-groups/4")
+            .uri("/rbac-service/v1/1/user-groups/4")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
@@ -295,12 +409,11 @@ public class UserGroupAPITest {
       void cannotCreateDuplicate() {
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/user-groups")
+            .uri("/rbac-service/v1/1/user-groups")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "namespaceId": 1,
                   "name": "group1"
                 }
                 """)
@@ -317,6 +430,35 @@ public class UserGroupAPITest {
                         "Unique制約に違反している",
                         "org.example.error.exception.RedundantException: UserGroup already exists",
                         "作成済みのリソースと重複しています。")
+            );
+      }
+
+      @Test
+      @DisplayName("権限がない場合はエラーになる")
+      void notAuthorizedCauseException() {
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/1/user-groups")
+            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "name": "group4"
+                }
+                """)
+            .exchange()
+            .expectStatus().isForbidden()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        403, null,
+                        "エンドポイントへのアクセス権がない",
+                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "この操作は許可されていません。")
             );
       }
     }
@@ -337,17 +479,45 @@ public class UserGroupAPITest {
       void deleteUserGroupById() {
         // when, then
         webTestClient.delete()
-            .uri("/rbac-service/v1/user-groups/3")
+            .uri("/rbac-service/v1/2/user-groups/3")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isNoContent()
             .expectBody(Void.class);
         webTestClient.get()
-            .uri("/rbac-service/v1/user-groups/3")
+            .uri("/rbac-service/v1/2/user-groups/3")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
             .expectBody(Void.class);
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @Test
+      @DisplayName("権限がない場合はエラーになる")
+      void notAuthorizedCauseException() {
+        // when, then
+        webTestClient.delete()
+            .uri("/rbac-service/v1/2/user-groups/3")
+            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .exchange()
+            .expectStatus().isForbidden()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        403, null,
+                        "エンドポイントへのアクセス権がない",
+                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "この操作は許可されていません。")
+            );
       }
     }
   }

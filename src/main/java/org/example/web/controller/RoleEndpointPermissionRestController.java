@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.example.persistence.entity.RoleEndpointPermission;
 import org.example.service.ReactiveContextService;
 import org.example.service.RoleEndpointPermissionService;
+import org.example.util.constant.AccessPath;
 import org.example.web.request.RoleEndpointPermissionInsertRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,11 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/rbac-service/v1/role-endpoint-permissions")
+@RequestMapping(AccessPath.ROLE_ENDPOINT_PERMISSIONS)
 public class RoleEndpointPermissionRestController {
 
   private final RoleEndpointPermissionService roleEndpointPermissionService;
@@ -32,7 +34,7 @@ public class RoleEndpointPermissionRestController {
   }
 
   @GetMapping
-  public Flux<RoleEndpointPermission> index(@RequestParam("namespace-id") Long namespaceId) {
+  public Flux<RoleEndpointPermission> index(@PathVariable("namespace-id") Long namespaceId) {
     return roleEndpointPermissionService.findByNamespaceId(namespaceId);
   }
 
@@ -47,14 +49,14 @@ public class RoleEndpointPermissionRestController {
   }
 
   @PostMapping
-  public Mono<RoleEndpointPermission> save(@Valid @RequestBody RoleEndpointPermissionInsertRequest request) {
-    return reactiveContextService.getCurrentUser()
-        .flatMap(u -> {
-          RoleEndpointPermission roleEndpointPermission = request.exportEntity();
-          roleEndpointPermission.setCreatedBy(u.getId());
-          return Mono.just(roleEndpointPermission);
-        })
-        .flatMap(roleEndpointPermissionService::insert);
+  public Mono<RoleEndpointPermission> save(
+      ServerWebExchange exchange,
+      @PathVariable("namespace-id") Long namespaceId,
+      @Valid @RequestBody RoleEndpointPermissionInsertRequest request) {
+    RoleEndpointPermission roleEndpointPermission = request.exportEntity();
+    roleEndpointPermission.setNamespaceId(namespaceId);
+    roleEndpointPermission.setCreatedBy(reactiveContextService.extractCurrentUser(exchange).getId());
+    return roleEndpointPermissionService.insert(roleEndpointPermission);
   }
 
   @DeleteMapping("/{id}")
@@ -65,7 +67,7 @@ public class RoleEndpointPermissionRestController {
 
   @DeleteMapping
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public Mono<Void> deleteByUniqueKeys(@RequestParam("namespace-id") Long namespaceId,
+  public Mono<Void> deleteByUniqueKeys(@PathVariable("namespace-id") Long namespaceId,
       @RequestParam("role-id") Long roleId,
       @RequestParam("endpoint-id") Long endpointId) {
     return roleEndpointPermissionService.deleteByUniqueKeys(namespaceId, roleId, endpointId);

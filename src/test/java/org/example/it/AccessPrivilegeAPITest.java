@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
 import org.example.Application;
+import org.example.error.response.ErrorResponse;
 import org.example.persistence.dto.AccessPrivilege;
 import org.example.persistence.entity.User;
 import org.example.service.Base64Service;
@@ -39,10 +40,12 @@ public class AccessPrivilegeAPITest {
   private Base64Service base64Service;
 
   private String jwt;
+  private String unAuthorizedJwt;
 
   @BeforeAll
   void beforeAll() {
     jwt = base64Service.encode(jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build()));
+    unAuthorizedJwt = base64Service.encode(jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
   }
 
   @Nested
@@ -58,7 +61,7 @@ public class AccessPrivilegeAPITest {
       void findByNamespace() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/access-privileges?namespace-id=1")
+            .uri("/rbac-service/v1/1/access-privileges")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
@@ -89,6 +92,34 @@ public class AccessPrivilegeAPITest {
             );
       }
     }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @Test
+      @DisplayName("権限がない場合はエラーになる")
+      void notAuthorizedCauseException() {
+        // when, then
+        webTestClient.get()
+            .uri("/rbac-service/v1/1/access-privileges")
+            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .exchange()
+            .expectStatus().isForbidden()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        403, null,
+                        "エンドポイントへのアクセス権がない",
+                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "この操作は許可されていません。")
+            );
+      }
+    }
   }
 
   @Nested
@@ -104,13 +135,11 @@ public class AccessPrivilegeAPITest {
       void canAccess() {
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/access-privileges/can-i")
+            .uri("/rbac-service/v1/1/access-privileges/can-i")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "userId": 2,
-                  "namespaceId": 1,
                   "path": "/user-service/v1/",
                   "method": "GET",
                   "objectId": "object-id-1"
@@ -124,31 +153,65 @@ public class AccessPrivilegeAPITest {
 
       @ParameterizedTest
       @CsvSource({
-          "2, 1, /user-service/v1/, GET, object-id-2",
-          "2, 1, /user-service/v1/, POST, object-id-1",
-          "2, 1, /user-service/v2/, GET, object-id-1",
-          "2, 2, /user-service/v1/, GET, object-id-1",
+          "/user-service/v1/, GET, object-id-2",
+          "/user-service/v1/, POST, object-id-1",
+          "/user-service/v2/, GET, object-id-1",
       })
       @DisplayName("アクセス権限を持っていないときfalseを返す")
-      void canNotAccess(Long userId, Long namespaceId, String path, String method,
-          String objectId) {
+      void canNotAccess(String path, String method, String objectId) {
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/access-privileges/can-i")
+            .uri("/rbac-service/v1/1/access-privileges/can-i")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "namespaceId": %d,
                   "path": "%s",
                   "method": "%s",
                   "objectId": "%s"
                 }
-                """.formatted(namespaceId, path, method, objectId)
+                """.formatted(path, method, objectId)
             )
             .exchange()
             .expectStatus().isOk()
             .expectBody(Boolean.class).isEqualTo(false);
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @Test
+      @DisplayName("権限がない場合はエラーになる")
+      void notAuthorizedCauseException() {
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/1/access-privileges/can-i")
+            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "path": "/user-service/v1/",
+                  "method": "GET",
+                  "objectId": "object-id-1"
+                }
+                """
+            )
+            .exchange()
+            .expectStatus().isForbidden()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        403, null,
+                        "エンドポイントへのアクセス権がない",
+                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "この操作は許可されていません。")
+            );
       }
     }
   }

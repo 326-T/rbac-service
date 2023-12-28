@@ -12,6 +12,7 @@ import org.example.service.EndpointDetailService;
 import org.example.service.EndpointService;
 import org.example.service.ReactiveContextService;
 import org.example.web.filter.AuthenticationWebFilter;
+import org.example.web.filter.AuthorizationWebFilter;
 import org.example.web.request.EndpointInsertRequest;
 import org.example.web.request.EndpointUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -27,12 +28,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @WebFluxTest(
     controllers = EndpointRestController.class,
-    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AuthenticationWebFilter.class)})
+    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+        classes = {AuthenticationWebFilter.class, AuthorizationWebFilter.class})})
 @AutoConfigureWebTestClient
 class EndpointRestControllerTest {
 
@@ -59,7 +62,7 @@ class EndpointRestControllerTest {
         when(endpointService.count()).thenReturn(Mono.just(3L));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/endpoints/count")
+            .uri("/rbac-service/v1/1/endpoints/count")
             .exchange()
             .expectStatus().isOk()
             .expectBody(Long.class).isEqualTo(3L);
@@ -90,7 +93,7 @@ class EndpointRestControllerTest {
             .thenReturn(Flux.just(endpointDetail1, endpointDetail2));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/endpoints?namespace-id=2")
+            .uri("/rbac-service/v1/2/endpoints")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(EndpointDetail.class)
@@ -127,7 +130,7 @@ class EndpointRestControllerTest {
             .thenReturn(Flux.just(endpointDetail1, endpointDetail2));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/endpoints?namespace-id=2&role-id=2")
+            .uri("/rbac-service/v1/2/endpoints?role-id=2")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(EndpointDetail.class)
@@ -167,7 +170,7 @@ class EndpointRestControllerTest {
         when(endpointService.findById(1L)).thenReturn(Mono.just(endpoint));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/endpoints/1")
+            .uri("/rbac-service/v1/1/endpoints/1")
             .exchange()
             .expectStatus().isOk()
             .expectBody(Endpoint.class)
@@ -199,7 +202,7 @@ class EndpointRestControllerTest {
         when(endpointService.update(any(Endpoint.class))).thenReturn(Mono.just(endpoint));
         // when, then
         webTestClient.put()
-            .uri("/rbac-service/v1/endpoints/2")
+            .uri("/rbac-service/v1/2/endpoints/2")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
@@ -245,7 +248,7 @@ class EndpointRestControllerTest {
         endpointUpdateRequest.setMethod(method);
         // when, then
         webTestClient.put()
-            .uri("/rbac-service/v1/endpoints/2")
+            .uri("/rbac-service/v1/2/endpoints/2")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(endpointUpdateRequest)
             .exchange()
@@ -269,14 +272,13 @@ class EndpointRestControllerTest {
             .id(4L).namespaceId(2L).pathId(3L).method("GET").targetGroupId(2L).createdBy(1L)
             .build();
         when(endpointService.insert(any(Endpoint.class))).thenReturn(Mono.just(endpoint));
-        when(reactiveContextService.getCurrentUser()).thenReturn(Mono.just(User.builder().id(1L).build()));
+        when(reactiveContextService.extractCurrentUser(any(ServerWebExchange.class))).thenReturn(User.builder().id(1L).build());
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/endpoints")
+            .uri("/rbac-service/v1/2/endpoints")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "namespaceId": 2,
                   "pathId": 3,
                   "method": "GET",
                   "targetGroupId": 2
@@ -303,17 +305,15 @@ class EndpointRestControllerTest {
       @DisplayName("バリデーションエラーが発生する")
       @ParameterizedTest
       @CsvSource({
-          ", 1, 1, GET",
-          "0, 1, 1, GET",
-          "1, , 1, GET",
-          "1, 0, 1, GET",
-          "1, 1, , GET",
-          "1, 1, 0, GET",
-          "1, 1, 1, ",
-          "1, 1, 1, ''",
-          "1, 1, 1, ' '",
+          ", 1, GET",
+          "0, 1, GET",
+          "1, , GET",
+          "1, 0, GET",
+          "1, 1, ",
+          "1, 1, ''",
+          "1, 1, ' '",
       })
-      void validationErrorOccurs(Long namespaceId, Long pathId, Long targetGroupId, String method) {
+      void validationErrorOccurs(Long pathId, Long targetGroupId, String method) {
         // given
         EndpointInsertRequest endpointInsertRequest = new EndpointInsertRequest();
         endpointInsertRequest.setPathId(pathId);
@@ -321,7 +321,7 @@ class EndpointRestControllerTest {
         endpointInsertRequest.setMethod(method);
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/endpoints")
+            .uri("/rbac-service/v1/1/endpoints")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(endpointInsertRequest)
             .exchange()
@@ -344,7 +344,7 @@ class EndpointRestControllerTest {
         when(endpointService.deleteById(1L)).thenReturn(Mono.empty());
         // when, then
         webTestClient.delete()
-            .uri("/rbac-service/v1/endpoints/3")
+            .uri("/rbac-service/v1/1/endpoints/3")
             .exchange()
             .expectStatus().isNoContent()
             .expectBody().isEmpty();

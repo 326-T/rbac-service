@@ -107,13 +107,12 @@ class AccessPrivilegeServiceTest {
             .method("(GET|POST)")
             .build();
         AccessPrivilegeRequest ask = new AccessPrivilegeRequest();
-        ask.setNamespaceId(1L);
         ask.setMethod(method);
         ask.setPath(path);
         ask.setObjectId(objectId);
         when(accessPrivilegeRepository.findByUserAndNamespace(1L, 1L)).thenReturn(Flux.just(accessPrivilege));
         // when
-        Mono<Boolean> canAccess = accessPrivilegeService.canAccess(1L, ask);
+        Mono<Boolean> canAccess = accessPrivilegeService.canAccess(1L, 1L, ask);
         // then
         StepVerifier.create(canAccess)
             .expectNext(true)
@@ -140,13 +139,12 @@ class AccessPrivilegeServiceTest {
             .method("(GET|POST)")
             .build();
         AccessPrivilegeRequest ask = new AccessPrivilegeRequest();
-        ask.setNamespaceId(1L);
         ask.setMethod(method);
         ask.setPath(path);
         ask.setObjectId(objectId);
         when(accessPrivilegeRepository.findByUserAndNamespace(1L, 1L)).thenReturn(Flux.just(accessPrivilege));
         // when
-        Mono<Boolean> canAccess = accessPrivilegeService.canAccess(1L, ask);
+        Mono<Boolean> canAccess = accessPrivilegeService.canAccess(1L, 1L, ask);
         // then
         StepVerifier.create(canAccess)
             .expectNext(false)

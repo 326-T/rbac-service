@@ -11,6 +11,7 @@ import org.example.persistence.entity.User;
 import org.example.service.AccessPrivilegeService;
 import org.example.service.ReactiveContextService;
 import org.example.web.filter.AuthenticationWebFilter;
+import org.example.web.filter.AuthorizationWebFilter;
 import org.example.web.request.AccessPrivilegeRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -25,12 +26,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @WebFluxTest(
     controllers = AccessPrivilegeRestController.class,
-    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AuthenticationWebFilter.class)})
+    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+        classes = {AuthenticationWebFilter.class, AuthorizationWebFilter.class})})
 @AutoConfigureWebTestClient
 class AccessPrivilegeRestControllerTest {
 
@@ -65,7 +68,7 @@ class AccessPrivilegeRestControllerTest {
         when(accessPrivilegeService.findByNamespace(1L)).thenReturn(Flux.just(accessPrivilege));
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/access-privileges?namespace-id=1")
+            .uri("/rbac-service/v1/1/access-privileges")
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(AccessPrivilege.class)
@@ -109,16 +112,15 @@ class AccessPrivilegeRestControllerTest {
       void canAccessThePath() {
         // given
         AccessPrivilegeRequest accessPrivilegeRequest = new AccessPrivilegeRequest();
-        accessPrivilegeRequest.setNamespaceId(1L);
         accessPrivilegeRequest.setPath("/user-service/v1/");
         accessPrivilegeRequest.setMethod("GET");
         accessPrivilegeRequest.setObjectId("object-id-1");
-        when(accessPrivilegeService.canAccess(eq(1L), any(AccessPrivilegeRequest.class)))
+        when(accessPrivilegeService.canAccess(eq(1L), eq(1L), any(AccessPrivilegeRequest.class)))
             .thenReturn(Mono.just(true));
-        when(reactiveContextService.getCurrentUser()).thenReturn(Mono.just(User.builder().id(1L).build()));
+        when(reactiveContextService.extractCurrentUser(any(ServerWebExchange.class))).thenReturn(User.builder().id(1L).build());
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/access-privileges/can-i")
+            .uri("/rbac-service/v1/1/access-privileges/can-i")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(accessPrivilegeRequest)
             .exchange()
@@ -135,28 +137,25 @@ class AccessPrivilegeRestControllerTest {
       @DisplayName("バリデーションエラーが発生する")
       @ParameterizedTest
       @CsvSource({
-          ", /user-service/v1/, GET, object-id-1",
-          "0, /user-service/v1/, GET, object-id-1",
-          "1, , GET, object-id-1",
-          "1, '', GET, object-id-1",
-          "1, ' ', GET, object-id-1",
-          "1, /user-service/v1/, , object-id-1",
-          "1, /user-service/v1/, '', object-id-1",
-          "1, /user-service/v1/, ' ', object-id-1",
-          "1, /user-service/v1/, GET, ",
-          "1, /user-service/v1/, GET, ''",
-          "1, /user-service/v1/, GET, ' '",
+          ", GET, object-id-1",
+          "'', GET, object-id-1",
+          "' ', GET, object-id-1",
+          "/user-service/v1/, , object-id-1",
+          "/user-service/v1/, '', object-id-1",
+          "/user-service/v1/, ' ', object-id-1",
+          "/user-service/v1/, GET, ",
+          "/user-service/v1/, GET, ''",
+          "/user-service/v1/, GET, ' '",
       })
-      void validationErrorOccurs(Long namespaceId, String path, String method, String objectId) {
+      void validationErrorOccurs(String path, String method, String objectId) {
         // given
         AccessPrivilegeRequest accessPrivilegeRequest = new AccessPrivilegeRequest();
-        accessPrivilegeRequest.setNamespaceId(namespaceId);
         accessPrivilegeRequest.setPath(path);
         accessPrivilegeRequest.setMethod(method);
         accessPrivilegeRequest.setObjectId(objectId);
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/access-privileges/can-i")
+            .uri("/rbac-service/v1/1/access-privileges/can-i")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(accessPrivilegeRequest)
             .exchange()

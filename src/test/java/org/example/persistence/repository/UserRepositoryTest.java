@@ -156,6 +156,36 @@ public class UserRepositoryTest {
     }
   }
 
+  @Order(1)
+  @Nested
+  class FindBySystemRoleId {
+
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+
+      @Test
+      @DisplayName("ユーザーをシステムロールIDで取得できる")
+      void canFindBySystemRoleId() {
+        // when
+        Flux<User> userFlux = userRepository.findBySystemRoleId(2L);
+        // then
+        StepVerifier.create(userFlux)
+            .assertNext(
+                user -> assertThat(user)
+                    .extracting(
+                        User::getId, User::getName, User::getEmail, User::getPasswordDigest)
+                    .containsExactly(1L, "privilege", "privilege@example.org", "$2a$10$Weqah6oP9KO2AiOFuRir4.2sQslZM.99vTjgaopnUKOhyzK2zCr22"))
+            .assertNext(
+                user -> assertThat(user)
+                    .extracting(
+                        User::getId, User::getName, User::getEmail, User::getPasswordDigest)
+                    .containsExactly(2L, "user1", "xxx@example.org", "$2a$10$/MmW9CyDFA41U2nyaU7Wq.lRUjSrs0fuwP3B49WOAT2LOWQ1Tzhjq"))
+            .verifyComplete();
+      }
+    }
+  }
+
   @Order(2)
   @Nested
   @TestExecutionListeners(listeners = {

@@ -3,6 +3,7 @@ package org.example.web.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.example.web.filter.AuthenticationWebFilter;
+import org.example.web.filter.AuthorizationWebFilter;
 import org.example.web.response.MethodResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,7 +17,8 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 @WebFluxTest(
     controllers = MethodController.class,
-    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AuthenticationWebFilter.class)})
+    excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+        classes = {AuthenticationWebFilter.class, AuthorizationWebFilter.class})})
 @AutoConfigureWebTestClient
 class MethodControllerTest {
 

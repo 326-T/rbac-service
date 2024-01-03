@@ -45,28 +45,6 @@ class PathRestControllerTest {
   private WebTestClient webTestClient;
 
   @Nested
-  class Count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("パスの件数を取得できる")
-      void countTheIndexes() {
-        // given
-        when(pathService.count()).thenReturn(Mono.just(3L));
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/paths/count")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Long.class).isEqualTo(3L);
-      }
-    }
-  }
-
-  @Nested
   class Index {
 
     @Nested
@@ -101,35 +79,6 @@ class PathRestControllerTest {
                         tuple(3L, 1L, "/movie-service/v1", 3L)
                     )
             );
-      }
-    }
-  }
-
-  @Nested
-  class FindById {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("パスをIDで取得できる")
-      void canGetThePathById() {
-        // given
-        Path path = Path.builder()
-            .id(1L).namespaceId(1L).regex("/user-service/v1").createdBy(1L).build();
-        when(pathService.findById(1L)).thenReturn(Mono.just(path));
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/paths/1")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Path.class)
-            .consumeWith(result ->
-                assertThat(result.getResponseBody())
-                    .extracting(Path::getId, Path::getNamespaceId,
-                        Path::getRegex, Path::getCreatedBy)
-                    .containsExactly(1L, 1L, "/user-service/v1", 1L));
       }
     }
   }

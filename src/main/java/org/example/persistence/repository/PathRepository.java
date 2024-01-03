@@ -10,12 +10,6 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface PathRepository extends ReactiveCrudRepository<Path, Long> {
 
-  Mono<Long> count();
-
-  Flux<Path> findAll();
-
-  Mono<Path> findById(Long id);
-
   @Query("""
       SELECT * FROM rbac_paths
       WHERE namespace_id = :namespaceId;

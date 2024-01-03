@@ -10,12 +10,6 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface RoleRepository extends ReactiveCrudRepository<Role, Long> {
 
-  Mono<Long> count();
-
-  Flux<Role> findAll();
-
-  Mono<Role> findById(Long id);
-
   @Query("""
       SELECT * FROM rbac_roles
       WHERE namespace_id = :namespaceId;

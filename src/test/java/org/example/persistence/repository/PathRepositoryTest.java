@@ -27,57 +27,6 @@ class PathRepositoryTest {
 
   @Order(1)
   @Nested
-  class Count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("パスの件数を取得できる")
-      void countTheIndexes() {
-        // when
-        Mono<Long> count = pathRepository.count();
-        // then
-        StepVerifier.create(count).expectNext(3L).verifyComplete();
-      }
-    }
-  }
-
-  @Order(1)
-  @Nested
-  class FindAll {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("パスを全件取得できる")
-      void findAllTheIndexes() {
-        // when
-        Flux<Path> pathFlux = pathRepository.findAll();
-        // then
-        StepVerifier.create(pathFlux)
-            .assertNext(path ->
-                assertThat(path)
-                    .extracting(Path::getId, Path::getNamespaceId, Path::getRegex, Path::getCreatedBy)
-                    .containsExactly(1L, 1L, "/user-service/v1/", 1L))
-            .assertNext(path ->
-                assertThat(path)
-                    .extracting(Path::getId, Path::getNamespaceId, Path::getRegex, Path::getCreatedBy)
-                    .containsExactly(2L, 2L, "/billing-service/v1/", 2L))
-            .assertNext(path ->
-                assertThat(path)
-                    .extracting(Path::getId, Path::getNamespaceId, Path::getRegex, Path::getCreatedBy)
-                    .containsExactly(3L, 2L, "/inventory-service/v2/", 3L))
-            .verifyComplete();
-      }
-    }
-  }
-
-  @Order(1)
-  @Nested
   class FindById {
 
     @Nested

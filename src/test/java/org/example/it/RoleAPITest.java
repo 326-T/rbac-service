@@ -8,6 +8,7 @@ import org.example.error.response.ErrorResponse;
 import org.example.listener.FlywayTestExecutionListener;
 import org.example.persistence.entity.Role;
 import org.example.persistence.entity.User;
+import org.example.persistence.repository.RoleRepository;
 import org.example.service.Base64Service;
 import org.example.service.JwtService;
 import org.junit.jupiter.api.BeforeAll;
@@ -25,6 +26,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.test.StepVerifier;
 
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
@@ -38,6 +40,8 @@ public class RoleAPITest {
   private JwtService jwtService;
   @Autowired
   private Base64Service base64Service;
+  @Autowired
+  private RoleRepository roleRepository;
 
   private String jwt;
   private String unAuthorizedJwt;
@@ -46,56 +50,6 @@ public class RoleAPITest {
   void beforeAll() {
     jwt = base64Service.encode(jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build()));
     unAuthorizedJwt = base64Service.encode(jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
-  }
-
-  @Nested
-  @Order(1)
-  class Count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ロールの件数を取得できる")
-      void countTheIndexes() {
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/2/roles/count")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Long.class).isEqualTo(3L);
-      }
-    }
-
-    @Nested
-    @DisplayName("異常系")
-    class Error {
-
-      @Test
-      @DisplayName("権限がない場合はエラーになる")
-      void notAuthorizedCauseException() {
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/2/roles/count")
-            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
-            .exchange()
-            .expectStatus().isForbidden()
-            .expectBody(ErrorResponse.class)
-            .consumeWith(response ->
-                assertThat(response.getResponseBody())
-                    .extracting(
-                        ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
-                    .containsExactly(
-                        403, null,
-                        "エンドポイントへのアクセス権がない",
-                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
-                        "この操作は許可されていません。")
-            );
-      }
-    }
   }
 
   @Order(1)
@@ -177,62 +131,6 @@ public class RoleAPITest {
     }
   }
 
-  @Order(1)
-  @Nested
-  class FindById {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ロールをIDで取得できる")
-      void findUserById() {
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/roles/1")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Role.class)
-            .consumeWith(response ->
-                assertThat(response.getResponseBody())
-                    .extracting(Role::getId, Role::getNamespaceId, Role::getName,
-                        Role::getCreatedBy)
-                    .containsExactly(1L, 1L, "developers", 1L)
-            );
-      }
-    }
-
-    @Nested
-    @DisplayName("異常系")
-    class Error {
-
-      @Test
-      @DisplayName("権限がない場合はエラーになる")
-      void notAuthorizedCauseException() {
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/roles/1")
-            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
-            .exchange()
-            .expectStatus().isForbidden()
-            .expectBody(ErrorResponse.class)
-            .consumeWith(response ->
-                assertThat(response.getResponseBody())
-                    .extracting(
-                        ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
-                    .containsExactly(
-                        403, null,
-                        "エンドポイントへのアクセス権がない",
-                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
-                        "この操作は許可されていません。")
-            );
-      }
-    }
-  }
-
   @Order(2)
   @Nested
   @TestExecutionListeners(listeners = {
@@ -264,17 +162,12 @@ public class RoleAPITest {
                   .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
                   .containsExactly(2L, 2L, "OPERATIONS", 2L);
             });
-        webTestClient.get()
-            .uri("/rbac-service/v1/2/roles/2")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Role.class)
-            .consumeWith(response -> {
-              assertThat(response.getResponseBody())
-                  .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
-                  .containsExactly(2L, 2L, "OPERATIONS", 2L);
-            });
+        roleRepository.findById(2L)
+            .as(StepVerifier::create)
+            .assertNext(role -> assertThat(role)
+                .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
+                .containsExactly(2L, 2L, "OPERATIONS", 2L))
+            .verifyComplete();
       }
     }
 
@@ -405,17 +298,12 @@ public class RoleAPITest {
                   .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
                   .containsExactly(4L, 1L, "guest", 2L);
             });
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/roles/4")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Role.class)
-            .consumeWith(response -> {
-              assertThat(response.getResponseBody())
-                  .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
-                  .containsExactly(4L, 1L, "guest", 2L);
-            });
+        roleRepository.findById(4L)
+            .as(StepVerifier::create)
+            .assertNext(role -> assertThat(role)
+                .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
+                .containsExactly(4L, 1L, "guest", 2L))
+            .verifyComplete();
       }
     }
 
@@ -503,12 +391,9 @@ public class RoleAPITest {
             .exchange()
             .expectStatus().isNoContent()
             .expectBody(Void.class);
-        webTestClient.get()
-            .uri("/rbac-service/v1/2/roles/3")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Void.class);
+        roleRepository.findById(3L)
+            .as(StepVerifier::create)
+            .verifyComplete();
       }
     }
 

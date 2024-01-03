@@ -27,26 +27,6 @@ class NamespaceServiceTest {
   private NamespaceRepository namespaceRepository;
 
   @Nested
-  class Count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ネームスペースの件数を取得できる")
-      void countTheIndexes() {
-        // given
-        when(namespaceRepository.count()).thenReturn(Mono.just(3L));
-        // when
-        Mono<Long> count = namespaceService.count();
-        // then
-        StepVerifier.create(count).expectNext(3L).verifyComplete();
-      }
-    }
-  }
-
-  @Nested
   class FindAll {
 
     @Nested
@@ -77,32 +57,6 @@ class NamespaceServiceTest {
             .assertNext(namespace -> assertThat(namespace)
                 .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
                 .containsExactly(3L, "namespace3", 3L))
-            .verifyComplete();
-      }
-    }
-  }
-
-  @Nested
-  class FindById {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ネームスペースをIDで取得できる")
-      void findByIdTheIndex() {
-        // given
-        Namespace namespace1 = Namespace.builder()
-            .id(1L).name("namespace1").createdBy(1L).build();
-        when(namespaceRepository.findById(1L)).thenReturn(Mono.just(namespace1));
-        // when
-        Mono<Namespace> namespaceMono = namespaceService.findById(1L);
-        // then
-        StepVerifier.create(namespaceMono)
-            .assertNext(namespace -> assertThat(namespace)
-                .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                .containsExactly(1L, "namespace1", 1L))
             .verifyComplete();
       }
     }

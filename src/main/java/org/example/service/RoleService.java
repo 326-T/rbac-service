@@ -18,18 +18,6 @@ public class RoleService {
     this.roleRepository = roleRepository;
   }
 
-  public Mono<Long> count() {
-    return roleRepository.count();
-  }
-
-  public Flux<Role> findAll() {
-    return roleRepository.findAll();
-  }
-
-  public Mono<Role> findById(Long id) {
-    return roleRepository.findById(id);
-  }
-
   public Flux<Role> findByNamespaceId(Long namespaceId) {
     return roleRepository.findByNamespaceId(namespaceId);
   }

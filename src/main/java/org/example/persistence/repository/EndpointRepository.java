@@ -11,12 +11,6 @@ import reactor.core.publisher.Mono;
 public interface EndpointRepository extends
     ReactiveCrudRepository<Endpoint, Long> {
 
-  Mono<Long> count();
-
-  Flux<Endpoint> findAll();
-
-  Mono<Endpoint> findById(Long id);
-
   @Query("""
       SELECT * FROM rbac_endpoints
       WHERE namespace_id = :namespaceId;

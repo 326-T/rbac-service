@@ -48,28 +48,6 @@ class NamespaceRestControllerTest {
   private WebTestClient webTestClient;
 
   @Nested
-  class Count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ネームスペースの件数を取得できる")
-      void countTheIndexes() {
-        // given
-        when(namespaceService.count()).thenReturn(Mono.just(3L));
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/namespaces/count")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Long.class).isEqualTo(3L);
-      }
-    }
-  }
-
-  @Nested
   class Index {
 
     @Nested
@@ -103,34 +81,6 @@ class NamespaceRestControllerTest {
                         tuple(3L, "database", 3L)
                     )
             );
-      }
-    }
-  }
-
-  @Nested
-  class findById {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ネームスペースをIDで取得できる")
-      void canGetTheNamespaceById() {
-        // given
-        Namespace namespace = Namespace.builder()
-            .id(1L).name("front").createdBy(1L).build();
-        when(namespaceService.findById(1L)).thenReturn(Mono.just(namespace));
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/namespaces/1")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Namespace.class)
-            .consumeWith(result ->
-                assertThat(result.getResponseBody())
-                    .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                    .containsExactly(1L, "front", 1L));
       }
     }
   }

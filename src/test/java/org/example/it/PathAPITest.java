@@ -8,6 +8,7 @@ import org.example.error.response.ErrorResponse;
 import org.example.listener.FlywayTestExecutionListener;
 import org.example.persistence.entity.Path;
 import org.example.persistence.entity.User;
+import org.example.persistence.repository.PathRepository;
 import org.example.service.Base64Service;
 import org.example.service.JwtService;
 import org.junit.jupiter.api.BeforeAll;
@@ -25,6 +26,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.test.StepVerifier;
 
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
@@ -38,6 +40,8 @@ public class PathAPITest {
   private JwtService jwtService;
   @Autowired
   private Base64Service base64Service;
+  @Autowired
+  private PathRepository pathRepository;
 
   private String jwt;
   private String unAuthorizedJwt;
@@ -46,56 +50,6 @@ public class PathAPITest {
   void beforeAll() {
     jwt = base64Service.encode(jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build()));
     unAuthorizedJwt = base64Service.encode(jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
-  }
-
-  @Nested
-  @Order(1)
-  class Count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("パスの件数を取得できる")
-      void countTheIndexes() {
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/paths/count")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Long.class).isEqualTo(3L);
-      }
-    }
-
-    @Nested
-    @DisplayName("異常系")
-    class Error {
-
-      @Test
-      @DisplayName("権限がない場合はエラーになる")
-      void notAuthorizedCauseException() {
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/paths/count")
-            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
-            .exchange()
-            .expectStatus().isForbidden()
-            .expectBody(ErrorResponse.class)
-            .consumeWith(response ->
-                assertThat(response.getResponseBody())
-                    .extracting(
-                        ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
-                    .containsExactly(
-                        403, null,
-                        "エンドポイントへのアクセス権がない",
-                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
-                        "この操作は許可されていません。")
-            );
-      }
-    }
   }
 
   @Order(1)
@@ -111,7 +65,10 @@ public class PathAPITest {
       void findAllTheIndexes() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/2/paths")
+            .uri(uriBuilder -> uriBuilder
+                .path("/rbac-service/v1/2/paths")
+                .queryParam("namespace-id", 2)
+                .build())
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isOk()
@@ -136,62 +93,10 @@ public class PathAPITest {
       void notAuthorizedCauseException() {
         // when, then
         webTestClient.get()
-            .uri("/rbac-service/v1/2/paths")
-            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
-            .exchange()
-            .expectStatus().isForbidden()
-            .expectBody(ErrorResponse.class)
-            .consumeWith(response ->
-                assertThat(response.getResponseBody())
-                    .extracting(
-                        ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
-                    .containsExactly(
-                        403, null,
-                        "エンドポイントへのアクセス権がない",
-                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
-                        "この操作は許可されていません。")
-            );
-      }
-    }
-  }
-
-  @Order(1)
-  @Nested
-  class FindById {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("パスをIDで取得できる")
-      void findUserById() {
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/paths/1")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Path.class)
-            .consumeWith(response -> {
-              assertThat(response.getResponseBody())
-                  .extracting(Path::getId, Path::getNamespaceId, Path::getRegex, Path::getCreatedBy)
-                  .containsExactly(1L, 1L, "/user-service/v1/", 1L);
-            });
-      }
-    }
-
-    @Nested
-    @DisplayName("異常系")
-    class Error {
-
-      @Test
-      @DisplayName("権限がない場合はエラーになる")
-      void notAuthorizedCauseException() {
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/paths/1")
+            .uri(uriBuilder -> uriBuilder
+                .path("/rbac-service/v1/2/paths")
+                .queryParam("namespace-id", 2)
+                .build())
             .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
             .exchange()
             .expectStatus().isForbidden()
@@ -244,18 +149,14 @@ public class PathAPITest {
                         Path::getCreatedBy)
                     .containsExactly(2L, 2L, "/replace-service/v1/", 2L)
             );
-        webTestClient.get()
-            .uri("/rbac-service/v1/2/paths/2")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Path.class)
-            .consumeWith(response ->
-                assertThat(response.getResponseBody())
+        pathRepository.findById(2L)
+            .as(StepVerifier::create)
+            .assertNext(path ->
+                assertThat(path)
                     .extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
                         Path::getCreatedBy)
-                    .containsExactly(2L, 2L, "/replace-service/v1/", 2L)
-            );
+                    .containsExactly(2L, 2L, "/replace-service/v1/", 2L))
+            .verifyComplete();
       }
     }
 
@@ -388,18 +289,14 @@ public class PathAPITest {
                         Path::getCreatedBy)
                     .containsExactly(4L, 1L, "/next-service/v1/", 2L)
             );
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/paths/4")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Path.class)
-            .consumeWith(response ->
-                assertThat(response.getResponseBody())
+        pathRepository.findById(4L)
+            .as(StepVerifier::create)
+            .assertNext(path ->
+                assertThat(path)
                     .extracting(Path::getId, Path::getNamespaceId, Path::getRegex,
                         Path::getCreatedBy)
-                    .containsExactly(4L, 1L, "/next-service/v1/", 2L)
-            );
+                    .containsExactly(4L, 1L, "/next-service/v1/", 2L))
+            .verifyComplete();
       }
     }
 
@@ -489,12 +386,9 @@ public class PathAPITest {
             .exchange()
             .expectStatus().isNoContent()
             .expectBody(Void.class);
-        webTestClient.get()
-            .uri("/rbac-service/v1/2/paths/3")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Void.class);
+        pathRepository.findById(3L)
+            .as(StepVerifier::create)
+            .verifyComplete();
       }
     }
 

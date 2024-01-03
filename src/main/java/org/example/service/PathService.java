@@ -18,18 +18,6 @@ public class PathService {
     this.pathRepository = pathRepository;
   }
 
-  public Mono<Long> count() {
-    return pathRepository.count();
-  }
-
-  public Flux<Path> findAll() {
-    return pathRepository.findAll();
-  }
-
-  public Mono<Path> findById(Long id) {
-    return pathRepository.findById(id);
-  }
-
   public Flux<Path> findByNamespaceId(Long namespaceId) {
     return pathRepository.findByNamespaceId(namespaceId);
   }

@@ -3,16 +3,17 @@ package org.example.it;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 
-import org.assertj.core.api.Assertions;
 import org.example.Application;
 import org.example.error.response.ErrorResponse;
 import org.example.listener.FlywayTestExecutionListener;
 import org.example.persistence.entity.Namespace;
 import org.example.persistence.entity.SystemRole;
 import org.example.persistence.entity.User;
+import org.example.persistence.repository.NamespaceRepository;
+import org.example.persistence.repository.SystemRoleRepository;
+import org.example.persistence.repository.UserRepository;
 import org.example.service.Base64Service;
 import org.example.service.JwtService;
-import org.example.web.response.UserResponse;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +29,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.test.StepVerifier;
 
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
@@ -41,34 +43,18 @@ public class NamespaceAPITest {
   private JwtService jwtService;
   @Autowired
   private Base64Service base64Service;
+  @Autowired
+  private NamespaceRepository namespaceRepository;
+  @Autowired
+  private SystemRoleRepository systemRoleRepository;
+  @Autowired
+  private UserRepository userRepository;
 
   private String jwt;
 
   @BeforeAll
   void beforeAll() {
     jwt = base64Service.encode(jwtService.encode(User.builder().id(2L).name("user1").email("xxx@example.org").build()));
-  }
-
-  @Nested
-  @Order(1)
-  class Count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ネームスペースの件数を取得できる")
-      void countTheIndexes() {
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/namespaces/count")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Long.class).isEqualTo(3L);
-      }
-    }
   }
 
   @Order(1)
@@ -97,33 +83,6 @@ public class NamespaceAPITest {
                       tuple(1L, "develop", 1L),
                       tuple(2L, "staging", 2L),
                       tuple(3L, "production", 3L));
-            });
-      }
-    }
-  }
-
-  @Order(1)
-  @Nested
-  class FindById {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ネームスペースをIDで取得できる")
-      void findUserById() {
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/namespaces/1")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Namespace.class)
-            .consumeWith(response -> {
-              assertThat(response.getResponseBody())
-                  .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                  .containsExactly(1L, "develop", 1L);
             });
       }
     }
@@ -161,17 +120,12 @@ public class NamespaceAPITest {
                   .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
                   .containsExactly(2L, "STAGING", 2L);
             });
-        webTestClient.get()
-            .uri("/rbac-service/v1/namespaces/2")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Namespace.class)
-            .consumeWith(response -> {
-              assertThat(response.getResponseBody())
-                  .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                  .containsExactly(2L, "STAGING", 2L);
-            });
+        namespaceRepository.findById(2L)
+            .as(StepVerifier::create)
+            .assertNext(namespace -> assertThat(namespace)
+                .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
+                .containsExactly(2L, "STAGING", 2L))
+            .verifyComplete();
       }
     }
 
@@ -273,59 +227,39 @@ public class NamespaceAPITest {
                     .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
                     .containsExactly(4L, "integration", 2L)
             );
-        webTestClient.get()
-            .uri("/rbac-service/v1/namespaces/4")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Namespace.class)
-            .consumeWith(response ->
-                assertThat(response.getResponseBody())
-                    .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
-                    .containsExactly(4L, "integration", 2L)
-            );
+        namespaceRepository.findById(4L)
+            .as(StepVerifier::create)
+            .assertNext(namespace -> assertThat(namespace)
+                .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
+                .containsExactly(4L, "integration", 2L))
+            .verifyComplete();
         // システムロールが自動作成されている
-        webTestClient.get()
-            .uri("/rbac-service/v1/4/system-roles")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBodyList(SystemRole.class)
-            .hasSize(2)
-            .consumeWith(result ->
-                assertThat(result.getResponseBody())
-                    .extracting(
-                        SystemRole::getId, SystemRole::getName,
-                        SystemRole::getNamespaceId, SystemRole::getPermission)
-                    .containsExactly(
-                        Assertions.tuple(7L, "integration_参照権限", 4L, "READ"),
-                        Assertions.tuple(8L, "integration_編集権限", 4L, "WRITE")
-                    )
-            );
+        systemRoleRepository.findByNamespaceId(4L)
+            .as(StepVerifier::create)
+            .assertNext(systemRole -> assertThat(systemRole)
+                .extracting(
+                    SystemRole::getId, SystemRole::getName,
+                    SystemRole::getNamespaceId, SystemRole::getPermission)
+                .containsExactly(7L, "integration_参照権限", 4L, "READ"))
+            .assertNext(systemRole -> assertThat(systemRole)
+                .extracting(
+                    SystemRole::getId, SystemRole::getName,
+                    SystemRole::getNamespaceId, SystemRole::getPermission)
+                .containsExactly(8L, "integration_編集権限", 4L, "WRITE"))
+            .verifyComplete();
         // システムロールに作成者と特権管理者が紐づいている
-        webTestClient.get()
-            .uri("/rbac-service/v1/users/system?system-role-id=7")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBodyList(UserResponse.class)
-            .consumeWith(response ->
-                assertThat(response.getResponseBody()).isEmpty()
-            );
-        webTestClient.get()
-            .uri("/rbac-service/v1/users/system?system-role-id=8")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBodyList(UserResponse.class)
-            .consumeWith(response -> {
-              assertThat(response.getResponseBody()).hasSize(2);
-              assertThat(response.getResponseBody())
-                  .extracting(UserResponse::getId, UserResponse::getName, UserResponse::getEmail)
-                  .containsExactly(
-                      tuple(1L, "privilege", "privilege@example.org"),
-                      tuple(2L, "user1", "xxx@example.org"));
-            });
+        userRepository.findBySystemRoleId(7L)
+            .as(StepVerifier::create)
+            .verifyComplete();
+        userRepository.findBySystemRoleId(8L)
+            .as(StepVerifier::create)
+            .assertNext(user -> assertThat(user)
+                .extracting(User::getId, User::getName, User::getEmail)
+                .containsExactly(1L, "privilege", "privilege@example.org"))
+            .assertNext(user -> assertThat(user)
+                .extracting(User::getId, User::getName, User::getEmail)
+                .containsExactly(2L, "user1", "xxx@example.org"))
+            .verifyComplete();
       }
     }
 
@@ -385,12 +319,9 @@ public class NamespaceAPITest {
             .exchange()
             .expectStatus().isNoContent()
             .expectBody(Void.class);
-        webTestClient.get()
-            .uri("/rbac-service/v1/namespaces/3")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Void.class);
+        namespaceRepository.findById(3L)
+            .as(StepVerifier::create)
+            .verifyComplete();
       }
     }
   }

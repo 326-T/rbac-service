@@ -38,16 +38,6 @@ public class PathRestController {
     return pathService.findByNamespaceId(namespaceId);
   }
 
-  @GetMapping("/count")
-  public Mono<Long> count() {
-    return pathService.count();
-  }
-
-  @GetMapping("/{id}")
-  public Mono<Path> findById(@PathVariable Long id) {
-    return pathService.findById(id);
-  }
-
   @PostMapping
   public Mono<Path> save(
       ServerWebExchange exchange,

@@ -68,7 +68,7 @@ class SystemRoleRepositoryTest {
 
   @Order(1)
   @Nested
-  class FindByUserId {
+  class FindByUserIdAndNamespaceId {
 
     @Nested
     @DisplayName("正常系")
@@ -87,26 +87,8 @@ class SystemRoleRepositoryTest {
                         SystemRole::getId, SystemRole::getName,
                         SystemRole::getNamespaceId, SystemRole::getPermission)
                     .containsExactly(
-                        2L, "develop_編集権限",
-                        1L, "WRITE")
-            )
-            .assertNext(systemRole ->
-                assertThat(systemRole)
-                    .extracting(
-                        SystemRole::getId, SystemRole::getName,
-                        SystemRole::getNamespaceId, SystemRole::getPermission)
-                    .containsExactly(
                         4L, "staging_編集権限",
                         2L, "WRITE")
-            )
-            .assertNext(systemRole ->
-                assertThat(systemRole)
-                    .extracting(
-                        SystemRole::getId, SystemRole::getName,
-                        SystemRole::getNamespaceId, SystemRole::getPermission)
-                    .containsExactly(
-                        6L, "production_編集権限",
-                        3L, "WRITE")
             )
             .verifyComplete();
       }

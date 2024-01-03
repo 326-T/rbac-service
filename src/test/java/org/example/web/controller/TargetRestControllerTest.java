@@ -45,28 +45,6 @@ class TargetRestControllerTest {
   private WebTestClient webTestClient;
 
   @Nested
-  class Count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ターゲットの件数を取得できる")
-      void countTheIndexes() {
-        // given
-        when(targetService.count()).thenReturn(Mono.just(3L));
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/targets/count")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Long.class).isEqualTo(3L);
-      }
-    }
-  }
-
-  @Nested
   class Index {
 
     @Nested
@@ -132,35 +110,6 @@ class TargetRestControllerTest {
                         tuple(3L, 1L, "object-id-3", 3L)
                     )
             );
-      }
-    }
-  }
-
-  @Nested
-  class FindById {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ターゲットをIDで取得できる")
-      void canGetTheTargetById() {
-        // given
-        Target target = Target.builder()
-            .id(1L).namespaceId(1L).objectIdRegex("object-id-1").createdBy(1L).build();
-        when(targetService.findById(1L)).thenReturn(Mono.just(target));
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/targets/1")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Target.class)
-            .consumeWith(result ->
-                assertThat(result.getResponseBody())
-                    .extracting(Target::getId, Target::getNamespaceId,
-                        Target::getObjectIdRegex, Target::getCreatedBy)
-                    .containsExactly(1L, 1L, "object-id-1", 1L));
       }
     }
   }

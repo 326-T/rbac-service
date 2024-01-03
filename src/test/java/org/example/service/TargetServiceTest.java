@@ -27,93 +27,6 @@ class TargetServiceTest {
   private TargetRepository targetRepository;
 
   @Nested
-  class Count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ターゲットの件数を取得できる")
-      void countTheIndexes() {
-        // given
-        when(targetRepository.count()).thenReturn(Mono.just(3L));
-        // when
-        Mono<Long> count = targetService.count();
-        // then
-        StepVerifier.create(count).expectNext(3L).verifyComplete();
-      }
-    }
-  }
-
-  @Nested
-  class FindAll {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ターゲットを全件取得できる")
-      void findAllTheIndexes() {
-        // given
-        Target target1 = Target.builder()
-            .id(1L).namespaceId(1L).objectIdRegex("object-id-1").createdBy(1L).build();
-        Target target2 = Target.builder()
-            .id(2L).namespaceId(2L).objectIdRegex("object-id-2").createdBy(2L).build();
-        Target target3 = Target.builder()
-            .id(3L).namespaceId(3L).objectIdRegex("object-id-3").createdBy(3L).build();
-        when(targetRepository.findAll()).thenReturn(Flux.just(target1, target2,
-            target3));
-        // when
-        Flux<Target> clusterFlux = targetService.findAll();
-        // then
-        StepVerifier.create(clusterFlux)
-            .assertNext(cluster -> assertThat(cluster)
-                .extracting(Target::getId, Target::getNamespaceId,
-                    Target::getObjectIdRegex, Target::getCreatedBy)
-                .containsExactly(1L, 1L, "object-id-1", 1L))
-            .assertNext(cluster -> assertThat(cluster)
-                .extracting(Target::getId, Target::getNamespaceId,
-                    Target::getObjectIdRegex, Target::getCreatedBy)
-                .containsExactly(2L, 2L, "object-id-2", 2L))
-            .assertNext(cluster -> assertThat(cluster)
-                .extracting(Target::getId, Target::getNamespaceId,
-                    Target::getObjectIdRegex, Target::getCreatedBy)
-                .containsExactly(3L, 3L, "object-id-3", 3L))
-            .verifyComplete();
-      }
-    }
-  }
-
-  @Nested
-  class FindById {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ターゲットをIDで取得できる")
-      void findByIdTheIndex() {
-        // given
-        Target target1 = Target.builder()
-            .id(1L).namespaceId(1L).objectIdRegex("object-id-1").createdBy(1L).build();
-        when(targetRepository.findById(1L)).thenReturn(Mono.just(target1));
-        // when
-        Mono<Target> targetMono = targetService.findById(1L);
-        // then
-        StepVerifier.create(targetMono)
-            .assertNext(cluster -> assertThat(cluster)
-                .extracting(Target::getId, Target::getNamespaceId,
-                    Target::getObjectIdRegex, Target::getCreatedBy)
-                .containsExactly(1L, 1L, "object-id-1", 1L))
-            .verifyComplete();
-      }
-    }
-  }
-
-  @Nested
   class FindByNamespaceId {
 
     @Nested
@@ -310,7 +223,7 @@ class TargetServiceTest {
   }
 
   @Nested
-  class Delete {
+  class DeleteById {
 
     @Nested
     @DisplayName("正常系")

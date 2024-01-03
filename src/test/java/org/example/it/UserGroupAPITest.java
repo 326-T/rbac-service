@@ -8,6 +8,7 @@ import org.example.error.response.ErrorResponse;
 import org.example.listener.FlywayTestExecutionListener;
 import org.example.persistence.entity.User;
 import org.example.persistence.entity.UserGroup;
+import org.example.persistence.repository.UserGroupRepository;
 import org.example.service.Base64Service;
 import org.example.service.JwtService;
 import org.junit.jupiter.api.BeforeAll;
@@ -25,6 +26,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.test.StepVerifier;
 
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
@@ -38,6 +40,8 @@ public class UserGroupAPITest {
   private JwtService jwtService;
   @Autowired
   private Base64Service base64Service;
+  @Autowired
+  private UserGroupRepository userGroupRepository;
 
   private String jwt;
   private String unAuthorizedJwt;
@@ -46,56 +50,6 @@ public class UserGroupAPITest {
   void beforeAll() {
     jwt = base64Service.encode(jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build()));
     unAuthorizedJwt = base64Service.encode(jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
-  }
-
-  @Nested
-  @Order(1)
-  class Count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("グループの件数を取得できる")
-      void countTheIndexes() {
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/user-groups/count")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Long.class).isEqualTo(3L);
-      }
-    }
-
-    @Nested
-    @DisplayName("異常系")
-    class Error {
-
-      @Test
-      @DisplayName("権限がない場合はエラーになる")
-      void notAuthorizedCauseException() {
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/user-groups/count")
-            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
-            .exchange()
-            .expectStatus().isForbidden()
-            .expectBody(ErrorResponse.class)
-            .consumeWith(response ->
-                assertThat(response.getResponseBody())
-                    .extracting(
-                        ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
-                    .containsExactly(
-                        403, null,
-                        "エンドポイントへのアクセス権がない",
-                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
-                        "この操作は許可されていません。")
-            );
-      }
-    }
   }
 
   @Order(1)
@@ -157,62 +111,6 @@ public class UserGroupAPITest {
     }
   }
 
-  @Order(1)
-  @Nested
-  class FindById {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("グループをIDで取得できる")
-      void findUserById() {
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/user-groups/1")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(UserGroup.class)
-            .consumeWith(response -> {
-              assertThat(response.getResponseBody())
-                  .extracting(UserGroup::getId, UserGroup::getNamespaceId,
-                      UserGroup::getName, UserGroup::getCreatedBy)
-                  .containsExactly(1L, 1L, "group1", 1L);
-            });
-      }
-    }
-
-    @Nested
-    @DisplayName("異常系")
-    class Error {
-
-      @Test
-      @DisplayName("権限がない場合はエラーになる")
-      void notAuthorizedCauseException() {
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/user-groups/1")
-            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
-            .exchange()
-            .expectStatus().isForbidden()
-            .expectBody(ErrorResponse.class)
-            .consumeWith(response ->
-                assertThat(response.getResponseBody())
-                    .extracting(
-                        ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
-                    .containsExactly(
-                        403, null,
-                        "エンドポイントへのアクセス権がない",
-                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
-                        "この操作は許可されていません。")
-            );
-      }
-    }
-  }
-
   @Order(2)
   @Nested
   @TestExecutionListeners(listeners = {
@@ -245,18 +143,13 @@ public class UserGroupAPITest {
                       UserGroup::getName, UserGroup::getCreatedBy)
                   .containsExactly(2L, 2L, "GROUP2", 2L);
             });
-        webTestClient.get()
-            .uri("/rbac-service/v1/2/user-groups/2")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(UserGroup.class)
-            .consumeWith(response -> {
-              assertThat(response.getResponseBody())
-                  .extracting(UserGroup::getId, UserGroup::getNamespaceId,
-                      UserGroup::getName, UserGroup::getCreatedBy)
-                  .containsExactly(2L, 2L, "GROUP2", 2L);
-            });
+        userGroupRepository.findById(2L)
+            .as(StepVerifier::create)
+            .assertNext(userGroup -> assertThat(userGroup)
+                .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                    UserGroup::getName, UserGroup::getCreatedBy)
+                .containsExactly(2L, 2L, "GROUP2", 2L))
+            .verifyComplete();
       }
     }
 
@@ -385,18 +278,13 @@ public class UserGroupAPITest {
                       UserGroup::getName, UserGroup::getCreatedBy)
                   .containsExactly(4L, 1L, "group4", 2L);
             });
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/user-groups/4")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(UserGroup.class)
-            .consumeWith(response -> {
-              assertThat(response.getResponseBody())
-                  .extracting(UserGroup::getId, UserGroup::getNamespaceId,
-                      UserGroup::getName, UserGroup::getCreatedBy)
-                  .containsExactly(4L, 1L, "group4", 2L);
-            });
+        userGroupRepository.findById(4L)
+            .as(StepVerifier::create)
+            .assertNext(userGroup -> assertThat(userGroup)
+                .extracting(UserGroup::getId, UserGroup::getNamespaceId,
+                    UserGroup::getName, UserGroup::getCreatedBy)
+                .containsExactly(4L, 1L, "group4", 2L))
+            .verifyComplete();
       }
     }
 
@@ -484,12 +372,9 @@ public class UserGroupAPITest {
             .exchange()
             .expectStatus().isNoContent()
             .expectBody(Void.class);
-        webTestClient.get()
-            .uri("/rbac-service/v1/2/user-groups/3")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Void.class);
+        userGroupRepository.findById(3L)
+            .as(StepVerifier::create)
+            .verifyComplete();
       }
     }
 

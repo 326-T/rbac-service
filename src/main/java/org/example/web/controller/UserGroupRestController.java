@@ -38,16 +38,6 @@ public class UserGroupRestController {
     return userGroupService.findByNamespaceId(namespaceId);
   }
 
-  @GetMapping("/count")
-  public Mono<Long> count() {
-    return userGroupService.count();
-  }
-
-  @GetMapping("/{id}")
-  public Mono<UserGroup> findById(@PathVariable Long id) {
-    return userGroupService.findById(id);
-  }
-
   @PostMapping
   public Mono<UserGroup> save(
       ServerWebExchange exchange,

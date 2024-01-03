@@ -18,18 +18,6 @@ public class UserGroupService {
     this.groupRepository = groupRepository;
   }
 
-  public Mono<Long> count() {
-    return groupRepository.count();
-  }
-
-  public Flux<UserGroup> findAll() {
-    return groupRepository.findAll();
-  }
-
-  public Mono<UserGroup> findById(Long id) {
-    return groupRepository.findById(id);
-  }
-
   public Flux<UserGroup> findByNamespaceId(Long namespaceId) {
     return groupRepository.findByNamespaceId(namespaceId);
   }

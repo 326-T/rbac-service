@@ -30,26 +30,6 @@ class UserServiceTest {
   private PasswordEncoder passwordEncoder;
 
   @Nested
-  class Count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ユーザの件数を取得できる")
-      void countTheIndexes() {
-        // given
-        when(userRepository.count()).thenReturn(Mono.just(3L));
-        // when
-        Mono<Long> count = userService.count();
-        // then
-        StepVerifier.create(count).expectNext(3L).verifyComplete();
-      }
-    }
-  }
-
-  @Nested
   class FindAll {
 
     @Nested
@@ -83,33 +63,6 @@ class UserServiceTest {
             .assertNext(user -> assertThat(user)
                 .extracting(User::getId, User::getName, User::getEmail, User::getPasswordDigest)
                 .containsExactly(3L, "user3", "zzz@example.org", "$2a$10$YxMTu2M07qcQPaf4.rt2aukUFenatquwsM1WyOWbPpy9Djz7pbY.y"))
-            .verifyComplete();
-      }
-    }
-  }
-
-  @Nested
-  class FindById {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ユーザをIDで取得できる")
-      void findByIdTheIndex() {
-        // given
-        User user1 = User.builder()
-            .id(1L).name("user1").email("xxx@example.org")
-            .passwordDigest("$2a$10$/MmW9CyDFA41U2nyaU7Wq.lRUjSrs0fuwP3B49WOAT2LOWQ1Tzhjq").build();
-        when(userRepository.findById(1L)).thenReturn(Mono.just(user1));
-        // when
-        Mono<User> userMono = userService.findById(1L);
-        // then
-        StepVerifier.create(userMono)
-            .assertNext(user -> assertThat(user)
-                .extracting(User::getId, User::getName, User::getEmail, User::getPasswordDigest)
-                .containsExactly(1L, "user1", "xxx@example.org", "$2a$10$/MmW9CyDFA41U2nyaU7Wq.lRUjSrs0fuwP3B49WOAT2LOWQ1Tzhjq"))
             .verifyComplete();
       }
     }
@@ -351,7 +304,7 @@ class UserServiceTest {
   }
 
   @Nested
-  class Delete {
+  class DeleteById {
 
     @Nested
     @DisplayName("正常系")

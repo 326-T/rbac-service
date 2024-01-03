@@ -27,93 +27,6 @@ class UserGroupServiceTest {
   private UserGroupRepository userGroupRepository;
 
   @Nested
-  class Count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ユーザグループの件数を取得できる")
-      void countTheIndexes() {
-        // given
-        when(userGroupRepository.count()).thenReturn(Mono.just(3L));
-        // when
-        Mono<Long> count = userGroupService.count();
-        // then
-        StepVerifier.create(count).expectNext(3L).verifyComplete();
-      }
-    }
-  }
-
-  @Nested
-  class FindAll {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ユーザグループを全件取得できる")
-      void findAllTheIndexes() {
-        // given
-        UserGroup userGroup1 = UserGroup.builder()
-            .id(1L).namespaceId(1L).name("group1").createdBy(1L).build();
-        UserGroup userGroup2 = UserGroup.builder()
-            .id(2L).namespaceId(2L).name("group2").createdBy(2L).build();
-        UserGroup userGroup3 = UserGroup.builder()
-            .id(3L).namespaceId(3L).name("group3").createdBy(3L).build();
-        when(userGroupRepository.findAll()).thenReturn(Flux.just(userGroup1, userGroup2,
-            userGroup3));
-        // when
-        Flux<UserGroup> groupFlux = userGroupService.findAll();
-        // then
-        StepVerifier.create(groupFlux)
-            .assertNext(group -> assertThat(group)
-                .extracting(UserGroup::getId, UserGroup::getNamespaceId,
-                    UserGroup::getName, UserGroup::getCreatedBy)
-                .containsExactly(1L, 1L, "group1", 1L))
-            .assertNext(group -> assertThat(group)
-                .extracting(UserGroup::getId, UserGroup::getNamespaceId,
-                    UserGroup::getName, UserGroup::getCreatedBy)
-                .containsExactly(2L, 2L, "group2", 2L))
-            .assertNext(group -> assertThat(group)
-                .extracting(UserGroup::getId, UserGroup::getNamespaceId,
-                    UserGroup::getName, UserGroup::getCreatedBy)
-                .containsExactly(3L, 3L, "group3", 3L))
-            .verifyComplete();
-      }
-    }
-  }
-
-  @Nested
-  class FindById {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ユーザグループをIDで取得できる")
-      void findByIdTheIndex() {
-        // given
-        UserGroup userGroup1 = UserGroup.builder()
-            .id(1L).namespaceId(1L).name("group1").createdBy(1L).build();
-        when(userGroupRepository.findById(1L)).thenReturn(Mono.just(userGroup1));
-        // when
-        Mono<UserGroup> groupMono = userGroupService.findById(1L);
-        // then
-        StepVerifier.create(groupMono)
-            .assertNext(group -> assertThat(group)
-                .extracting(UserGroup::getId, UserGroup::getNamespaceId,
-                    UserGroup::getName, UserGroup::getCreatedBy)
-                .containsExactly(1L, 1L, "group1", 1L))
-            .verifyComplete();
-      }
-    }
-  }
-
-  @Nested
   class FindByNamespaceId {
 
     @Nested
@@ -264,7 +177,7 @@ class UserGroupServiceTest {
   }
 
   @Nested
-  class Delete {
+  class DeleteById {
 
     @Nested
     @DisplayName("正常系")

@@ -10,10 +10,6 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface TargetRepository extends ReactiveCrudRepository<Target, Long> {
 
-  Mono<Long> count();
-
-  Flux<Target> findAll();
-
   Mono<Target> findById(Long id);
 
   @Query("""

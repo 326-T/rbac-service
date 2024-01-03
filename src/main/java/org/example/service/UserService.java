@@ -22,16 +22,8 @@ public class UserService {
     this.passwordEncoder = passwordEncoder;
   }
 
-  public Mono<Long> count() {
-    return userRepository.count();
-  }
-
   public Flux<User> findAll() {
     return userRepository.findAll();
-  }
-
-  public Mono<User> findById(Long id) {
-    return userRepository.findById(id);
   }
 
   public Mono<User> findByEmail(String email) {

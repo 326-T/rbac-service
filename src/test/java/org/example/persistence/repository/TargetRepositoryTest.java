@@ -27,56 +27,6 @@ class TargetRepositoryTest {
 
   @Order(1)
   @Nested
-  class Count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ターゲットの件数を取得できる")
-      void countTheIndexes() {
-        // when
-        Mono<Long> count = targetRepository.count();
-        // then
-        StepVerifier.create(count).expectNext(3L).verifyComplete();
-      }
-    }
-  }
-
-  @Order(1)
-  @Nested
-  class FindAll {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ターゲットを全件取得できる")
-      void findAllTheIndexes() {
-        // when
-        Flux<Target> targetFlux = targetRepository.findAll();
-        // then
-        StepVerifier.create(targetFlux)
-            .assertNext(target ->
-                assertThat(target)
-                    .extracting(Target::getId, Target::getNamespaceId, Target::getObjectIdRegex, Target::getCreatedBy)
-                    .containsExactly(1L, 1L, "object-id-1", 1L))
-            .assertNext(target ->
-                assertThat(target)
-                    .extracting(Target::getId, Target::getNamespaceId, Target::getObjectIdRegex, Target::getCreatedBy)
-                    .containsExactly(2L, 2L, "object-id-2", 2L))
-            .assertNext(target ->
-                assertThat(target)
-                    .extracting(Target::getId, Target::getNamespaceId, Target::getObjectIdRegex, Target::getCreatedBy)
-                    .containsExactly(3L, 2L, "object-id-3", 3L)).verifyComplete();
-      }
-    }
-  }
-
-  @Order(1)
-  @Nested
   class FindById {
 
     @Nested

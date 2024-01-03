@@ -39,19 +39,6 @@ public class TargetGroupRestController {
     return targetGroupService.findByNamespaceId(namespaceId);
   }
 
-  @GetMapping("/count")
-  public Mono<Long> count() {
-    return targetGroupService.count();
-  }
-
-  @GetMapping("/{id}")
-  public Mono<TargetGroup> findById(
-      @PathVariable("namespace-id") Long namespaceId,
-      @PathVariable Long id) {
-    return targetGroupService.findById(id)
-        .filter(t -> t.getNamespaceId().equals(namespaceId));
-  }
-
   @PostMapping
   public Mono<TargetGroup> save(
       ServerWebExchange exchange,

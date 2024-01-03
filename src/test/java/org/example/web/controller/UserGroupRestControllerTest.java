@@ -44,28 +44,6 @@ class UserGroupRestControllerTest {
   private WebTestClient webTestClient;
 
   @Nested
-  class Count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ユーザグループの件数を取得できる")
-      void countTheIndexes() {
-        // given
-        when(userGroupService.count()).thenReturn(Mono.just(3L));
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/2/user-groups/count")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Long.class).isEqualTo(3L);
-      }
-    }
-  }
-
-  @Nested
   class Index {
 
     @Nested
@@ -101,35 +79,6 @@ class UserGroupRestControllerTest {
                         tuple(3L, 1L, "group-3", 3L)
                     )
             );
-      }
-    }
-  }
-
-  @Nested
-  class FindById {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ユーザグループをIDで取得できる")
-      void canGetTheUserGroupById() {
-        // given
-        UserGroup userGroup = UserGroup.builder()
-            .id(1L).namespaceId(1L).name("group-1").createdBy(1L).build();
-        when(userGroupService.findById(1L)).thenReturn(Mono.just(userGroup));
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/user-groups/1")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(UserGroup.class)
-            .consumeWith(result ->
-                assertThat(result.getResponseBody())
-                    .extracting(UserGroup::getId, UserGroup::getNamespaceId,
-                        UserGroup::getName, UserGroup::getCreatedBy)
-                    .containsExactly(1L, 1L, "group-1", 1L));
       }
     }
   }

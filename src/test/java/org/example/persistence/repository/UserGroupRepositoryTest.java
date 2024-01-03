@@ -27,60 +27,6 @@ class UserGroupRepositoryTest {
 
   @Order(1)
   @Nested
-  class Count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ユーザグループの件数を取得できる")
-      void countTheIndexes() {
-        // when
-        Mono<Long> count = groupRepository.count();
-        // then
-        StepVerifier.create(count).expectNext(3L).verifyComplete();
-      }
-    }
-  }
-
-  @Order(1)
-  @Nested
-  class FindAll {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ユーザグループを全件取得できる")
-      void findAllTheIndexes() {
-        // when
-        Flux<UserGroup> userGroupFlux = groupRepository.findAll();
-        // then
-        StepVerifier.create(userGroupFlux)
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(UserGroup::getId, UserGroup::getNamespaceId,
-                        UserGroup::getName, UserGroup::getCreatedBy)
-                    .containsExactly(1L, 1L, "group1", 1L))
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(UserGroup::getId, UserGroup::getNamespaceId,
-                        UserGroup::getName, UserGroup::getCreatedBy)
-                    .containsExactly(2L, 2L, "group2", 2L))
-            .assertNext(
-                group -> assertThat(group)
-                    .extracting(UserGroup::getId, UserGroup::getNamespaceId,
-                        UserGroup::getName, UserGroup::getCreatedBy)
-                    .containsExactly(3L, 2L, "group3", 3L))
-            .verifyComplete();
-      }
-    }
-  }
-
-  @Order(1)
-  @Nested
   class FindById {
 
     @Nested

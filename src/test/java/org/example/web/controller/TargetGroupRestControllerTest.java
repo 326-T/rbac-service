@@ -46,28 +46,6 @@ class TargetGroupRestControllerTest {
   private WebTestClient webTestClient;
 
   @Nested
-  class Count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ターゲットグループの件数を取得できる")
-      void countTheIndexes() {
-        // given
-        when(targetGroupService.count()).thenReturn(Mono.just(3L));
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/target-groups/count")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Long.class).isEqualTo(3L);
-      }
-    }
-  }
-
-  @Nested
   class Index {
 
     @Nested
@@ -103,35 +81,6 @@ class TargetGroupRestControllerTest {
                         tuple(3L, 1L, "target-group-3", 3L)
                     )
             );
-      }
-    }
-  }
-
-  @Nested
-  class FindById {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ターゲットグループをIDで取得できる")
-      void canGetTheTargetGroupById() {
-        // given
-        TargetGroup targetGroup = TargetGroup.builder()
-            .id(1L).namespaceId(1L).name("target-group-1").createdBy(1L).build();
-        when(targetGroupService.findById(1L)).thenReturn(Mono.just(targetGroup));
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/target-groups/1")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(TargetGroup.class)
-            .consumeWith(result ->
-                assertThat(result.getResponseBody())
-                    .extracting(TargetGroup::getId, TargetGroup::getNamespaceId,
-                        TargetGroup::getName, TargetGroup::getCreatedBy)
-                    .containsExactly(1L, 1L, "target-group-1", 1L));
       }
     }
   }

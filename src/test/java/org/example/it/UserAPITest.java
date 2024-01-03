@@ -7,6 +7,7 @@ import org.example.Application;
 import org.example.error.response.ErrorResponse;
 import org.example.listener.FlywayTestExecutionListener;
 import org.example.persistence.entity.User;
+import org.example.persistence.repository.UserRepository;
 import org.example.service.Base64Service;
 import org.example.service.JwtService;
 import org.example.web.response.UserResponse;
@@ -25,6 +26,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.test.StepVerifier;
 
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
@@ -38,34 +40,14 @@ public class UserAPITest {
   private JwtService jwtService;
   @Autowired
   private Base64Service base64Service;
+  @Autowired
+  private UserRepository userRepository;
 
   private String jwt;
 
   @BeforeAll
   void beforeAll() {
     jwt = base64Service.encode(jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build()));
-  }
-
-  @Nested
-  @Order(1)
-  class count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ユーザの件数を取得できる")
-      void countTheIndexes() {
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/users/count")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Long.class).isEqualTo(4L);
-      }
-    }
   }
 
   @Order(1)
@@ -149,33 +131,6 @@ public class UserAPITest {
     }
   }
 
-  @Order(1)
-  @Nested
-  class FindById {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ユーザをIDで取得できる")
-      void findUserById() {
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/users/2")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(UserResponse.class)
-            .consumeWith(response ->
-                assertThat(response.getResponseBody())
-                    .extracting(UserResponse::getId, UserResponse::getName, UserResponse::getEmail)
-                    .containsExactly(2L, "user1", "xxx@example.org")
-            );
-      }
-    }
-  }
-
   @Order(2)
   @Nested
   @TestExecutionListeners(listeners = {
@@ -209,17 +164,12 @@ public class UserAPITest {
                     .extracting(UserResponse::getId, UserResponse::getName, UserResponse::getEmail)
                     .containsExactly(3L, "USER2", "bbb@example.org")
             );
-        webTestClient.get()
-            .uri("/rbac-service/v1/users/3")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(UserResponse.class)
-            .consumeWith(response ->
-                assertThat(response.getResponseBody())
-                    .extracting(UserResponse::getId, UserResponse::getName, UserResponse::getEmail)
-                    .containsExactly(3L, "USER2", "bbb@example.org")
-            );
+        userRepository.findById(3L)
+            .as(StepVerifier::create)
+            .assertNext(user -> assertThat(user)
+                .extracting(User::getId, User::getName, User::getEmail)
+                .containsExactly(3L, "USER2", "bbb@example.org"))
+            .verifyComplete();
       }
 
       @Test
@@ -327,17 +277,12 @@ public class UserAPITest {
                     .extracting(UserResponse::getId, UserResponse::getName, UserResponse::getEmail)
                     .containsExactly(5L, "user4", "aaa@example.org")
             );
-        webTestClient.get()
-            .uri("/rbac-service/v1/users/5")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(UserResponse.class)
-            .consumeWith(response ->
-                assertThat(response.getResponseBody())
-                    .extracting(UserResponse::getId, UserResponse::getName, UserResponse::getEmail)
-                    .containsExactly(5L, "user4", "aaa@example.org")
-            );
+        userRepository.findById(5L)
+            .as(StepVerifier::create)
+            .assertNext(user -> assertThat(user)
+                .extracting(User::getId, User::getName, User::getEmail)
+                .containsExactly(5L, "user4", "aaa@example.org"))
+            .verifyComplete();
       }
     }
 
@@ -399,12 +344,9 @@ public class UserAPITest {
             .exchange()
             .expectStatus().isNoContent()
             .expectBody(Void.class);
-        webTestClient.get()
-            .uri("/rbac-service/v1/users/3")
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Void.class);
+        userRepository.findById(3L)
+            .as(StepVerifier::create)
+            .verifyComplete();
       }
     }
   }

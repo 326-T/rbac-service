@@ -27,57 +27,6 @@ class RoleRepositoryTest {
 
   @Order(1)
   @Nested
-  class Count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ロールの件数を取得できる")
-      void countTheIndexes() {
-        // when
-        Mono<Long> count = roleRepository.count();
-        // then
-        StepVerifier.create(count).expectNext(3L).verifyComplete();
-      }
-    }
-  }
-
-  @Order(1)
-  @Nested
-  class FindAll {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ロールを全件取得できる")
-      void findAllTheIndexes() {
-        // when
-        Flux<Role> roleFlux = roleRepository.findAll();
-        // then
-        StepVerifier.create(roleFlux)
-            .assertNext(
-                role -> assertThat(role)
-                    .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
-                    .containsExactly(1L, 1L, "developers", 1L))
-            .assertNext(
-                role -> assertThat(role)
-                    .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
-                    .containsExactly(2L, 2L, "operations", 2L))
-            .assertNext(
-                role -> assertThat(role)
-                    .extracting(Role::getId, Role::getNamespaceId, Role::getName, Role::getCreatedBy)
-                    .containsExactly(3L, 2L, "security", 3L))
-            .verifyComplete();
-      }
-    }
-  }
-
-  @Order(1)
-  @Nested
   class FindById {
 
     @Nested

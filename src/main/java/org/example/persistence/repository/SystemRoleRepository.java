@@ -21,7 +21,8 @@ public interface SystemRoleRepository extends ReactiveCrudRepository<SystemRole,
       INNER JOIN rbac_user_system_role_permissions AS srp
       ON sr.id = srp.system_role_id
       WHERE srp.user_id = :userId
-      AND sr.namespace_id = :namespaceId;
+      AND sr.namespace_id = :namespaceId
+      ORDER BY sr.id;
       """)
   Flux<SystemRole> findByUserIdAndNamespaceId(Long userId, Long namespaceId);
 

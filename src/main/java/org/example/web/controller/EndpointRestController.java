@@ -49,16 +49,6 @@ public class EndpointRestController {
     return endpointDetailService.findByNamespaceIdAndRoleId(namespaceId, roleId);
   }
 
-  @GetMapping("/count")
-  public Mono<Long> count() {
-    return endpointService.count();
-  }
-
-  @GetMapping("/{id}")
-  public Mono<Endpoint> findById(@PathVariable Long id) {
-    return endpointService.findById(id);
-  }
-
   @PostMapping
   public Mono<Endpoint> save(
       ServerWebExchange exchange,

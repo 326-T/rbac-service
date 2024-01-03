@@ -10,10 +10,6 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface TargetGroupRepository extends ReactiveCrudRepository<TargetGroup, Long> {
 
-  Mono<Long> count();
-
-  Flux<TargetGroup> findAll();
-
   Mono<TargetGroup> findById(Long id);
 
   @Query("""

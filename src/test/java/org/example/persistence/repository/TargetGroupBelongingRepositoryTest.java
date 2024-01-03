@@ -14,7 +14,6 @@ import org.junit.jupiter.api.TestClassOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestExecutionListeners;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -24,63 +23,6 @@ class TargetGroupBelongingRepositoryTest {
 
   @Autowired
   private TargetGroupBelongingRepository targetGroupBelongingRepository;
-
-  @Order(1)
-  @Nested
-  class Count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ターゲットとグループの関係情報の件数を取得できる")
-      void countTheIndexes() {
-        // when
-        Mono<Long> count = targetGroupBelongingRepository.count();
-        // then
-        StepVerifier.create(count).expectNext(3L).verifyComplete();
-      }
-    }
-  }
-
-  @Order(1)
-  @Nested
-  class FindAll {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ターゲットとグループの関係情報を全件取得できる")
-      void findAllTheIndexes() {
-        // when
-        Flux<TargetGroupBelonging> targetBelongsGroupFlux = targetGroupBelongingRepository.findAll();
-        // then
-        StepVerifier.create(targetBelongsGroupFlux)
-            .assertNext(
-                targetClusterBelonging -> assertThat(targetClusterBelonging)
-                    .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
-                        TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
-                        TargetGroupBelonging::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, 1L, 1L))
-            .assertNext(
-                targetClusterBelonging -> assertThat(targetClusterBelonging)
-                    .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
-                        TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
-                        TargetGroupBelonging::getCreatedBy)
-                    .containsExactly(2L, 2L, 2L, 2L, 2L))
-            .assertNext(
-                targetClusterBelonging -> assertThat(targetClusterBelonging)
-                    .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
-                        TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
-                        TargetGroupBelonging::getCreatedBy)
-                    .containsExactly(3L, 2L, 3L, 3L, 3L))
-            .verifyComplete();
-      }
-    }
-  }
 
   @Order(1)
   @Nested
@@ -98,32 +40,6 @@ class TargetGroupBelongingRepositoryTest {
             1L);
         // then
         StepVerifier.create(targetBelongsGroupMono)
-            .assertNext(
-                targetClusterBelonging -> assertThat(targetClusterBelonging)
-                    .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
-                        TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
-                        TargetGroupBelonging::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, 1L, 1L))
-            .verifyComplete();
-      }
-    }
-  }
-
-  @Order(1)
-  @Nested
-  class FindByNamespaceId {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ターゲットとグループの関係情報をnamespaceIdで取得できる")
-      void findAllTheIndexes() {
-        // when
-        Flux<TargetGroupBelonging> targetBelongsGroupFlux = targetGroupBelongingRepository.findByNamespaceId(1L);
-        // then
-        StepVerifier.create(targetBelongsGroupFlux)
             .assertNext(
                 targetClusterBelonging -> assertThat(targetClusterBelonging)
                     .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
@@ -209,28 +125,6 @@ class TargetGroupBelongingRepositoryTest {
                         TargetGroupBelonging::getCreatedBy)
                     .containsExactly(4L, 3L, 3L, 1L, 1L))
             .verifyComplete();
-      }
-    }
-  }
-
-  @Order(2)
-  @Nested
-  @TestExecutionListeners(listeners = {
-      FlywayTestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-  class DeleteById {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ターゲットとグループの関係情報をIDで削除できる")
-      void deleteTargetBelongsGroupById() {
-        // when
-        Mono<Void> voidMono = targetGroupBelongingRepository.deleteById(3L);
-        // then
-        StepVerifier.create(voidMono).verifyComplete();
-        targetGroupBelongingRepository.findById(3L).as(StepVerifier::create).verifyComplete();
       }
     }
   }

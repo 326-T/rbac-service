@@ -41,28 +41,6 @@ class UserRestControllerTest {
   private WebTestClient webTestClient;
 
   @Nested
-  class Count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ユーザの件数を取得できる")
-      void countTheIndexes() {
-        // given
-        when(userService.count()).thenReturn(Mono.just(3L));
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/users/count")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Long.class).isEqualTo(3L);
-      }
-    }
-  }
-
-  @Nested
   class Index {
 
     @Nested
@@ -137,36 +115,6 @@ class UserRestControllerTest {
                         tuple(3L, "user3", "zzz@example.org")
                     )
             );
-      }
-    }
-  }
-
-  @Nested
-  class FindById {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ユーザをIDで取得できる")
-      void canGetTheUserById() {
-        // given
-        User user = User.builder()
-            .id(1L).name("user1").email("xxx@example.org")
-            .passwordDigest("$2a$10$/MmW9CyDFA41U2nyaU7Wq.lRUjSrs0fuwP3B49WOAT2LOWQ1Tzhjq")
-            .build();
-        when(userService.findById(1L)).thenReturn(Mono.just(user));
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/users/1")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(UserResponse.class)
-            .consumeWith(result ->
-                assertThat(result.getResponseBody())
-                    .extracting(UserResponse::getId, UserResponse::getName, UserResponse::getEmail)
-                    .containsExactly(1L, "user1", "xxx@example.org"));
       }
     }
   }

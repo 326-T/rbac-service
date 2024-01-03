@@ -18,16 +18,9 @@ public class NamespaceService {
     this.namespaceRepository = namespaceRepository;
   }
 
-  public Mono<Long> count() {
-    return namespaceRepository.count();
-  }
 
   public Flux<Namespace> findAll() {
     return namespaceRepository.findAll();
-  }
-
-  public Mono<Namespace> findById(Long id) {
-    return namespaceRepository.findById(id);
   }
 
   /**

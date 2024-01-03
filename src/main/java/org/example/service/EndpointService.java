@@ -18,18 +18,6 @@ public class EndpointService {
     this.endpointRepository = endpointRepository;
   }
 
-  public Mono<Long> count() {
-    return endpointRepository.count();
-  }
-
-  public Flux<Endpoint> findAll() {
-    return endpointRepository.findAll();
-  }
-
-  public Mono<Endpoint> findById(Long id) {
-    return endpointRepository.findById(id);
-  }
-
   public Flux<Endpoint> findByNamespaceId(Long namespaceId) {
     return endpointRepository.findByNamespaceId(namespaceId);
   }

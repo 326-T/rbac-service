@@ -39,16 +39,6 @@ public class UserRestController {
     return userService.findByUserGroupId(userGroupId).map(UserResponse::new);
   }
 
-  @GetMapping("/count")
-  public Mono<Long> count() {
-    return userService.count();
-  }
-
-  @GetMapping("/{id}")
-  public Mono<UserResponse> findById(@PathVariable Long id) {
-    return userService.findById(id).map(UserResponse::new);
-  }
-
   @GetMapping("/system")
   public Flux<UserResponse> findBySystemRoleId(@RequestParam("system-role-id") Long systemRoleId) {
     return userService.findBySystemRoleId(systemRoleId).map(UserResponse::new);

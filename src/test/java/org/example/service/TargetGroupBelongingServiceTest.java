@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -25,142 +24,6 @@ class TargetGroupBelongingServiceTest {
   private TargetGroupBelongingService targetGroupBelongingService;
   @Mock
   private TargetGroupBelongingRepository targetGroupBelongingRepository;
-
-  @Nested
-  class Count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ターゲットグループの件数を取得できる")
-      void countTheIndexes() {
-        // given
-        when(targetGroupBelongingRepository.count()).thenReturn(Mono.just(3L));
-        // when
-        Mono<Long> count = targetGroupBelongingService.count();
-        // then
-        StepVerifier.create(count).expectNext(3L).verifyComplete();
-      }
-    }
-  }
-
-  @Nested
-  class FindAll {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ターゲットグループを全件取得できる")
-      void findAllTheIndexes() {
-        // given
-        TargetGroupBelonging targetGroupBelonging1 = TargetGroupBelonging.builder()
-            .id(1L).namespaceId(1L).targetId(1L).targetGroupId(1L).createdBy(1L).build();
-        TargetGroupBelonging targetGroupBelonging2 = TargetGroupBelonging.builder()
-            .id(2L).namespaceId(2L).targetId(2L).targetGroupId(2L).createdBy(2L).build();
-        TargetGroupBelonging targetGroupBelonging3 = TargetGroupBelonging.builder()
-            .id(3L).namespaceId(3L).targetId(3L).targetGroupId(3L).createdBy(3L).build();
-        when(targetGroupBelongingRepository.findAll()).thenReturn(
-            Flux.just(targetGroupBelonging1, targetGroupBelonging2,
-                targetGroupBelonging3));
-        // when
-        Flux<TargetGroupBelonging> groupFlux = targetGroupBelongingService.findAll();
-        // then
-        StepVerifier.create(groupFlux)
-            .assertNext(group -> assertThat(group)
-                .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
-                    TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
-                    TargetGroupBelonging::getCreatedBy)
-                .containsExactly(1L, 1L, 1L, 1L, 1L))
-            .assertNext(group -> assertThat(group)
-                .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
-                    TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
-                    TargetGroupBelonging::getCreatedBy)
-                .containsExactly(2L, 2L, 2L, 2L, 2L))
-            .assertNext(group -> assertThat(group)
-                .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
-                    TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
-                    TargetGroupBelonging::getCreatedBy)
-                .containsExactly(3L, 3L, 3L, 3L, 3L))
-            .verifyComplete();
-      }
-    }
-  }
-
-  @Nested
-  class FindById {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ターゲットグループをIDで取得できる")
-      void findByIdTheIndex() {
-        // given
-        TargetGroupBelonging targetGroupBelonging1 = TargetGroupBelonging.builder()
-            .id(1L).namespaceId(1L).targetId(1L).targetGroupId(1L).createdBy(1L).build();
-        when(targetGroupBelongingRepository.findById(1L)).thenReturn(
-            Mono.just(targetGroupBelonging1));
-        // when
-        Mono<TargetGroupBelonging> groupMono = targetGroupBelongingService.findById(1L);
-        // then
-        StepVerifier.create(groupMono)
-            .assertNext(group -> assertThat(group)
-                .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
-                    TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
-                    TargetGroupBelonging::getCreatedBy)
-                .containsExactly(1L, 1L, 1L, 1L, 1L))
-            .verifyComplete();
-      }
-    }
-  }
-
-  @Nested
-  class FindByNamespaceId {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ターゲットグループを名前空間IDで取得できる")
-      void findAllTheIndexes() {
-        // given
-        TargetGroupBelonging targetGroupBelonging1 = TargetGroupBelonging.builder()
-            .id(1L).namespaceId(1L).targetId(1L).targetGroupId(1L).createdBy(1L).build();
-        TargetGroupBelonging targetGroupBelonging2 = TargetGroupBelonging.builder()
-            .id(2L).namespaceId(1L).targetId(2L).targetGroupId(2L).createdBy(2L).build();
-        TargetGroupBelonging targetGroupBelonging3 = TargetGroupBelonging.builder()
-            .id(3L).namespaceId(1L).targetId(3L).targetGroupId(3L).createdBy(3L).build();
-        when(targetGroupBelongingRepository.findByNamespaceId(1L))
-            .thenReturn(Flux.just(targetGroupBelonging1, targetGroupBelonging2, targetGroupBelonging3));
-        // when
-        Flux<TargetGroupBelonging> groupFlux = targetGroupBelongingService.findByNamespaceId(1L);
-        // then
-        StepVerifier.create(groupFlux)
-            .assertNext(group -> assertThat(group)
-                .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
-                    TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
-                    TargetGroupBelonging::getCreatedBy)
-                .containsExactly(1L, 1L, 1L, 1L, 1L))
-            .assertNext(group -> assertThat(group)
-                .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
-                    TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
-                    TargetGroupBelonging::getCreatedBy)
-                .containsExactly(2L, 1L, 2L, 2L, 2L))
-            .assertNext(group -> assertThat(group)
-                .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
-                    TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
-                    TargetGroupBelonging::getCreatedBy)
-                .containsExactly(3L, 1L, 3L, 3L, 3L))
-            .verifyComplete();
-      }
-    }
-  }
 
   @Nested
   class Insert {
@@ -213,27 +76,6 @@ class TargetGroupBelongingServiceTest {
         Mono<TargetGroupBelonging> groupMono = targetGroupBelongingService.insert(after);
         // then
         StepVerifier.create(groupMono).expectError(RedundantException.class).verify();
-      }
-    }
-  }
-
-  @Nested
-  class Delete {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ターゲットグループを削除できる")
-      void deleteTheIndex() {
-        // given
-        when(targetGroupBelongingRepository.deleteById(1L)).thenReturn(Mono.empty());
-        // when
-        Mono<Void> groupMono = targetGroupBelongingService.deleteById(1L);
-        // then
-        StepVerifier.create(groupMono).verifyComplete();
-        verify(targetGroupBelongingRepository).deleteById(1L);
       }
     }
   }

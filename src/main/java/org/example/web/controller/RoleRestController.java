@@ -45,16 +45,6 @@ public class RoleRestController {
     return roleService.findByNamespaceIdAndUserGroupId(namespaceId, userGroupId);
   }
 
-  @GetMapping("/count")
-  public Mono<Long> count() {
-    return roleService.count();
-  }
-
-  @GetMapping("/{id}")
-  public Mono<Role> findById(@PathVariable Long id) {
-    return roleService.findById(id);
-  }
-
   @PostMapping
   public Mono<Role> save(
       ServerWebExchange exchange,

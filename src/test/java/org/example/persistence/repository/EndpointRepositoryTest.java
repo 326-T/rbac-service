@@ -27,25 +27,6 @@ class EndpointRepositoryTest {
 
   @Order(1)
   @Nested
-  class Count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("エンドポイントの件数を取得できる")
-      void countTheIndexes() {
-        // when
-        Mono<Long> count = endpointRepository.count();
-        // then
-        StepVerifier.create(count).expectNext(3L).verifyComplete();
-      }
-    }
-  }
-
-  @Order(1)
-  @Nested
   class FindAll {
 
     @Nested

@@ -10,11 +10,7 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface NamespaceRepository extends ReactiveCrudRepository<Namespace, Long> {
 
-  Mono<Long> count();
-
   Flux<Namespace> findAll();
-
-  Mono<Namespace> findById(Long id);
 
   Mono<Namespace> save(Namespace namespace);
 

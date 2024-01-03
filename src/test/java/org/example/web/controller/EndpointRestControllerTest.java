@@ -49,28 +49,6 @@ class EndpointRestControllerTest {
   private WebTestClient webTestClient;
 
   @Nested
-  class Count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("エンドポイントの件数を取得できる")
-      void countTheIndexes() {
-        // given
-        when(endpointService.count()).thenReturn(Mono.just(3L));
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/endpoints/count")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Long.class).isEqualTo(3L);
-      }
-    }
-  }
-
-  @Nested
   class Index {
 
     @Nested
@@ -148,38 +126,6 @@ class EndpointRestControllerTest {
                         tuple(2L, 2L, 2L, "/billing-service/v1/", 2L, "target-group-2", "POST", 2L),
                         tuple(3L, 2L, 3L, "/inventory-service/v2/", 3L, "target-group-3", "PUT", 3L)
                     )
-            );
-      }
-    }
-  }
-
-  @Nested
-  class FindById {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("エンドポイントをIDで取得できる")
-      void canGetTheEndpointById() {
-        // given
-        Endpoint endpoint = Endpoint.builder()
-            .id(1L).namespaceId(1L).pathId(1L).method("GET").targetGroupId(1L).createdBy(1L)
-            .build();
-        when(endpointService.findById(1L)).thenReturn(Mono.just(endpoint));
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/endpoints/1")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Endpoint.class)
-            .consumeWith(result ->
-                assertThat(result.getResponseBody())
-                    .extracting(Endpoint::getId, Endpoint::getNamespaceId,
-                        Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, "GET", 1L, 1L)
             );
       }
     }

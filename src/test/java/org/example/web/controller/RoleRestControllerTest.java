@@ -11,7 +11,6 @@ import org.example.service.ReactiveContextService;
 import org.example.service.RoleService;
 import org.example.web.filter.AuthenticationWebFilter;
 import org.example.web.filter.AuthorizationWebFilter;
-import org.example.web.request.RoleInsertRequest;
 import org.example.web.request.RoleUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -43,28 +42,6 @@ class RoleRestControllerTest {
   private ReactiveContextService reactiveContextService;
   @Autowired
   private WebTestClient webTestClient;
-
-  @Nested
-  class Count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ロールの件数を取得できる")
-      void countTheIndexes() {
-        // given
-        when(roleService.count()).thenReturn(Mono.just(3L));
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/roles/count")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Long.class).isEqualTo(3L);
-      }
-    }
-  }
 
   @Nested
   class Index {
@@ -132,56 +109,6 @@ class RoleRestControllerTest {
                         tuple(3L, 1L, "security", 3L)
                     )
             );
-      }
-    }
-  }
-
-  @Nested
-  class FindById {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ロールをIDで取得できる")
-      void canGetTheRoleById() {
-        // given
-        Role role = Role.builder()
-            .id(1L).namespaceId(1L).name("developer").createdBy(1L).build();
-        when(roleService.findById(1L)).thenReturn(Mono.just(role));
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/roles/1")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Role.class)
-            .consumeWith(result ->
-                assertThat(result.getResponseBody())
-                    .extracting(Role::getId, Role::getNamespaceId,
-                        Role::getName, Role::getCreatedBy)
-                    .containsExactly(1L, 1L, "developer", 1L));
-      }
-    }
-
-    @Nested
-    @DisplayName("異常系")
-    class Error {
-
-      @DisplayName("バリデーションエラーが発生する")
-      @ParameterizedTest
-      @ValueSource(strings = {"", " "})
-      void validationErrorOccurs(String name) {
-        // given
-        RoleInsertRequest roleInsertRequest = new RoleInsertRequest();
-        roleInsertRequest.setName(name);
-        // when, then
-        webTestClient.post()
-            .uri("/rbac-service/v1/1/roles")
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(roleInsertRequest)
-            .exchange()
-            .expectStatus().isBadRequest();
       }
     }
   }

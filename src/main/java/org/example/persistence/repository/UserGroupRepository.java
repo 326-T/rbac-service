@@ -10,10 +10,6 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface UserGroupRepository extends ReactiveCrudRepository<UserGroup, Long> {
 
-  Mono<Long> count();
-
-  Flux<UserGroup> findAll();
-
   Mono<UserGroup> findById(Long id);
 
   @Query("""

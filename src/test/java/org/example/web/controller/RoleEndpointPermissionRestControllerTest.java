@@ -1,7 +1,6 @@
 package org.example.web.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.groups.Tuple.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -26,7 +25,6 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @WebFluxTest(
@@ -42,97 +40,6 @@ class RoleEndpointPermissionRestControllerTest {
   private ReactiveContextService reactiveContextService;
   @Autowired
   private WebTestClient webTestClient;
-
-  @Nested
-  class Count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ユーザグループの件数を取得できる")
-      void countTheIndexes() {
-        // given
-        when(roleEndpointPermissionService.count()).thenReturn(Mono.just(3L));
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/role-endpoint-permissions/count")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Long.class).isEqualTo(3L);
-      }
-    }
-  }
-
-  @Nested
-  class Index {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ユーザグループを全件取得できる")
-      void findAllTheIndexes() {
-        // given
-        RoleEndpointPermission roleEndpointPermission1 = RoleEndpointPermission.builder()
-            .id(1L).namespaceId(1L).roleId(1L).endpointId(1L).createdBy(1L).build();
-        RoleEndpointPermission roleEndpointPermission2 = RoleEndpointPermission.builder()
-            .id(2L).namespaceId(1L).roleId(2L).endpointId(2L).createdBy(2L).build();
-        RoleEndpointPermission roleEndpointPermission3 = RoleEndpointPermission.builder()
-            .id(3L).namespaceId(1L).roleId(3L).endpointId(3L).createdBy(3L).build();
-        when(roleEndpointPermissionService.findByNamespaceId(1L))
-            .thenReturn(Flux.just(roleEndpointPermission1, roleEndpointPermission2, roleEndpointPermission3));
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/role-endpoint-permissions")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBodyList(RoleEndpointPermission.class)
-            .hasSize(3)
-            .consumeWith(result ->
-                assertThat(result.getResponseBody())
-                    .extracting(RoleEndpointPermission::getId, RoleEndpointPermission::getNamespaceId,
-                        RoleEndpointPermission::getRoleId, RoleEndpointPermission::getEndpointId, RoleEndpointPermission::getCreatedBy)
-                    .containsExactly(
-                        tuple(1L, 1L, 1L, 1L, 1L),
-                        tuple(2L, 1L, 2L, 2L, 2L),
-                        tuple(3L, 1L, 3L, 3L, 3L)
-                    )
-            );
-      }
-    }
-  }
-
-  @Nested
-  class FindById {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ユーザグループをIDで取得できる")
-      void canGetTheRoleEndpointPermissionById() {
-        // given
-        RoleEndpointPermission roleEndpointPermission = RoleEndpointPermission.builder()
-            .id(1L).namespaceId(1L).roleId(1L).endpointId(1L).createdBy(1L).build();
-        when(roleEndpointPermissionService.findById(1L)).thenReturn(Mono.just(roleEndpointPermission));
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/role-endpoint-permissions/1")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(RoleEndpointPermission.class)
-            .consumeWith(result ->
-                assertThat(result.getResponseBody())
-                    .extracting(RoleEndpointPermission::getId, RoleEndpointPermission::getNamespaceId,
-                        RoleEndpointPermission::getRoleId, RoleEndpointPermission::getEndpointId, RoleEndpointPermission::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, 1L, 1L));
-      }
-    }
-  }
 
   @Nested
   class Save {
@@ -195,28 +102,6 @@ class RoleEndpointPermissionRestControllerTest {
             .bodyValue(roleEndpointPermissionInsertRequest)
             .exchange()
             .expectStatus().isBadRequest();
-      }
-    }
-  }
-
-  @Nested
-  class DeleteById {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ユーザグループを削除できる")
-      void canDeleteTheRoleEndpointPermissionById() {
-        // given
-        when(roleEndpointPermissionService.deleteById(3L)).thenReturn(Mono.empty());
-        // when, then
-        webTestClient.delete()
-            .uri("/rbac-service/v1/1/role-endpoint-permissions/3")
-            .exchange()
-            .expectStatus().isNoContent()
-            .expectBody().isEmpty();
       }
     }
   }

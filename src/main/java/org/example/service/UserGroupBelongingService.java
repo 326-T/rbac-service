@@ -5,7 +5,6 @@ import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.UserGroupBelonging;
 import org.example.persistence.repository.UserGroupBelongingRepository;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -15,22 +14,6 @@ public class UserGroupBelongingService {
 
   public UserGroupBelongingService(UserGroupBelongingRepository userGroupBelongingRepository) {
     this.userGroupBelongingRepository = userGroupBelongingRepository;
-  }
-
-  public Mono<Long> count() {
-    return userGroupBelongingRepository.count();
-  }
-
-  public Flux<UserGroupBelonging> findAll() {
-    return userGroupBelongingRepository.findAll();
-  }
-
-  public Mono<UserGroupBelonging> findById(Long id) {
-    return userGroupBelongingRepository.findById(id);
-  }
-
-  public Flux<UserGroupBelonging> findByNamespaceId(Long namespaceId) {
-    return userGroupBelongingRepository.findByNamespaceId(namespaceId);
   }
 
   /**
@@ -53,10 +36,6 @@ public class UserGroupBelongingService {
         .flatMap(present -> Mono.<UserGroupBelonging>error(new RedundantException("UserGroupBelonging already exists")))
         .switchIfEmpty(Mono.just(userGroupBelonging))
         .flatMap(userGroupBelongingRepository::save);
-  }
-
-  public Mono<Void> deleteById(Long id) {
-    return userGroupBelongingRepository.deleteById(id);
   }
 
   public Mono<Void> deleteByUniqueKeys(Long namespaceId, Long userId, Long userGroupId) {

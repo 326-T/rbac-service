@@ -18,18 +18,6 @@ public class TargetGroupService {
     this.targetGroupRepository = targetGroupRepository;
   }
 
-  public Mono<Long> count() {
-    return targetGroupRepository.count();
-  }
-
-  public Flux<TargetGroup> findAll() {
-    return targetGroupRepository.findAll();
-  }
-
-  public Mono<TargetGroup> findById(Long id) {
-    return targetGroupRepository.findById(id);
-  }
-
   public Flux<TargetGroup> findByNamespaceId(Long namespaceId) {
     return targetGroupRepository.findByNamespaceId(namespaceId);
   }

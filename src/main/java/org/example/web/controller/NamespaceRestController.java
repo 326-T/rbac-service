@@ -42,16 +42,6 @@ public class NamespaceRestController {
     return namespaceService.findAll();
   }
 
-  @GetMapping("/count")
-  public Mono<Long> count() {
-    return namespaceService.count();
-  }
-
-  @GetMapping("/{id}")
-  public Mono<Namespace> findById(@PathVariable Long id) {
-    return namespaceService.findById(id);
-  }
-
   @PostMapping
   public Mono<Namespace> save(
       ServerWebExchange exchange,

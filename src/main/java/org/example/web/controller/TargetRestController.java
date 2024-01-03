@@ -45,16 +45,6 @@ public class TargetRestController {
     return targetService.findByNamespaceIdAndTargetGroupId(namespaceId, targetGroupId);
   }
 
-  @GetMapping("/count")
-  public Mono<Long> count() {
-    return targetService.count();
-  }
-
-  @GetMapping("/{id}")
-  public Mono<Target> findById(@PathVariable Long id) {
-    return targetService.findById(id);
-  }
-
   @PostMapping
   public Mono<Target> save(
       ServerWebExchange exchange,

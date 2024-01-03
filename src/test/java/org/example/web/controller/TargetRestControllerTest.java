@@ -240,7 +240,7 @@ class TargetRestControllerTest {
       @DisplayName("ターゲットを削除できる")
       void canDeleteTheTargetById() {
         // given
-        when(targetService.deleteById(3L)).thenReturn(Mono.empty());
+        when(targetService.deleteById(3L, 1L)).thenReturn(Mono.empty());
         // when, then
         webTestClient.delete()
             .uri("/rbac-service/v1/1/targets/3")

@@ -6,8 +6,10 @@ import static org.mockito.Mockito.when;
 
 import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
+import org.example.error.exception.UnAuthorizedException;
 import org.example.persistence.entity.Namespace;
 import org.example.persistence.repository.NamespaceRepository;
+import org.example.util.constant.SystemRolePermission;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,6 +27,8 @@ class NamespaceServiceTest {
   private NamespaceService namespaceService;
   @Mock
   private NamespaceRepository namespaceRepository;
+  @Mock
+  private SystemRoleService systemRoleService;
 
   @Nested
   class FindAll {
@@ -119,14 +123,16 @@ class NamespaceServiceTest {
       void updateTheIndex() {
         // given
         Namespace before = Namespace.builder()
-            .id(2L).name("namespace2").createdBy(2L).build();
+            .id(1L).name("namespace2").createdBy(2L).build();
         Namespace after = Namespace.builder()
             .id(1L).name("namespace1").createdBy(1L).build();
         when(namespaceRepository.findById(1L)).thenReturn(Mono.just(before));
         when(namespaceRepository.findDuplicate("namespace1")).thenReturn(Mono.empty());
         when(namespaceRepository.save(any(Namespace.class))).thenReturn(Mono.just(after));
+        when(systemRoleService.aggregateSystemRolePermission(1L, 1L))
+            .thenReturn(Mono.just(SystemRolePermission.WRITE));
         // when
-        Mono<Namespace> namespaceMono = namespaceService.update(after);
+        Mono<Namespace> namespaceMono = namespaceService.update(after, 1L);
         // then
         StepVerifier.create(namespaceMono)
             .assertNext(namespace -> assertThat(namespace)
@@ -148,8 +154,10 @@ class NamespaceServiceTest {
             .id(1L).name("namespace1").createdBy(1L).build();
         when(namespaceRepository.findById(1L)).thenReturn(Mono.empty());
         when(namespaceRepository.save(any(Namespace.class))).thenReturn(Mono.just(after));
+        when(systemRoleService.aggregateSystemRolePermission(1L, 1L))
+            .thenReturn(Mono.just(SystemRolePermission.WRITE));
         // when
-        Mono<Namespace> namespaceMono = namespaceService.update(after);
+        Mono<Namespace> namespaceMono = namespaceService.update(after, 1L);
         // then
         StepVerifier.create(namespaceMono).expectError(NotExistingException.class).verify();
       }
@@ -161,16 +169,56 @@ class NamespaceServiceTest {
         Namespace before = Namespace.builder()
             .id(2L).name("namespace2").createdBy(2L).build();
         Namespace after = Namespace.builder()
-            .id(2L).name("namespace1").createdBy(1L).build();
+            .id(2L).name("namespace1").createdBy(2L).build();
         Namespace duplicate = Namespace.builder()
             .id(1L).name("namespace1").createdBy(1L).build();
         when(namespaceRepository.findById(2L)).thenReturn(Mono.just(before));
         when(namespaceRepository.findDuplicate("namespace1")).thenReturn(Mono.just(duplicate));
         when(namespaceRepository.save(any(Namespace.class))).thenReturn(Mono.just(after));
+        when(systemRoleService.aggregateSystemRolePermission(1L, 2L))
+            .thenReturn(Mono.just(SystemRolePermission.WRITE));
         // when
-        Mono<Namespace> namespaceMono = namespaceService.update(after);
+        Mono<Namespace> namespaceMono = namespaceService.update(after, 1L);
         // then
         StepVerifier.create(namespaceMono).expectError(RedundantException.class).verify();
+      }
+
+      @Test
+      @DisplayName("権限がない場合はエラーになる")
+      void cannotUpdateWithoutPermission() {
+        // given
+        Namespace before = Namespace.builder()
+            .id(1L).name("namespace2").createdBy(2L).build();
+        Namespace after = Namespace.builder()
+            .id(1L).name("namespace1").createdBy(1L).build();
+        when(namespaceRepository.findById(1L)).thenReturn(Mono.just(before));
+        when(namespaceRepository.findDuplicate("namespace1")).thenReturn(Mono.empty());
+        when(namespaceRepository.save(any(Namespace.class))).thenReturn(Mono.just(after));
+        when(systemRoleService.aggregateSystemRolePermission(1L, 1L))
+            .thenReturn(Mono.just(SystemRolePermission.NONE));
+        // when
+        Mono<Namespace> namespaceMono = namespaceService.update(after, 1L);
+        // then
+        StepVerifier.create(namespaceMono).expectError(UnAuthorizedException.class).verify();
+      }
+
+      @Test
+      @DisplayName("参照権限のみの場合はエラーになる")
+      void cannotUpdateWithoutREADPermission() {
+        // given
+        Namespace before = Namespace.builder()
+            .id(1L).name("namespace2").createdBy(2L).build();
+        Namespace after = Namespace.builder()
+            .id(1L).name("namespace1").createdBy(1L).build();
+        when(namespaceRepository.findById(1L)).thenReturn(Mono.just(before));
+        when(namespaceRepository.findDuplicate("namespace1")).thenReturn(Mono.empty());
+        when(namespaceRepository.save(any(Namespace.class))).thenReturn(Mono.just(after));
+        when(systemRoleService.aggregateSystemRolePermission(1L, 1L))
+            .thenReturn(Mono.just(SystemRolePermission.READ));
+        // when
+        Mono<Namespace> namespaceMono = namespaceService.update(after, 1L);
+        // then
+        StepVerifier.create(namespaceMono).expectError(UnAuthorizedException.class).verify();
       }
     }
   }
@@ -187,10 +235,43 @@ class NamespaceServiceTest {
       void deleteTheIndex() {
         // given
         when(namespaceRepository.deleteById(1L)).thenReturn(Mono.empty());
+        when(systemRoleService.aggregateSystemRolePermission(1L, 1L))
+            .thenReturn(Mono.just(SystemRolePermission.WRITE));
         // when
-        Mono<Void> namespaceMono = namespaceService.deleteById(1L);
+        Mono<Void> namespaceMono = namespaceService.deleteById(1L, 1L);
         // then
         StepVerifier.create(namespaceMono).verifyComplete();
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @Test
+      @DisplayName("権限がない場合はエラーになる")
+      void cannotDeleteWithoutPermission() {
+        // given
+        when(namespaceRepository.deleteById(1L)).thenReturn(Mono.empty());
+        when(systemRoleService.aggregateSystemRolePermission(1L, 1L))
+            .thenReturn(Mono.just(SystemRolePermission.NONE));
+        // when
+        Mono<Void> namespaceMono = namespaceService.deleteById(1L, 1L);
+        // then
+        StepVerifier.create(namespaceMono).expectError(UnAuthorizedException.class).verify();
+      }
+
+      @Test
+      @DisplayName("参照権限のみの場合はエラーになる")
+      void cannotDeleteWithoutREADPermission() {
+        // given
+        when(namespaceRepository.deleteById(1L)).thenReturn(Mono.empty());
+        when(systemRoleService.aggregateSystemRolePermission(1L, 1L))
+            .thenReturn(Mono.just(SystemRolePermission.READ));
+        // when
+        Mono<Void> namespaceMono = namespaceService.deleteById(1L, 1L);
+        // then
+        StepVerifier.create(namespaceMono).expectError(UnAuthorizedException.class).verify();
       }
     }
   }

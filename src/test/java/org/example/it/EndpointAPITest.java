@@ -158,7 +158,7 @@ public class EndpointAPITest {
       void updateTargetEndpoint() {
         // when, then
         webTestClient.put()
-            .uri("/rbac-service/v1/1/endpoints/2")
+            .uri("/rbac-service/v1/2/endpoints/2")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
@@ -221,7 +221,39 @@ public class EndpointAPITest {
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
-                        "org.example.error.exception.NotExistingException: Endpoint not found",
+                        "org.example.error.exception.NotExistingException: Endpoint is not in the namespace",
+                        "指定されたリソースは存在しません。")
+            );
+      }
+
+      @Test
+      @DisplayName("namespaceIdが異なる場合はエラーになる")
+      void cannotUpdateWithDifferentNamespaceId() {
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/3/endpoints/2")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "pathId": 3,
+                  "method": "GET",
+                  "targetGroupId": 2
+                }
+                """
+            )
+            .exchange()
+            .expectStatus().isNotFound()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        404, null,
+                        "idに該当するリソースが存在しない",
+                        "org.example.error.exception.NotExistingException: Endpoint is not in the namespace",
                         "指定されたリソースは存在しません。")
             );
       }
@@ -231,7 +263,7 @@ public class EndpointAPITest {
       void cannotUpdateWithDuplicate() {
         // when, then
         webTestClient.put()
-            .uri("/rbac-service/v1/1/endpoints/2")
+            .uri("/rbac-service/v1/2/endpoints/2")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
@@ -426,7 +458,7 @@ public class EndpointAPITest {
       void deleteTargetEndpointById() {
         // when, then
         webTestClient.delete()
-            .uri("/rbac-service/v1/1/endpoints/3")
+            .uri("/rbac-service/v1/2/endpoints/3")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .exchange()
             .expectStatus().isNoContent()
@@ -459,6 +491,52 @@ public class EndpointAPITest {
                         "エンドポイントへのアクセス権がない",
                         "org.example.error.exception.UnAuthorizedException: 認可されていません。",
                         "この操作は許可されていません。")
+            );
+      }
+
+      @Test
+      @DisplayName("存在しないターゲットの場合はエラーになる")
+      void notExistingIdCauseException() {
+        // when, then
+        webTestClient.delete()
+            .uri("/rbac-service/v1/3/endpoints/999")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .exchange()
+            .expectStatus().isNotFound()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        404, null,
+                        "idに該当するリソースが存在しない",
+                        "org.example.error.exception.NotExistingException: Endpoint is not in the namespace",
+                        "指定されたリソースは存在しません。")
+            );
+      }
+
+      @Test
+      @DisplayName("namespaceIdが異なる場合はエラーになる")
+      void cannotDeleteWithDifferentNamespaceId() {
+        // when, then
+        webTestClient.delete()
+            .uri("/rbac-service/v1/3/endpoints/3")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .exchange()
+            .expectStatus().isNotFound()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        404, null,
+                        "idに該当するリソースが存在しない",
+                        "org.example.error.exception.NotExistingException: Endpoint is not in the namespace",
+                        "指定されたリソースは存在しません。")
             );
       }
     }

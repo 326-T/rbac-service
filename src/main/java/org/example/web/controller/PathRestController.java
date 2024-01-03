@@ -50,15 +50,21 @@ public class PathRestController {
   }
 
   @PutMapping("/{id}")
-  public Mono<Path> update(@PathVariable Long id, @Valid @RequestBody PathUpdateRequest request) {
+  public Mono<Path> update(
+      @PathVariable("namespace-id") Long namespaceId,
+      @PathVariable Long id,
+      @Valid @RequestBody PathUpdateRequest request) {
     Path path = request.exportEntity();
     path.setId(id);
+    path.setNamespaceId(namespaceId);
     return pathService.update(path);
   }
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public Mono<Void> deleteById(@PathVariable Long id) {
-    return pathService.deleteById(id);
+  public Mono<Void> deleteById(
+      @PathVariable("namespace-id") Long namespaceId,
+      @PathVariable Long id) {
+    return pathService.deleteById(id, namespaceId);
   }
 }

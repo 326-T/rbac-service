@@ -78,4 +78,18 @@ public class SystemRoleService {
                         .build()))
             .flatMap(userSystemRolePermissionRepository::save).then());
   }
+
+  public Mono<SystemRolePermission> aggregateSystemRolePermission(Long userId, Long namespaceId) {
+    return systemRoleRepository.findByUserIdAndNamespaceId(userId, namespaceId)
+        .collectList()
+        .map(systemRoles -> {
+          if (systemRoles.stream().anyMatch(systemRole -> SystemRolePermission.WRITE.getPermission().equals(systemRole.getPermission()))) {
+            return SystemRolePermission.WRITE;
+          }
+          if (systemRoles.stream().anyMatch(systemRole -> SystemRolePermission.READ.getPermission().equals(systemRole.getPermission()))) {
+            return SystemRolePermission.READ;
+          }
+          return SystemRolePermission.NONE;
+        });
+  }
 }

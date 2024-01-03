@@ -57,15 +57,21 @@ public class RoleRestController {
   }
 
   @PutMapping("/{id}")
-  public Mono<Role> update(@PathVariable Long id, @Valid @RequestBody RoleUpdateRequest request) {
+  public Mono<Role> update(
+      @PathVariable("namespace-id") Long namespaceId,
+      @PathVariable Long id,
+      @Valid @RequestBody RoleUpdateRequest request) {
     Role role = request.exportEntity();
     role.setId(id);
+    role.setNamespaceId(namespaceId);
     return roleService.update(role);
   }
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public Mono<Void> deleteById(@PathVariable Long id) {
-    return roleService.deleteById(id);
+  public Mono<Void> deleteById(
+      @PathVariable("namespace-id") Long namespaceId,
+      @PathVariable Long id) {
+    return roleService.deleteById(id, namespaceId);
   }
 }

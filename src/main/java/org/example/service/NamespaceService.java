@@ -3,8 +3,10 @@ package org.example.service;
 import java.time.LocalDateTime;
 import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
+import org.example.error.exception.UnAuthorizedException;
 import org.example.persistence.entity.Namespace;
 import org.example.persistence.repository.NamespaceRepository;
+import org.example.util.constant.SystemRolePermission;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -13,9 +15,11 @@ import reactor.core.publisher.Mono;
 public class NamespaceService {
 
   private final NamespaceRepository namespaceRepository;
+  private final SystemRoleService systemRoleService;
 
-  public NamespaceService(NamespaceRepository namespaceRepository) {
+  public NamespaceService(NamespaceRepository namespaceRepository, SystemRoleService systemRoleService) {
     this.namespaceRepository = namespaceRepository;
+    this.systemRoleService = systemRoleService;
   }
 
 
@@ -55,7 +59,7 @@ public class NamespaceService {
    * @throws NotExistingException IDが存在しない場合
    * @throws RedundantException   重複した場合
    */
-  public Mono<Namespace> update(Namespace namespace) {
+  public Mono<Namespace> update(Namespace namespace, Long userId) {
     Mono<Namespace> namespaceMono = namespaceRepository.findById(namespace.getId())
         .switchIfEmpty(Mono.error(new NotExistingException("Namespace not found")))
         .flatMap(present -> {
@@ -63,13 +67,30 @@ public class NamespaceService {
           present.setUpdatedAt(LocalDateTime.now());
           return Mono.just(present);
         });
-    return namespaceMono.flatMap(e -> namespaceRepository.findDuplicate(e.getName()))
+    return systemRoleService.aggregateSystemRolePermission(userId, namespace.getId())
+        .flatMap(permission -> {
+          if (SystemRolePermission.WRITE.equals(permission)) {
+            return Mono.just(permission);
+          }
+          return Mono.error(new UnAuthorizedException("認可されていません。"));
+        })
+        .then(namespaceMono)
+        .flatMap(e -> namespaceRepository.findDuplicate(e.getName()))
         .flatMap(present -> Mono.<Namespace>error(new RedundantException("Namespace already exists")))
         .switchIfEmpty(namespaceMono)
         .flatMap(namespaceRepository::save);
   }
 
-  public Mono<Void> deleteById(Long id) {
-    return namespaceRepository.deleteById(id);
+  public Mono<Void> deleteById(Long id, Long userId) {
+    return systemRoleService
+        .aggregateSystemRolePermission(userId, id)
+        .flatMap(permission -> {
+          if (SystemRolePermission.WRITE.equals(permission)) {
+            return Mono.just(permission);
+          }
+          return Mono.error(new UnAuthorizedException("認可されていません。"));
+        })
+        .thenReturn(id)
+        .flatMap(namespaceRepository::deleteById);
   }
 }

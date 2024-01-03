@@ -98,7 +98,8 @@ class NamespaceRestControllerTest {
         // given
         Namespace namespace = Namespace.builder()
             .id(2L).name("kvs").createdBy(1L).build();
-        when(namespaceService.update(any(Namespace.class))).thenReturn(Mono.just(namespace));
+        when(namespaceService.update(any(Namespace.class), eq(1L))).thenReturn(Mono.just(namespace));
+        when(reactiveContextService.extractCurrentUser(any(ServerWebExchange.class))).thenReturn(User.builder().id(1L).build());
         // when, then
         webTestClient.put()
             .uri("/rbac-service/v1/namespaces/2")
@@ -210,7 +211,8 @@ class NamespaceRestControllerTest {
       @DisplayName("ネームスペースを削除できる")
       void canDeleteTheNamespaceById() {
         // given
-        when(namespaceService.deleteById(3L)).thenReturn(Mono.empty());
+        when(namespaceService.deleteById(3L, 1L)).thenReturn(Mono.empty());
+        when(reactiveContextService.extractCurrentUser(any(ServerWebExchange.class))).thenReturn(User.builder().id(1L).build());
         // when, then
         webTestClient.delete()
             .uri("/rbac-service/v1/namespaces/3")

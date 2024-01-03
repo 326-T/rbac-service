@@ -44,7 +44,8 @@ public class RoleEndpointPermissionRestController {
 
   @DeleteMapping
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public Mono<Void> deleteByUniqueKeys(@PathVariable("namespace-id") Long namespaceId,
+  public Mono<Void> deleteByUniqueKeys(
+      @PathVariable("namespace-id") Long namespaceId,
       @RequestParam("role-id") Long roleId,
       @RequestParam("endpoint-id") Long endpointId) {
     return roleEndpointPermissionService.deleteByUniqueKeys(namespaceId, roleId, endpointId);

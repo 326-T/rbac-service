@@ -53,15 +53,22 @@ public class NamespaceRestController {
   }
 
   @PutMapping("/{id}")
-  public Mono<Namespace> update(@PathVariable Long id, @Valid @RequestBody NamespaceUpdateRequest request) {
+  public Mono<Namespace> update(
+      ServerWebExchange exchange,
+      @PathVariable Long id,
+      @Valid @RequestBody NamespaceUpdateRequest request) {
     Namespace namespace = request.exportEntity();
     namespace.setId(id);
-    return namespaceService.update(namespace);
+    return namespaceService.update(namespace,
+        reactiveContextService.extractCurrentUser(exchange).getId());
   }
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public Mono<Void> deleteById(@PathVariable Long id) {
-    return namespaceService.deleteById(id);
+  public Mono<Void> deleteById(
+      ServerWebExchange exchange,
+      @PathVariable Long id) {
+    return namespaceService.deleteById(id,
+        reactiveContextService.extractCurrentUser(exchange).getId());
   }
 }

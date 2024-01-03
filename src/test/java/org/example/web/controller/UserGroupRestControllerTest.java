@@ -209,7 +209,7 @@ class UserGroupRestControllerTest {
       @DisplayName("ユーザグループを削除できる")
       void canDeleteTheUserGroupById() {
         // given
-        when(userGroupService.deleteById(3L)).thenReturn(Mono.empty());
+        when(userGroupService.deleteById(3L, 1L)).thenReturn(Mono.empty());
         // when, then
         webTestClient.delete()
             .uri("/rbac-service/v1/1/user-groups/3")

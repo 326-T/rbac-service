@@ -185,6 +185,21 @@ class RoleServiceTest {
       }
 
       @Test
+      @DisplayName("namespaceIdが一致しない場合はエラーになる")
+      void cannotUpdateWithDifferentNamespaceId() {
+        // given
+        Role before = Role.builder().id(2L).namespaceId(2L).name("operator").createdBy(2L).build();
+        Role after = Role.builder().id(2L).namespaceId(999L).name("developer").createdBy(2L).build();
+        when(roleRepository.findById(2L)).thenReturn(Mono.just(before));
+        when(roleRepository.findDuplicate(2L, "developer")).thenReturn(Mono.empty());
+        when(roleRepository.save(any(Role.class))).thenReturn(Mono.just(after));
+        // when
+        Mono<Role> groupMono = roleService.update(after);
+        // then
+        StepVerifier.create(groupMono).expectError(NotExistingException.class).verify();
+      }
+
+      @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
       void cannotUpdateWithDuplicate() {
         // given
@@ -213,11 +228,43 @@ class RoleServiceTest {
       @DisplayName("ロールを削除できる")
       void deleteTheIndex() {
         // given
+        Role role = Role.builder().id(1L).namespaceId(1L).name("developer").createdBy(1L).build();
+        when(roleRepository.findById(1L)).thenReturn(Mono.just(role));
         when(roleRepository.deleteById(1L)).thenReturn(Mono.empty());
         // when
-        Mono<Void> groupMono = roleService.deleteById(1L);
+        Mono<Void> groupMono = roleService.deleteById(1L, 1L);
         // then
         StepVerifier.create(groupMono).verifyComplete();
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @Test
+      @DisplayName("存在しないidの場合はエラーになる")
+      void notExistingIdCauseException() {
+        // given
+        when(roleRepository.findById(1L)).thenReturn(Mono.empty());
+        when(roleRepository.deleteById(1L)).thenReturn(Mono.empty());
+        // when
+        Mono<Void> groupMono = roleService.deleteById(1L, 1L);
+        // then
+        StepVerifier.create(groupMono).expectError(NotExistingException.class).verify();
+      }
+
+      @Test
+      @DisplayName("namespaceIdが一致しない場合はエラーになる")
+      void cannotDeleteWithDifferentNamespaceId() {
+        // given
+        Role role = Role.builder().id(1L).namespaceId(1L).name("developer").createdBy(1L).build();
+        when(roleRepository.findById(1L)).thenReturn(Mono.just(role));
+        when(roleRepository.deleteById(1L)).thenReturn(Mono.empty());
+        // when
+        Mono<Void> groupMono = roleService.deleteById(1L, 999L);
+        // then
+        StepVerifier.create(groupMono).expectError(NotExistingException.class).verify();
       }
     }
   }

@@ -155,6 +155,21 @@ class PathServiceTest {
       }
 
       @Test
+      @DisplayName("namespaceIdが一致しない場合はエラーになる")
+      void cannotUpdateWithDifferentNamespaceId() {
+        // given
+        Path before = Path.builder().id(2L).namespaceId(2L).regex("/billing-service/v1").createdBy(2L).build();
+        Path after = Path.builder().id(2L).namespaceId(999L).regex("/user-service/v1").createdBy(2L).build();
+        when(pathRepository.findById(2L)).thenReturn(Mono.just(before));
+        when(pathRepository.findDuplicate(2L, "/user-service/v1")).thenReturn(Mono.empty());
+        when(pathRepository.save(any(Path.class))).thenReturn(Mono.just(after));
+        // when
+        Mono<Path> clusterMono = pathService.update(after);
+        // then
+        StepVerifier.create(clusterMono).expectError(NotExistingException.class).verify();
+      }
+
+      @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
       void cannotUpdateWithDuplicate() {
         // given
@@ -183,11 +198,43 @@ class PathServiceTest {
       @DisplayName("パスを削除できる")
       void deleteTheIndex() {
         // given
+        Path path = Path.builder().id(1L).namespaceId(1L).regex("/user-service/v1").createdBy(1L).build();
+        when(pathRepository.findById(1L)).thenReturn(Mono.just(path));
         when(pathRepository.deleteById(1L)).thenReturn(Mono.empty());
         // when
-        Mono<Void> clusterMono = pathService.deleteById(1L);
+        Mono<Void> clusterMono = pathService.deleteById(1L, 1L);
         // then
         StepVerifier.create(clusterMono).verifyComplete();
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @Test
+      @DisplayName("存在しないidの場合はエラーになる")
+      void notExistingIdCauseException() {
+        // given
+        when(pathRepository.findById(1L)).thenReturn(Mono.empty());
+        when(pathRepository.deleteById(1L)).thenReturn(Mono.empty());
+        // when
+        Mono<Void> clusterMono = pathService.deleteById(1L, 1L);
+        // then
+        StepVerifier.create(clusterMono).expectError(NotExistingException.class).verify();
+      }
+
+      @Test
+      @DisplayName("namespaceIdが一致しない場合はエラーになる")
+      void cannotDeleteWithDifferentNamespaceId() {
+        // given
+        Path path = Path.builder().id(1L).namespaceId(1L).regex("/user-service/v1").createdBy(1L).build();
+        when(pathRepository.findById(1L)).thenReturn(Mono.just(path));
+        when(pathRepository.deleteById(1L)).thenReturn(Mono.empty());
+        // when
+        Mono<Void> clusterMono = pathService.deleteById(1L, 999L);
+        // then
+        StepVerifier.create(clusterMono).expectError(NotExistingException.class).verify();
       }
     }
   }

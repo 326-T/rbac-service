@@ -1,6 +1,7 @@
 package org.example.service;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.Endpoint;
@@ -49,7 +50,8 @@ public class EndpointService {
    */
   public Mono<Endpoint> update(Endpoint endpoint) {
     Mono<Endpoint> endpointMono = endpointRepository.findById(endpoint.getId())
-        .switchIfEmpty(Mono.error(new NotExistingException("Endpoint not found")))
+        .filter(present -> Objects.equals(present.getNamespaceId(), endpoint.getNamespaceId()))
+        .switchIfEmpty(Mono.error(new NotExistingException("Endpoint is not in the namespace")))
         .flatMap(present -> {
           present.setPathId(endpoint.getPathId());
           present.setTargetGroupId(endpoint.getTargetGroupId());
@@ -64,7 +66,11 @@ public class EndpointService {
         .flatMap(endpointRepository::save);
   }
 
-  public Mono<Void> deleteById(Long id) {
-    return endpointRepository.deleteById(id);
+  public Mono<Void> deleteById(Long id, Long namespaceId) {
+    return endpointRepository.findById(id)
+        .filter(present -> Objects.equals(present.getNamespaceId(), namespaceId))
+        .switchIfEmpty(Mono.error(new NotExistingException("Endpoint is not in the namespace")))
+        .map(Endpoint::getId)
+        .flatMap(endpointRepository::deleteById);
   }
 }

@@ -3,7 +3,6 @@ package org.example.web.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import org.example.persistence.entity.TargetGroup;
@@ -98,7 +97,7 @@ class TargetGroupRestControllerTest {
         // given
         TargetGroup targetGroup = TargetGroup.builder()
             .id(2L).namespaceId(1L).name("OBJECT-ID-2").createdBy(1L).build();
-        when(targetGroupService.update(any(TargetGroup.class), eq(1L))).thenReturn(Mono.just(targetGroup));
+        when(targetGroupService.update(any(TargetGroup.class))).thenReturn(Mono.just(targetGroup));
         // when, then
         webTestClient.put()
             .uri("/rbac-service/v1/1/target-groups/2")

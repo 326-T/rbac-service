@@ -6,7 +6,9 @@ import lombok.Getter;
 @Getter
 public enum SystemRolePermission {
   READ("参照権限", "READ"),
-  WRITE("編集権限", "WRITE");
+  WRITE("編集権限", "WRITE"),
+  NONE("権限なし", "NONE");
+
   private final String name;
   private final String permission;
 

@@ -51,10 +51,12 @@ public class NamespaceAPITest {
   private UserRepository userRepository;
 
   private String jwt;
+  private String unAuthorizedJwt;
 
   @BeforeAll
   void beforeAll() {
     jwt = base64Service.encode(jwtService.encode(User.builder().id(2L).name("user1").email("xxx@example.org").build()));
+    unAuthorizedJwt = base64Service.encode(jwtService.encode(User.builder().id(3L).name("user2").email("yyy@example.org").build()));
   }
 
   @Order(1)
@@ -148,7 +150,7 @@ public class NamespaceAPITest {
                 """
             )
             .exchange()
-            .expectStatus().isNotFound()
+            .expectStatus().isForbidden()
             .expectBody(ErrorResponse.class)
             .consumeWith(response ->
                 assertThat(response.getResponseBody())
@@ -156,10 +158,10 @@ public class NamespaceAPITest {
                         ErrorResponse::getStatus, ErrorResponse::getCode,
                         ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
                     .containsExactly(
-                        404, null,
-                        "idに該当するリソースが存在しない",
-                        "org.example.error.exception.NotExistingException: Namespace not found",
-                        "指定されたリソースは存在しません。")
+                        403, null,
+                        "エンドポイントへのアクセス権がない",
+                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "この操作は許可されていません。")
             );
       }
 
@@ -190,6 +192,36 @@ public class NamespaceAPITest {
                         "Unique制約に違反している",
                         "org.example.error.exception.RedundantException: Namespace already exists",
                         "作成済みのリソースと重複しています。")
+            );
+      }
+
+      @Test
+      @DisplayName("権限がない場合はエラーになる")
+      void notAuthorizedCauseException() {
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/namespaces/2")
+            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "name": "STAGING"
+                }
+                """
+            )
+            .exchange()
+            .expectStatus().isForbidden()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        403, null,
+                        "エンドポイントへのアクセス権がない",
+                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "この操作は許可されていません。")
             );
       }
     }
@@ -322,6 +354,34 @@ public class NamespaceAPITest {
         namespaceRepository.findById(3L)
             .as(StepVerifier::create)
             .verifyComplete();
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @Test
+      @DisplayName("権限がない場合はエラーになる")
+      void notAuthorizedCauseException() {
+        // when, then
+        webTestClient.delete()
+            .uri("/rbac-service/v1/namespaces/3")
+            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .exchange()
+            .expectStatus().isForbidden()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        403, null,
+                        "エンドポイントへのアクセス権がない",
+                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "この操作は許可されていません。")
+            );
       }
     }
   }

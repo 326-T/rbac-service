@@ -1,6 +1,7 @@
 package org.example.service;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.TargetGroup;
@@ -56,10 +57,10 @@ public class TargetGroupService {
    * @throws NotExistingException IDが存在しない場合
    * @throws RedundantException   重複した場合
    */
-  public Mono<TargetGroup> update(TargetGroup targetGroup, Long namespaceId) {
+  public Mono<TargetGroup> update(TargetGroup targetGroup) {
     Mono<TargetGroup> targetGroupMono = targetGroupRepository.findById(targetGroup.getId())
-        .filter(t -> t.getNamespaceId().equals(namespaceId))
-        .switchIfEmpty(Mono.error(new NotExistingException("TargetGroup not found")))
+        .filter(present -> Objects.equals(present.getNamespaceId(), targetGroup.getNamespaceId()))
+        .switchIfEmpty(Mono.error(new NotExistingException("TargetGroup is not in the namespace")))
         .flatMap(present -> {
           present.setName(targetGroup.getName());
           present.setUpdatedAt(LocalDateTime.now());
@@ -84,8 +85,9 @@ public class TargetGroupService {
    */
   public Mono<Void> deleteById(Long id, Long namespaceId) {
     return targetGroupRepository.findById(id)
-        .filter(t -> t.getNamespaceId().equals(namespaceId))
-        .switchIfEmpty(Mono.error(new NotExistingException("TargetGroup not found")))
-        .flatMap(tg -> targetGroupRepository.deleteById(tg.getId()));
+        .filter(t -> Objects.equals(t.getNamespaceId(), namespaceId))
+        .switchIfEmpty(Mono.error(new NotExistingException("TargetGroup is not in the namespace")))
+        .map(TargetGroup::getId)
+        .flatMap(targetGroupRepository::deleteById);
   }
 }

@@ -159,6 +159,21 @@ class UserGroupServiceTest {
       }
 
       @Test
+      @DisplayName("namespaceIdが一致しない場合はエラーになる")
+      void cannotUpdateWithDifferentNamespaceId() {
+        // given
+        UserGroup before = UserGroup.builder().id(2L).namespaceId(1L).name("group2").createdBy(2L).build();
+        UserGroup after = UserGroup.builder().id(2L).namespaceId(999L).name("GROUP2").createdBy(2L).build();
+        when(userGroupRepository.findById(2L)).thenReturn(Mono.just(before));
+        when(userGroupRepository.findDuplicate(2L, "GROUP2")).thenReturn(Mono.empty());
+        when(userGroupRepository.save(any(UserGroup.class))).thenReturn(Mono.just(after));
+        // when
+        Mono<UserGroup> groupMono = userGroupService.update(after);
+        // then
+        StepVerifier.create(groupMono).expectError(NotExistingException.class).verify();
+      }
+
+      @Test
       @DisplayName("すでに登録済みの場合はエラーになる")
       void cannotUpdateWithDuplicate() {
         // given
@@ -187,11 +202,43 @@ class UserGroupServiceTest {
       @DisplayName("ユーザグループを削除できる")
       void deleteTheIndex() {
         // given
+        UserGroup userGroup = UserGroup.builder().id(1L).namespaceId(1L).name("group1").createdBy(1L).build();
+        when(userGroupRepository.findById(1L)).thenReturn(Mono.just(userGroup));
         when(userGroupRepository.deleteById(1L)).thenReturn(Mono.empty());
         // when
-        Mono<Void> groupMono = userGroupService.deleteById(1L);
+        Mono<Void> groupMono = userGroupService.deleteById(1L, 1L);
         // then
         StepVerifier.create(groupMono).verifyComplete();
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @Test
+      @DisplayName("存在しないidの場合はエラーになる")
+      void notExistingIdCauseException() {
+        // given
+        when(userGroupRepository.findById(1L)).thenReturn(Mono.empty());
+        when(userGroupRepository.deleteById(1L)).thenReturn(Mono.empty());
+        // when
+        Mono<Void> targetMono = userGroupService.deleteById(1L, 1L);
+        // then
+        StepVerifier.create(targetMono).expectError(NotExistingException.class).verify();
+      }
+
+      @Test
+      @DisplayName("namespaceIdが一致しない場合はエラーになる")
+      void cannotDeleteWithDifferentNamespaceId() {
+        // given
+        UserGroup userGroup = UserGroup.builder().id(1L).namespaceId(1L).name("group1").createdBy(1L).build();
+        when(userGroupRepository.findById(1L)).thenReturn(Mono.just(userGroup));
+        when(userGroupRepository.deleteById(1L)).thenReturn(Mono.empty());
+        // when
+        Mono<Void> targetMono = userGroupService.deleteById(1L, 999L);
+        // then
+        StepVerifier.create(targetMono).expectError(NotExistingException.class).verify();
       }
     }
   }

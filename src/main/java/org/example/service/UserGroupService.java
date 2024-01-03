@@ -1,6 +1,7 @@
 package org.example.service;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.UserGroup;
@@ -43,9 +44,10 @@ public class UserGroupService {
 
   /**
    * 1. IDが存在してるか確認する
-   * 2. 変更内容をセットする
-   * 3. 重複がないか確認する
-   * 4. 保存する
+   * 2. NamespaceIdが一致しているか確認する
+   * 3. 変更内容をセットする
+   * 4. 重複がないか確認する
+   * 5. 保存する
    *
    * @param userGroup nameのみ変更可能
    *
@@ -56,7 +58,8 @@ public class UserGroupService {
    */
   public Mono<UserGroup> update(UserGroup userGroup) {
     Mono<UserGroup> userGroupMono = groupRepository.findById(userGroup.getId())
-        .switchIfEmpty(Mono.error(new NotExistingException("UserGroup not found")))
+        .filter(present -> Objects.equals(present.getNamespaceId(), userGroup.getNamespaceId()))
+        .switchIfEmpty(Mono.error(new NotExistingException("UserGroup is not in the namespace")))
         .flatMap(present -> {
           present.setName(userGroup.getName());
           present.setUpdatedAt(LocalDateTime.now());
@@ -69,7 +72,21 @@ public class UserGroupService {
         .flatMap(groupRepository::save);
   }
 
-  public Mono<Void> deleteById(Long id) {
-    return groupRepository.deleteById(id);
+  /**
+   * 1. IDが存在してるか確認する
+   * 2. NamespaceIdが一致しているか確認する
+   * 3. 削除する
+   *
+   * @param id          UserGroupのID
+   * @param namespaceId UserGroupのNamespaceId
+   *
+   * @return Void
+   */
+  public Mono<Void> deleteById(Long id, Long namespaceId) {
+    return groupRepository.findById(id)
+        .filter(present -> Objects.equals(present.getNamespaceId(), namespaceId))
+        .switchIfEmpty(Mono.error(new NotExistingException("UserGroup is not in the namespace")))
+        .map(UserGroup::getId)
+        .flatMap(groupRepository::deleteById);
   }
 }

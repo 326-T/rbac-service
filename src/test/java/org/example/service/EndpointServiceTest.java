@@ -222,6 +222,25 @@ class EndpointServiceTest {
     }
 
     @Test
+    @DisplayName("namespaceIdが一致しない場合はエラーになる")
+    void cannotUpdateWithDifferentNamespaceId() {
+      // given
+      Endpoint before = Endpoint.builder()
+          .id(2L).namespaceId(2L).pathId(2L).method("POST")
+          .targetGroupId(2L).createdBy(2L).build();
+      Endpoint after = Endpoint.builder()
+          .id(2L).namespaceId(999L).pathId(3L).method("GET")
+          .targetGroupId(3L).createdBy(2L).build();
+      when(endpointRepository.findById(2L)).thenReturn(Mono.just(before));
+      when(endpointRepository.findDuplicate(2L, 3L, 3L, "GET")).thenReturn(Mono.empty());
+      when(endpointRepository.save(any(Endpoint.class))).thenReturn(Mono.just(after));
+      // when
+      Mono<Endpoint> clusterMono = endpointService.update(after);
+      // then
+      StepVerifier.create(clusterMono).expectError(NotExistingException.class).verify();
+    }
+
+    @Test
     @DisplayName("すでに登録済みの場合はエラーになる")
     void cannotUpdateWithDuplicateEndpoint() {
       // given
@@ -229,10 +248,10 @@ class EndpointServiceTest {
           .id(2L).namespaceId(2L).pathId(2L).method("POST")
           .targetGroupId(2L).createdBy(2L).build();
       Endpoint after = Endpoint.builder()
-          .id(2L).namespaceId(3L).pathId(3L).method("PUT")
+          .id(2L).namespaceId(2L).pathId(3L).method("PUT")
           .targetGroupId(3L).createdBy(3L).build();
       Endpoint duplicate = Endpoint.builder()
-          .id(2L).namespaceId(3L).pathId(3L).method("PUT")
+          .id(2L).namespaceId(2L).pathId(3L).method("PUT")
           .targetGroupId(3L).createdBy(3L).build();
       when(endpointRepository.findById(2L)).thenReturn(Mono.just(before));
       when(endpointRepository.findDuplicate(2L, 3L, 3L, "PUT")).thenReturn(Mono.just(duplicate));
@@ -255,11 +274,43 @@ class EndpointServiceTest {
       @DisplayName("エンドポイントを削除できる")
       void deleteTheIndex() {
         // given
+        Endpoint endpoint = Endpoint.builder().id(1L).namespaceId(1L).createdBy(1L).build();
+        when(endpointRepository.findById(1L)).thenReturn(Mono.just(endpoint));
         when(endpointRepository.deleteById(1L)).thenReturn(Mono.empty());
         // when
-        Mono<Void> clusterMono = endpointService.deleteById(1L);
+        Mono<Void> clusterMono = endpointService.deleteById(1L, 1L);
         // then
         StepVerifier.create(clusterMono).verifyComplete();
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @Test
+      @DisplayName("存在しないidの場合はエラーになる")
+      void notExistingIdCauseException() {
+        // given
+        when(endpointRepository.findById(1L)).thenReturn(Mono.empty());
+        when(endpointRepository.deleteById(1L)).thenReturn(Mono.empty());
+        // when
+        Mono<Void> clusterMono = endpointService.deleteById(1L, 1L);
+        // then
+        StepVerifier.create(clusterMono).expectError(NotExistingException.class).verify();
+      }
+
+      @Test
+      @DisplayName("namespaceIdが一致しない場合はエラーになる")
+      void cannotDeleteWithDifferentNamespaceId() {
+        // given
+        Endpoint endpoint = Endpoint.builder().id(1L).namespaceId(1L).createdBy(1L).build();
+        when(endpointRepository.findById(1L)).thenReturn(Mono.just(endpoint));
+        when(endpointRepository.deleteById(1L)).thenReturn(Mono.empty());
+        // when
+        Mono<Void> clusterMono = endpointService.deleteById(1L, 999L);
+        // then
+        StepVerifier.create(clusterMono).expectError(NotExistingException.class).verify();
       }
     }
   }

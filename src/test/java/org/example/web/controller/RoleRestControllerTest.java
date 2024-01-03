@@ -220,7 +220,7 @@ class RoleRestControllerTest {
       @DisplayName("ロールを削除できる")
       void canDeleteTheRoleById() {
         // given
-        when(roleService.deleteById(3L)).thenReturn(Mono.empty());
+        when(roleService.deleteById(3L, 1L)).thenReturn(Mono.empty());
         // when, then
         webTestClient.delete()
             .uri("/rbac-service/v1/1/roles/3")

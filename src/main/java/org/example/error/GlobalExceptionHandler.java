@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.example.error.exception.DifferentNamespaceException;
 import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
 import org.example.error.exception.UnAuthenticatedException;
@@ -66,6 +67,16 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
               .summary("Unique制約に違反している")
               .detail(ex.toString())
               .message("作成済みのリソースと重複しています。")
+              .build());
+    }
+
+    if (ex instanceof DifferentNamespaceException) {
+      return setResponse(exchange, HttpStatus.FORBIDDEN,
+          ErrorResponse.builder()
+              .status(HttpStatus.FORBIDDEN.value())
+              .summary("Namespace外のリソースを操作をしようとした")
+              .detail(ex.toString())
+              .message("Namespace外のリソースを操作することはできません。")
               .build());
     }
 

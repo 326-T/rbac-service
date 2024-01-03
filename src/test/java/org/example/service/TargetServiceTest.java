@@ -37,14 +37,14 @@ class TargetServiceTest {
       @DisplayName("ターゲットを名前空間IDで取得できる")
       void findAllTheIndexes() {
         // given
-        Target target1 = Target.builder()
-            .id(1L).namespaceId(1L).objectIdRegex("object-id-1").createdBy(1L).build();
-        Target target2 = Target.builder()
-            .id(2L).namespaceId(1L).objectIdRegex("object-id-2").createdBy(2L).build();
-        Target target3 = Target.builder()
-            .id(3L).namespaceId(1L).objectIdRegex("object-id-3").createdBy(3L).build();
-        when(targetRepository.findByNamespaceId(1L)).thenReturn(Flux.just(target1, target2,
-            target3));
+        Target target1 = Target.builder().id(1L).namespaceId(1L)
+            .objectIdRegex("object-id-1").createdBy(1L).build();
+        Target target2 = Target.builder().id(2L).namespaceId(1L)
+            .objectIdRegex("object-id-2").createdBy(2L).build();
+        Target target3 = Target.builder().id(3L).namespaceId(1L)
+            .objectIdRegex("object-id-3").createdBy(3L).build();
+        when(targetRepository.findByNamespaceId(1L))
+            .thenReturn(Flux.just(target1, target2, target3));
         // when
         Flux<Target> clusterFlux = targetService.findByNamespaceId(1L);
         // then
@@ -77,12 +77,12 @@ class TargetServiceTest {
       @DisplayName("ターゲットを名前空間IDとターゲットグループIDで取得できる")
       void findAllTheIndexes() {
         // given
-        Target target1 = Target.builder()
-            .id(1L).namespaceId(1L).objectIdRegex("object-id-1").createdBy(1L).build();
-        Target target2 = Target.builder()
-            .id(2L).namespaceId(1L).objectIdRegex("object-id-2").createdBy(2L).build();
-        Target target3 = Target.builder()
-            .id(3L).namespaceId(1L).objectIdRegex("object-id-3").createdBy(3L).build();
+        Target target1 = Target.builder().id(1L).namespaceId(1L)
+            .objectIdRegex("object-id-1").createdBy(1L).build();
+        Target target2 = Target.builder().id(2L).namespaceId(1L)
+            .objectIdRegex("object-id-2").createdBy(2L).build();
+        Target target3 = Target.builder().id(3L).namespaceId(1L)
+            .objectIdRegex("object-id-3").createdBy(3L).build();
         when(targetRepository.findByNamespaceIdAndTargetGroupId(1L, 1L))
             .thenReturn(Flux.just(target1, target2, target3));
         // when
@@ -121,7 +121,8 @@ class TargetServiceTest {
         Target target1 = Target.builder()
             .namespaceId(1L).objectIdRegex("object-id-1").createdBy(1L).build();
         when(targetRepository.save(any(Target.class))).thenReturn(Mono.just(target1));
-        when(targetRepository.findDuplicate(1L, "object-id-1")).thenReturn(Mono.empty());
+        when(targetRepository.findDuplicate(1L, "object-id-1"))
+            .thenReturn(Mono.empty());
         // when
         Mono<Target> targetMono = targetService.insert(target1);
         // then
@@ -142,9 +143,12 @@ class TargetServiceTest {
       @DisplayName("すでに登録済みの場合はエラーになる")
       void cannotCreateDuplicateTarget() {
         // given
-        Target before = Target.builder().namespaceId(1L).objectIdRegex("object-id-1").createdBy(1L).build();
-        Target after = Target.builder().namespaceId(1L).objectIdRegex("object-id-1").createdBy(1L).build();
-        when(targetRepository.findDuplicate(1L, "object-id-1")).thenReturn(Mono.just(before));
+        Target before = Target.builder().namespaceId(1L)
+            .objectIdRegex("object-id-1").createdBy(1L).build();
+        Target after = Target.builder().namespaceId(1L)
+            .objectIdRegex("object-id-1").createdBy(1L).build();
+        when(targetRepository.findDuplicate(1L, "object-id-1"))
+            .thenReturn(Mono.just(before));
         // when
         Mono<Target> targetMono = targetService.insert(after);
         // then
@@ -164,12 +168,13 @@ class TargetServiceTest {
       @DisplayName("ターゲットを更新できる")
       void updateTheIndex() {
         // given
-        Target before = Target.builder()
-            .id(2L).namespaceId(2L).objectIdRegex("object-id-2").createdBy(2L).build();
-        Target after = Target.builder()
-            .id(2L).namespaceId(2L).objectIdRegex("OBJECT_ID_2").createdBy(2L).build();
+        Target before = Target.builder().id(2L).namespaceId(2L)
+            .objectIdRegex("object-id-2").createdBy(2L).build();
+        Target after = Target.builder().id(2L).namespaceId(2L)
+            .objectIdRegex("OBJECT_ID_2").createdBy(2L).build();
         when(targetRepository.findById(2L)).thenReturn(Mono.just(before));
-        when(targetRepository.findDuplicate(2L, "OBJECT_ID_2")).thenReturn(Mono.empty());
+        when(targetRepository.findDuplicate(2L, "OBJECT_ID_2"))
+            .thenReturn(Mono.empty());
         when(targetRepository.save(any(Target.class))).thenReturn(Mono.just(after));
         // when
         Mono<Target> targetMono = targetService.update(after);
@@ -191,9 +196,29 @@ class TargetServiceTest {
       @DisplayName("存在しないターゲットの場合はエラーになる")
       void notExistingTargetCauseException() {
         // given
-        Target after = Target.builder().id(2L).namespaceId(2L).objectIdRegex("OBJECT_ID_2").createdBy(2L).build();
+        Target after = Target.builder().id(2L).namespaceId(2L)
+            .objectIdRegex("OBJECT_ID_2").createdBy(2L).build();
         when(targetRepository.findById(2L)).thenReturn(Mono.empty());
-        when(targetRepository.findDuplicate(2L, "OBJECT_ID_2")).thenReturn(Mono.empty());
+        when(targetRepository.findDuplicate(2L, "OBJECT_ID_2"))
+            .thenReturn(Mono.empty());
+        when(targetRepository.save(any(Target.class))).thenReturn(Mono.just(after));
+        // when
+        Mono<Target> targetMono = targetService.update(after);
+        // then
+        StepVerifier.create(targetMono).expectError(NotExistingException.class).verify();
+      }
+
+      @Test
+      @DisplayName("namespaceIdが一致しない場合はエラーになる")
+      void cannotUpdateWithDifferentNamespaceId() {
+        // given
+        Target before = Target.builder()
+            .id(2L).namespaceId(2L).objectIdRegex("object-id-2").createdBy(2L).build();
+        Target after = Target.builder()
+            .id(2L).namespaceId(999L).objectIdRegex("OBJECT_ID_2").createdBy(2L).build();
+        when(targetRepository.findById(2L)).thenReturn(Mono.just(before));
+        when(targetRepository.findDuplicate(2L, "OBJECT_ID_2"))
+            .thenReturn(Mono.empty());
         when(targetRepository.save(any(Target.class))).thenReturn(Mono.just(after));
         // when
         Mono<Target> targetMono = targetService.update(after);
@@ -212,7 +237,8 @@ class TargetServiceTest {
         Target duplicate = Target.builder()
             .id(3L).namespaceId(2L).objectIdRegex("OBJECT_ID_2").createdBy(2L).build();
         when(targetRepository.findById(2L)).thenReturn(Mono.just(before));
-        when(targetRepository.findDuplicate(2L, "OBJECT_ID_2")).thenReturn(Mono.just(duplicate));
+        when(targetRepository.findDuplicate(2L, "OBJECT_ID_2"))
+            .thenReturn(Mono.just(duplicate));
         when(targetRepository.save(any(Target.class))).thenReturn(Mono.just(after));
         // when
         Mono<Target> targetMono = targetService.update(after);
@@ -233,11 +259,45 @@ class TargetServiceTest {
       @DisplayName("ターゲットを削除できる")
       void deleteTheIndex() {
         // given
+        Target before = Target.builder().id(1L).namespaceId(1L)
+            .objectIdRegex("object-id-1").createdBy(1L).build();
+        when(targetRepository.findById(1L)).thenReturn(Mono.just(before));
         when(targetRepository.deleteById(1L)).thenReturn(Mono.empty());
         // when
-        Mono<Void> targetMono = targetService.deleteById(1L);
+        Mono<Void> targetMono = targetService.deleteById(1L, 1L);
         // then
         StepVerifier.create(targetMono).verifyComplete();
+      }
+    }
+
+    @Nested
+    @DisplayName("異常系")
+    class Error {
+
+      @Test
+      @DisplayName("存在しないidの場合はエラーになる")
+      void notExistingIdCauseException() {
+        // given
+        when(targetRepository.findById(1L)).thenReturn(Mono.empty());
+        when(targetRepository.deleteById(1L)).thenReturn(Mono.empty());
+        // when
+        Mono<Void> targetMono = targetService.deleteById(1L, 1L);
+        // then
+        StepVerifier.create(targetMono).expectError(NotExistingException.class).verify();
+      }
+
+      @Test
+      @DisplayName("namespaceIdが一致しない場合はエラーになる")
+      void cannotDeleteWithDifferentNamespaceId() {
+        // given
+        Target target = Target.builder().id(1L).namespaceId(1L)
+            .objectIdRegex("object-id-1").createdBy(1L).build();
+        when(targetRepository.findById(1L)).thenReturn(Mono.just(target));
+        when(targetRepository.deleteById(1L)).thenReturn(Mono.empty());
+        // when
+        Mono<Void> targetMono = targetService.deleteById(1L, 999L);
+        // then
+        StepVerifier.create(targetMono).expectError(NotExistingException.class).verify();
       }
     }
   }

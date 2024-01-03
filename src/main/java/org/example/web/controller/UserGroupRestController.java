@@ -50,15 +50,21 @@ public class UserGroupRestController {
   }
 
   @PutMapping("/{id}")
-  public Mono<UserGroup> update(@PathVariable Long id, @Valid @RequestBody UserGroupUpdateRequest request) {
+  public Mono<UserGroup> update(
+      @PathVariable("namespace-id") Long namespaceId,
+      @PathVariable Long id,
+      @Valid @RequestBody UserGroupUpdateRequest request) {
     UserGroup userGroup = request.exportEntity();
     userGroup.setId(id);
+    userGroup.setNamespaceId(namespaceId);
     return userGroupService.update(userGroup);
   }
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public Mono<Void> deleteById(@PathVariable Long id) {
-    return userGroupService.deleteById(id);
+  public Mono<Void> deleteById(
+      @PathVariable("namespace-id") Long namespaceId,
+      @PathVariable Long id) {
+    return userGroupService.deleteById(id, namespaceId);
   }
 }

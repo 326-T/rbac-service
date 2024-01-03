@@ -57,7 +57,8 @@ public class TargetGroupRestController {
       @Valid @RequestBody TargetGroupUpdateRequest request) {
     TargetGroup targetGroup = request.exportEntity();
     targetGroup.setId(id);
-    return targetGroupService.update(targetGroup, namespaceId);
+    targetGroup.setNamespaceId(namespaceId);
+    return targetGroupService.update(targetGroup);
   }
 
   @DeleteMapping("/{id}")

@@ -1,6 +1,7 @@
 package org.example.service;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.Target;
@@ -16,6 +17,10 @@ public class TargetService {
 
   public TargetService(TargetRepository targetRepository) {
     this.targetRepository = targetRepository;
+  }
+
+  public Mono<Target> findById(Long id) {
+    return targetRepository.findById(id);
   }
 
   public Flux<Target> findByNamespaceId(Long namespaceId) {
@@ -48,9 +53,10 @@ public class TargetService {
 
   /**
    * 1. IDが存在してるか確認する
-   * 2. 変更内容をセットする
-   * 3. 重複がないか確認する
-   * 4. 保存する
+   * 2. NamespaceIdが一致しているか確認する
+   * 3. 変更内容をセットする
+   * 4. 重複がないか確認する
+   * 5. 保存する
    *
    * @param target objectIdRegexのみ変更可能
    *
@@ -61,7 +67,8 @@ public class TargetService {
    */
   public Mono<Target> update(Target target) {
     Mono<Target> targetMono = targetRepository.findById(target.getId())
-        .switchIfEmpty(Mono.error(new NotExistingException("Target not found")))
+        .filter(present -> Objects.equals(present.getNamespaceId(), target.getNamespaceId()))
+        .switchIfEmpty(Mono.error(new NotExistingException("Target is not in the namespace")))
         .flatMap(present -> {
           present.setObjectIdRegex(target.getObjectIdRegex());
           present.setUpdatedAt(LocalDateTime.now());
@@ -74,7 +81,21 @@ public class TargetService {
         .flatMap(targetRepository::save);
   }
 
-  public Mono<Void> deleteById(Long id) {
-    return targetRepository.deleteById(id);
+  /**
+   * 1. IDが存在してるか確認する
+   * 2. NamespaceIdが一致しているか確認する
+   * 3. 削除する
+   *
+   * @param id          TargetのID
+   * @param namespaceId TargetのNamespaceId
+   *
+   * @return Void
+   */
+  public Mono<Void> deleteById(Long id, Long namespaceId) {
+    return targetRepository.findById(id)
+        .filter(present -> Objects.equals(present.getNamespaceId(), namespaceId))
+        .switchIfEmpty(Mono.error(new NotExistingException("Target is not in the namespace")))
+        .map(Target::getId)
+        .flatMap(targetRepository::deleteById);
   }
 }

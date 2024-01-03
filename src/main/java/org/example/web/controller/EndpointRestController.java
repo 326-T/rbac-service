@@ -61,15 +61,21 @@ public class EndpointRestController {
   }
 
   @PutMapping("/{id}")
-  public Mono<Endpoint> update(@PathVariable Long id, @Valid @RequestBody EndpointUpdateRequest request) {
+  public Mono<Endpoint> update(
+      @PathVariable("namespace-id") Long namespaceId,
+      @PathVariable Long id,
+      @Valid @RequestBody EndpointUpdateRequest request) {
     Endpoint endpoint = request.exportEntity();
     endpoint.setId(id);
+    endpoint.setNamespaceId(namespaceId);
     return endpointService.update(endpoint);
   }
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public Mono<Void> deleteById(@PathVariable Long id) {
-    return endpointService.deleteById(id);
+  public Mono<Void> deleteById(
+      @PathVariable("namespace-id") Long namespaceId,
+      @PathVariable Long id) {
+    return endpointService.deleteById(id, namespaceId);
   }
 }

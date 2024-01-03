@@ -287,7 +287,7 @@ class EndpointRestControllerTest {
       @DisplayName("エンドポイントを削除できる")
       void canDeleteTheEndpointById() {
         // given
-        when(endpointService.deleteById(1L)).thenReturn(Mono.empty());
+        when(endpointService.deleteById(3L, 1L)).thenReturn(Mono.empty());
         // when, then
         webTestClient.delete()
             .uri("/rbac-service/v1/1/endpoints/3")

@@ -1,6 +1,7 @@
 package org.example.service;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.Role;
@@ -47,9 +48,10 @@ public class RoleService {
 
   /**
    * 1. IDが存在してるか確認する
-   * 2. 変更内容をセットする
-   * 3. 重複がないか確認する
-   * 4. 保存する
+   * 2. NamespaceIdが一致しているか確認する
+   * 3. 変更内容をセットする
+   * 4. 重複がないか確認する
+   * 5. 保存する
    *
    * @param role nameのみ変更可能
    *
@@ -60,7 +62,8 @@ public class RoleService {
    */
   public Mono<Role> update(Role role) {
     Mono<Role> roleMono = roleRepository.findById(role.getId())
-        .switchIfEmpty(Mono.error(new NotExistingException("Role not found")))
+        .filter(present -> Objects.equals(present.getNamespaceId(), role.getNamespaceId()))
+        .switchIfEmpty(Mono.error(new NotExistingException("Role is not in the namespace")))
         .flatMap(present -> {
           present.setName(role.getName());
           present.setUpdatedAt(LocalDateTime.now());
@@ -73,7 +76,21 @@ public class RoleService {
         .flatMap(roleRepository::save);
   }
 
-  public Mono<Void> deleteById(Long id) {
-    return roleRepository.deleteById(id);
+  /**
+   * 1. IDが存在してるか確認する
+   * 2. NamespaceIdが一致しているか確認する
+   * 3. 削除する
+   *
+   * @param id          RoleのID
+   * @param namespaceId RoleのNamespaceId
+   *
+   * @return Void
+   */
+  public Mono<Void> deleteById(Long id, Long namespaceId) {
+    return roleRepository.findById(id)
+        .filter(present -> Objects.equals(present.getNamespaceId(), namespaceId))
+        .switchIfEmpty(Mono.error(new NotExistingException("Role is not in the namespace")))
+        .map(Role::getId)
+        .flatMap(roleRepository::deleteById);
   }
 }

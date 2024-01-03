@@ -132,7 +132,7 @@ class TargetGroupServiceTest {
         when(targetGroupRepository.findDuplicate(2L, "CLUSTER2")).thenReturn(Mono.empty());
         when(targetGroupRepository.save(any(TargetGroup.class))).thenReturn(Mono.just(after));
         // when
-        Mono<TargetGroup> clusterMono = targetGroupService.update(after, 2L);
+        Mono<TargetGroup> clusterMono = targetGroupService.update(after);
         // then
         StepVerifier.create(clusterMono)
             .assertNext(cluster -> assertThat(cluster)
@@ -157,7 +157,24 @@ class TargetGroupServiceTest {
         when(targetGroupRepository.findDuplicate(2L, "CLUSTER2")).thenReturn(Mono.empty());
         when(targetGroupRepository.save(any(TargetGroup.class))).thenReturn(Mono.just(after));
         // when
-        Mono<TargetGroup> clusterMono = targetGroupService.update(after, 1L);
+        Mono<TargetGroup> clusterMono = targetGroupService.update(after);
+        // then
+        StepVerifier.create(clusterMono).expectError(NotExistingException.class).verify();
+      }
+
+      @Test
+      @DisplayName("namespaceIdが一致しない場合はエラーになる")
+      void cannotUpdateWithDifferentNamespaceId() {
+        // given
+        TargetGroup before = TargetGroup.builder()
+            .id(2L).namespaceId(2L).name("cluster2").createdBy(2L).build();
+        TargetGroup after = TargetGroup.builder()
+            .id(2L).namespaceId(999L).name("CLUSTER2").createdBy(2L).build();
+        when(targetGroupRepository.findById(2L)).thenReturn(Mono.just(before));
+        when(targetGroupRepository.findDuplicate(2L, "CLUSTER2")).thenReturn(Mono.empty());
+        when(targetGroupRepository.save(any(TargetGroup.class))).thenReturn(Mono.just(after));
+        // when
+        Mono<TargetGroup> clusterMono = targetGroupService.update(after);
         // then
         StepVerifier.create(clusterMono).expectError(NotExistingException.class).verify();
       }
@@ -176,7 +193,7 @@ class TargetGroupServiceTest {
         when(targetGroupRepository.findDuplicate(2L, "CLUSTER2")).thenReturn(Mono.just(duplicate));
         when(targetGroupRepository.save(any(TargetGroup.class))).thenReturn(Mono.just(after));
         // when
-        Mono<TargetGroup> clusterMono = targetGroupService.update(after, 2L);
+        Mono<TargetGroup> clusterMono = targetGroupService.update(after);
         // then
         StepVerifier.create(clusterMono).expectError(RedundantException.class).verify();
       }
@@ -202,6 +219,32 @@ class TargetGroupServiceTest {
         Mono<Void> clusterMono = targetGroupService.deleteById(1L, 1L);
         // then
         StepVerifier.create(clusterMono).verifyComplete();
+      }
+
+      @Test
+      @DisplayName("存在しないidの場合はエラーになる")
+      void notExistingIdCauseException() {
+        // given
+        when(targetGroupRepository.deleteById(1L)).thenReturn(Mono.empty());
+        when(targetGroupRepository.findById(1L)).thenReturn(Mono.empty());
+        // when
+        Mono<Void> clusterMono = targetGroupService.deleteById(1L, 2L);
+        // then
+        StepVerifier.create(clusterMono).expectError(NotExistingException.class).verify();
+      }
+
+      @Test
+      @DisplayName("namespaceIdが一致しない場合はエラーになる")
+      void cannotDeleteWithDifferentNamespaceId() {
+        // given
+        TargetGroup targetGroup = TargetGroup.builder()
+            .id(1L).namespaceId(1L).name("cluster1").createdBy(1L).build();
+        when(targetGroupRepository.deleteById(1L)).thenReturn(Mono.empty());
+        when(targetGroupRepository.findById(1L)).thenReturn(Mono.just(targetGroup));
+        // when
+        Mono<Void> clusterMono = targetGroupService.deleteById(1L, 999L);
+        // then
+        StepVerifier.create(clusterMono).expectError(NotExistingException.class).verify();
       }
     }
   }

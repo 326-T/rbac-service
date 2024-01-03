@@ -57,12 +57,12 @@ public class AuthorizationWebFilter implements WebFilter {
     if (path.startsWith(AccessPath.USERS) || path.startsWith(AccessPath.NAMESPACES) || path.startsWith(AccessPath.METHODS)) {
       return chain.filter(exchange);
     }
-    return systemRoleService.findByUserIdAndNamespaceId(user.getId(), PathUtil.getNamespaceId(path))
-        .map(systemRole -> SystemRolePermission.of(systemRole.getPermission()))
-        .switchIfEmpty(Mono.error(new UnAuthorizedException("認可されていません。")))
-        .collectList()
+    return systemRoleService.aggregateSystemRolePermission(user.getId(), PathUtil.getNamespaceId(path))
         .flatMap(permissions -> {
-          if (permissions.contains(SystemRolePermission.WRITE)) {
+          if (SystemRolePermission.NONE.equals(permissions)) {
+            return Mono.error(new UnAuthorizedException("認可されていません。"));
+          }
+          if (SystemRolePermission.WRITE.equals(permissions)) {
             return chain.filter(exchange);
           }
           if (HttpMethod.GET.equals(method)) {

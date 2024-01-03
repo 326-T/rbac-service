@@ -4,28 +4,13 @@ import org.example.persistence.entity.UserGroupRoleAssignment;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
 public interface UserGroupRoleAssignmentRepository extends
     ReactiveCrudRepository<UserGroupRoleAssignment, Long> {
 
-  Mono<Long> count();
-
-  Flux<UserGroupRoleAssignment> findAll();
-
-  Mono<UserGroupRoleAssignment> findById(Long id);
-
-  @Query("""
-      SELECT * FROM rbac_user_group_role_assignments
-      WHERE namespace_id = :namespaceId;
-      """)
-  Flux<UserGroupRoleAssignment> findByNamespaceId(Long namespaceId);
-
   Mono<UserGroupRoleAssignment> save(UserGroupRoleAssignment userGroupRoleAssignment);
-
-  Mono<Void> deleteById(Long id);
 
   @Query("""
       DELETE FROM rbac_user_group_role_assignments

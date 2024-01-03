@@ -1,7 +1,6 @@
 package org.example.web.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.groups.Tuple.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -26,7 +25,6 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @WebFluxTest(
@@ -42,97 +40,6 @@ class UserGroupBelongingRestControllerTest {
   private ReactiveContextService reactiveContextService;
   @Autowired
   private WebTestClient webTestClient;
-
-  @Nested
-  class Count {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ユーザとグループの関係の件数を取得できる")
-      void countTheIndexes() {
-        // given
-        when(userGroupBelongingService.count()).thenReturn(Mono.just(3L));
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/user-group-belongings/count")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Long.class).isEqualTo(3L);
-      }
-    }
-  }
-
-  @Nested
-  class findAll {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ユーザとグループの関係を全件取得できる")
-      void findAllTheIndexes() {
-        // given
-        UserGroupBelonging userGroupBelonging1 = UserGroupBelonging.builder()
-            .id(1L).namespaceId(1L).userId(1L).userGroupId(1L).createdBy(1L).build();
-        UserGroupBelonging userGroupBelonging2 = UserGroupBelonging.builder()
-            .id(2L).namespaceId(1L).userId(2L).userGroupId(2L).createdBy(2L).build();
-        UserGroupBelonging userGroupBelonging3 = UserGroupBelonging.builder()
-            .id(3L).namespaceId(1L).userId(3L).userGroupId(3L).createdBy(3L).build();
-        when(userGroupBelongingService.findByNamespaceId(1L))
-            .thenReturn(Flux.just(userGroupBelonging1, userGroupBelonging2, userGroupBelonging3));
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/user-group-belongings")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBodyList(UserGroupBelonging.class)
-            .hasSize(3)
-            .consumeWith(result ->
-                assertThat(result.getResponseBody())
-                    .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
-                        UserGroupBelonging::getUserId, UserGroupBelonging::getUserGroupId, UserGroupBelonging::getCreatedBy)
-                    .containsExactly(
-                        tuple(1L, 1L, 1L, 1L, 1L),
-                        tuple(2L, 1L, 2L, 2L, 2L),
-                        tuple(3L, 1L, 3L, 3L, 3L)
-                    )
-            );
-      }
-    }
-  }
-
-  @Nested
-  class FindById {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ユーザとグループの関係をIDで取得できる")
-      void canGetTheUserGroupBelongingById() {
-        // given
-        UserGroupBelonging userGroupBelonging = UserGroupBelonging.builder()
-            .id(1L).namespaceId(1L).userId(1L).userGroupId(1L).createdBy(1L).build();
-        when(userGroupBelongingService.findById(1L)).thenReturn(Mono.just(userGroupBelonging));
-        // when, then
-        webTestClient.get()
-            .uri("/rbac-service/v1/1/user-group-belongings/1")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(UserGroupBelonging.class)
-            .consumeWith(result ->
-                assertThat(result.getResponseBody())
-                    .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
-                        UserGroupBelonging::getUserId, UserGroupBelonging::getUserGroupId, UserGroupBelonging::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, 1L, 1L));
-      }
-    }
-  }
 
   @Nested
   class Save {
@@ -195,28 +102,6 @@ class UserGroupBelongingRestControllerTest {
             .bodyValue(userGroupBelongingInsertRequest)
             .exchange()
             .expectStatus().isBadRequest();
-      }
-    }
-  }
-
-  @Nested
-  class DeleteById {
-
-    @Nested
-    @DisplayName("正常系")
-    class Regular {
-
-      @Test
-      @DisplayName("ユーザとグループの関係を削除できる")
-      void canDeleteTheUserGroupBelongingById() {
-        // given
-        when(userGroupBelongingService.deleteById(3L)).thenReturn(Mono.empty());
-        // when, then
-        webTestClient.delete()
-            .uri("/rbac-service/v1/1/user-group-belongings/3")
-            .exchange()
-            .expectStatus().isNoContent()
-            .expectBody().isEmpty();
       }
     }
   }

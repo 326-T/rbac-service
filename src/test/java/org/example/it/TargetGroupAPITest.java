@@ -44,12 +44,12 @@ public class TargetGroupAPITest {
   private TargetGroupRepository targetGroupRepository;
 
   private String jwt;
-  private String unAuthorizedJwt;
+  private String readOnlyJwt;
 
   @BeforeAll
   void beforeAll() {
     jwt = base64Service.encode(jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build()));
-    unAuthorizedJwt = base64Service.encode(jwtService.encode(User.builder().id(2L).name("user3").email("zzz@example.org").build()));
+    readOnlyJwt = base64Service.encode(jwtService.encode(User.builder().id(2L).name("user3").email("zzz@example.org").build()));
   }
 
   @Order(1)
@@ -92,7 +92,7 @@ public class TargetGroupAPITest {
         // when, then
         webTestClient.get()
             .uri("/rbac-service/v1/2/target-groups")
-            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .header(HttpHeaders.AUTHORIZATION, readOnlyJwt)
             .exchange()
             .expectStatus().isForbidden()
             .expectBody(ErrorResponse.class)
@@ -104,7 +104,7 @@ public class TargetGroupAPITest {
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
-                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "org.example.error.exception.UnauthorizedException: 認可されていません。",
                         "この操作は許可されていません。")
             );
       }
@@ -183,7 +183,7 @@ public class TargetGroupAPITest {
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
-                        "org.example.error.exception.NotExistingException: TargetGroup is not in the namespace",
+                        "org.example.error.exception.NotExistingException: TargetGroup does not exist in the namespace",
                         "指定されたリソースは存在しません。")
             );
       }
@@ -212,7 +212,7 @@ public class TargetGroupAPITest {
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
-                        "org.example.error.exception.NotExistingException: TargetGroup is not in the namespace",
+                        "org.example.error.exception.NotExistingException: TargetGroup does not exist in the namespace",
                         "指定されたリソースは存在しません。")
             );
       }
@@ -252,7 +252,7 @@ public class TargetGroupAPITest {
         // when, then
         webTestClient.put()
             .uri("/rbac-service/v1/2/target-groups/2")
-            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .header(HttpHeaders.AUTHORIZATION, readOnlyJwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
@@ -270,7 +270,7 @@ public class TargetGroupAPITest {
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
-                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "org.example.error.exception.UnauthorizedException: 認可されていません。",
                         "この操作は許可されていません。")
             );
       }
@@ -358,7 +358,7 @@ public class TargetGroupAPITest {
         // when, then
         webTestClient.post()
             .uri("/rbac-service/v1/1/target-groups")
-            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .header(HttpHeaders.AUTHORIZATION, readOnlyJwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
@@ -376,7 +376,7 @@ public class TargetGroupAPITest {
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
-                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "org.example.error.exception.UnauthorizedException: 認可されていません。",
                         "この操作は許可されていません。")
             );
       }
@@ -419,7 +419,7 @@ public class TargetGroupAPITest {
         // when, then
         webTestClient.delete()
             .uri("/rbac-service/v1/2/target-groups/3")
-            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .header(HttpHeaders.AUTHORIZATION, readOnlyJwt)
             .exchange()
             .expectStatus().isForbidden()
             .expectBody(ErrorResponse.class)
@@ -431,7 +431,7 @@ public class TargetGroupAPITest {
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
-                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "org.example.error.exception.UnauthorizedException: 認可されていません。",
                         "この操作は許可されていません。")
             );
       }
@@ -454,7 +454,7 @@ public class TargetGroupAPITest {
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
-                        "org.example.error.exception.NotExistingException: TargetGroup is not in the namespace",
+                        "org.example.error.exception.NotExistingException: TargetGroup does not exist in the namespace",
                         "指定されたリソースは存在しません。")
             );
       }
@@ -477,7 +477,7 @@ public class TargetGroupAPITest {
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
-                        "org.example.error.exception.NotExistingException: TargetGroup is not in the namespace",
+                        "org.example.error.exception.NotExistingException: TargetGroup does not exist in the namespace",
                         "指定されたリソースは存在しません。")
             );
       }

@@ -42,10 +42,10 @@ public class TargetGroupBelongingService {
     targetGroupBelonging.setUpdatedAt(LocalDateTime.now());
     return targetRepository.findById(targetGroupBelonging.getTargetId())
         .filter(t -> Objects.equals(t.getNamespaceId(), targetGroupBelonging.getNamespaceId()))
-        .switchIfEmpty(Mono.error(new NotExistingException("Target is not in the namespace")))
+        .switchIfEmpty(Mono.error(new NotExistingException("Target does not exist in the namespace")))
         .then(targetGroupRepository.findById(targetGroupBelonging.getTargetGroupId()))
         .filter(tg -> Objects.equals(tg.getNamespaceId(), targetGroupBelonging.getNamespaceId()))
-        .switchIfEmpty(Mono.error(new NotExistingException("TargetGroup is not in the namespace")))
+        .switchIfEmpty(Mono.error(new NotExistingException("TargetGroup does not exist in the namespace")))
         .then(targetGroupBelongingRepository.findDuplicate(
             targetGroupBelonging.getNamespaceId(),
             targetGroupBelonging.getTargetGroupId(), targetGroupBelonging.getTargetId()))

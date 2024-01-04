@@ -52,13 +52,13 @@ public class NamespaceAPITest {
 
   private String jwt;
   private String readOnlyJwt;
-  private String unAuthorizedJwt;
+  private String unauthorizedJwt;
 
   @BeforeAll
   void beforeAll() {
     jwt = base64Service.encode(jwtService.encode(User.builder().id(2L).name("user1").email("xxx@example.org").build()));
     readOnlyJwt = base64Service.encode(jwtService.encode(User.builder().id(3L).name("user2").email("yyy@example.org").build()));
-    unAuthorizedJwt = base64Service.encode(jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
+    unauthorizedJwt = base64Service.encode(jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
   }
 
   @Order(1)
@@ -96,7 +96,7 @@ public class NamespaceAPITest {
         // when, then
         webTestClient.get()
             .uri("/rbac-service/v1/namespaces")
-            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .header(HttpHeaders.AUTHORIZATION, unauthorizedJwt)
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(Namespace.class)
@@ -175,7 +175,7 @@ public class NamespaceAPITest {
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
-                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "org.example.error.exception.UnauthorizedException: 認可されていません。",
                         "この操作は許可されていません。")
             );
       }
@@ -235,7 +235,7 @@ public class NamespaceAPITest {
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
-                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "org.example.error.exception.UnauthorizedException: 認可されていません。",
                         "この操作は許可されていません。")
             );
       }
@@ -394,7 +394,7 @@ public class NamespaceAPITest {
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
-                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "org.example.error.exception.UnauthorizedException: 認可されていません。",
                         "この操作は許可されていません。")
             );
       }

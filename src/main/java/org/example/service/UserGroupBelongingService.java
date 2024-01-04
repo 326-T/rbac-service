@@ -44,7 +44,7 @@ public class UserGroupBelongingService {
         .switchIfEmpty(Mono.error(new NotExistingException("User does not exist")))
         .then(userGroupRepository.findById(userGroupBelonging.getUserGroupId()))
         .filter(tg -> Objects.equals(tg.getNamespaceId(), userGroupBelonging.getNamespaceId()))
-        .switchIfEmpty(Mono.error(new NotExistingException("UserGroup is not in the namespace")))
+        .switchIfEmpty(Mono.error(new NotExistingException("UserGroup does not exist in the namespace")))
         .then(userGroupBelongingRepository.findDuplicate(
             userGroupBelonging.getNamespaceId(),
             userGroupBelonging.getUserId(),

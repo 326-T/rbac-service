@@ -48,10 +48,10 @@ public class EndpointService {
     endpoint.setUpdatedAt(LocalDateTime.now());
     return pathRepository.findById(endpoint.getPathId())
         .filter(present -> Objects.equals(present.getNamespaceId(), endpoint.getNamespaceId()))
-        .switchIfEmpty(Mono.error(new NotExistingException("Path is not in the namespace")))
+        .switchIfEmpty(Mono.error(new NotExistingException("Path does not exist in the namespace")))
         .then(targetGroupRepository.findById(endpoint.getTargetGroupId()))
         .filter(present -> Objects.equals(present.getNamespaceId(), endpoint.getNamespaceId()))
-        .switchIfEmpty(Mono.error(new NotExistingException("TargetGroup is not in the namespace")))
+        .switchIfEmpty(Mono.error(new NotExistingException("TargetGroup does not exist in the namespace")))
         .then(endpointRepository.findDuplicate(
             endpoint.getNamespaceId(), endpoint.getPathId(),
             endpoint.getTargetGroupId(), endpoint.getMethod()))
@@ -75,13 +75,13 @@ public class EndpointService {
   public Mono<Endpoint> update(Endpoint endpoint) {
     Mono<Endpoint> endpointMono = pathRepository.findById(endpoint.getPathId())
         .filter(present -> Objects.equals(present.getNamespaceId(), endpoint.getNamespaceId()))
-        .switchIfEmpty(Mono.error(new NotExistingException("Path is not in the namespace")))
+        .switchIfEmpty(Mono.error(new NotExistingException("Path does not exist in the namespace")))
         .then(targetGroupRepository.findById(endpoint.getTargetGroupId()))
         .filter(present -> Objects.equals(present.getNamespaceId(), endpoint.getNamespaceId()))
-        .switchIfEmpty(Mono.error(new NotExistingException("TargetGroup is not in the namespace")))
+        .switchIfEmpty(Mono.error(new NotExistingException("TargetGroup does not exist in the namespace")))
         .then(endpointRepository.findById(endpoint.getId()))
         .filter(present -> Objects.equals(present.getNamespaceId(), endpoint.getNamespaceId()))
-        .switchIfEmpty(Mono.error(new NotExistingException("Endpoint is not in the namespace")))
+        .switchIfEmpty(Mono.error(new NotExistingException("Endpoint does not exist in the namespace")))
         .flatMap(present -> {
           present.setPathId(endpoint.getPathId());
           present.setTargetGroupId(endpoint.getTargetGroupId());
@@ -109,7 +109,7 @@ public class EndpointService {
   public Mono<Void> deleteById(Long id, Long namespaceId) {
     return endpointRepository.findById(id)
         .filter(present -> Objects.equals(present.getNamespaceId(), namespaceId))
-        .switchIfEmpty(Mono.error(new NotExistingException("Endpoint is not in the namespace")))
+        .switchIfEmpty(Mono.error(new NotExistingException("Endpoint does not exist in the namespace")))
         .map(Endpoint::getId)
         .flatMap(endpointRepository::deleteById);
   }

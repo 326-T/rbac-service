@@ -3,7 +3,7 @@ package org.example.service;
 import java.time.LocalDateTime;
 import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
-import org.example.error.exception.UnAuthenticatedException;
+import org.example.error.exception.UnauthenticatedException;
 import org.example.persistence.entity.User;
 import org.example.persistence.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -91,7 +91,7 @@ public class UserService {
   public Mono<User> login(String email, String password) {
     return userRepository.findByEmail(email)
         .filter(user -> passwordEncoder.matches(password, user.getPasswordDigest()))
-        .switchIfEmpty(Mono.error(new UnAuthenticatedException("email or password is incorrect")));
+        .switchIfEmpty(Mono.error(new UnauthenticatedException("email or password is incorrect")));
   }
 
   public Mono<Void> deleteById(Long id) {

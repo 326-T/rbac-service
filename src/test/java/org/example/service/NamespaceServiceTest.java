@@ -6,7 +6,7 @@ import static org.mockito.Mockito.when;
 
 import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
-import org.example.error.exception.UnAuthorizedException;
+import org.example.error.exception.UnauthorizedException;
 import org.example.persistence.entity.Namespace;
 import org.example.persistence.repository.NamespaceRepository;
 import org.example.util.constant.SystemRolePermission;
@@ -200,7 +200,7 @@ class NamespaceServiceTest {
         // when
         Mono<Namespace> namespaceMono = namespaceService.update(after, 1L);
         // then
-        StepVerifier.create(namespaceMono).expectError(UnAuthorizedException.class).verify();
+        StepVerifier.create(namespaceMono).expectError(UnauthorizedException.class).verify();
       }
 
       @Test
@@ -219,7 +219,7 @@ class NamespaceServiceTest {
         // when
         Mono<Namespace> namespaceMono = namespaceService.update(after, 1L);
         // then
-        StepVerifier.create(namespaceMono).expectError(UnAuthorizedException.class).verify();
+        StepVerifier.create(namespaceMono).expectError(UnauthorizedException.class).verify();
       }
     }
   }
@@ -259,7 +259,7 @@ class NamespaceServiceTest {
         // when
         Mono<Void> namespaceMono = namespaceService.deleteById(1L, 1L);
         // then
-        StepVerifier.create(namespaceMono).expectError(UnAuthorizedException.class).verify();
+        StepVerifier.create(namespaceMono).expectError(UnauthorizedException.class).verify();
       }
 
       @Test
@@ -272,7 +272,7 @@ class NamespaceServiceTest {
         // when
         Mono<Void> namespaceMono = namespaceService.deleteById(1L, 1L);
         // then
-        StepVerifier.create(namespaceMono).expectError(UnAuthorizedException.class).verify();
+        StepVerifier.create(namespaceMono).expectError(UnauthorizedException.class).verify();
       }
     }
   }

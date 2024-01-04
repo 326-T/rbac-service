@@ -36,12 +36,12 @@ public class SystemRoleAPITest {
   private Base64Service base64Service;
 
   private String jwt;
-  private String unAuthorizedJwt;
+  private String readOnlyJwt;
 
   @BeforeAll
   void beforeAll() {
     jwt = base64Service.encode(jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build()));
-    unAuthorizedJwt = base64Service.encode(jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
+    readOnlyJwt = base64Service.encode(jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
   }
 
   @Nested
@@ -85,7 +85,7 @@ public class SystemRoleAPITest {
         // when, then
         webTestClient.get()
             .uri("/rbac-service/v1/1/system-roles")
-            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .header(HttpHeaders.AUTHORIZATION, readOnlyJwt)
             .exchange()
             .expectStatus().isForbidden()
             .expectBody(ErrorResponse.class)
@@ -97,7 +97,7 @@ public class SystemRoleAPITest {
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
-                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "org.example.error.exception.UnauthorizedException: 認可されていません。",
                         "この操作は許可されていません。")
             );
       }

@@ -42,10 +42,10 @@ public class UserGroupRoleAssignmentService {
     userGroupRoleAssignment.setUpdatedAt(LocalDateTime.now());
     return userGroupRepository.findById(userGroupRoleAssignment.getUserGroupId())
         .filter(ug -> Objects.equals(ug.getNamespaceId(), userGroupRoleAssignment.getNamespaceId()))
-        .switchIfEmpty(Mono.error(new NotExistingException("UserGroup is not in the namespace")))
+        .switchIfEmpty(Mono.error(new NotExistingException("UserGroup does not exist in the namespace")))
         .then(roleRepository.findById(userGroupRoleAssignment.getRoleId()))
         .filter(r -> Objects.equals(r.getNamespaceId(), userGroupRoleAssignment.getNamespaceId()))
-        .switchIfEmpty(Mono.error(new NotExistingException("Role is not in the namespace")))
+        .switchIfEmpty(Mono.error(new NotExistingException("Role does not exist in the namespace")))
         .then(userGroupRoleAssignmentRepository.findDuplicate(
             userGroupRoleAssignment.getNamespaceId(),
             userGroupRoleAssignment.getUserGroupId(), userGroupRoleAssignment.getRoleId()))

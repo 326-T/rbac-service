@@ -44,7 +44,7 @@ public class UserSystemRolePermissionService {
         .switchIfEmpty(Mono.error(new NotExistingException("User not found")))
         .then(systemRoleRepository.findById(userSystemRolePermission.getSystemRoleId()))
         .filter(systemRole -> Objects.equals(systemRole.getNamespaceId(), userSystemRolePermission.getNamespaceId()))
-        .switchIfEmpty(Mono.error(new NotExistingException("SystemRole is not in the namespace")))
+        .switchIfEmpty(Mono.error(new NotExistingException("SystemRole does not exist in the namespace")))
         .then(userSystemRolePermissionRepository.findDuplicate(
             userSystemRolePermission.getUserId(),
             userSystemRolePermission.getSystemRoleId()))

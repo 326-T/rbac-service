@@ -4,11 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.example.error.exception.DifferentNamespaceException;
 import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
-import org.example.error.exception.UnAuthenticatedException;
-import org.example.error.exception.UnAuthorizedException;
+import org.example.error.exception.UnauthenticatedException;
+import org.example.error.exception.UnauthorizedException;
 import org.example.error.response.ErrorResponse;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -30,7 +29,7 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
 
   @Override
   public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
-    if (ex instanceof UnAuthenticatedException) {
+    if (ex instanceof UnauthenticatedException) {
       return setResponse(exchange, HttpStatus.UNAUTHORIZED,
           ErrorResponse.builder()
               .status(HttpStatus.UNAUTHORIZED.value())
@@ -40,7 +39,7 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
               .build());
     }
 
-    if (ex instanceof UnAuthorizedException) {
+    if (ex instanceof UnauthorizedException) {
       return setResponse(exchange, HttpStatus.FORBIDDEN,
           ErrorResponse.builder()
               .status(HttpStatus.FORBIDDEN.value())
@@ -67,16 +66,6 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
               .summary("Unique制約に違反している")
               .detail(ex.toString())
               .message("作成済みのリソースと重複しています。")
-              .build());
-    }
-
-    if (ex instanceof DifferentNamespaceException) {
-      return setResponse(exchange, HttpStatus.FORBIDDEN,
-          ErrorResponse.builder()
-              .status(HttpStatus.FORBIDDEN.value())
-              .summary("Namespace外のリソースを操作をしようとした")
-              .detail(ex.toString())
-              .message("Namespace外のリソースを操作することはできません。")
               .build());
     }
 

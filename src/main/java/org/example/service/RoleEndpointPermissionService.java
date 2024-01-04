@@ -42,10 +42,10 @@ public class RoleEndpointPermissionService {
     roleEndpointPermission.setUpdatedAt(LocalDateTime.now());
     return roleRepository.findById(roleEndpointPermission.getRoleId())
         .filter(t -> Objects.equals(t.getNamespaceId(), roleEndpointPermission.getNamespaceId()))
-        .switchIfEmpty(Mono.error(new NotExistingException("Role is not in the namespace")))
+        .switchIfEmpty(Mono.error(new NotExistingException("Role does not exist in the namespace")))
         .then(endpointRepository.findById(roleEndpointPermission.getEndpointId()))
         .filter(tg -> Objects.equals(tg.getNamespaceId(), roleEndpointPermission.getNamespaceId()))
-        .switchIfEmpty(Mono.error(new NotExistingException("Endpoint is not in the namespace")))
+        .switchIfEmpty(Mono.error(new NotExistingException("Endpoint does not exist in the namespace")))
         .then(roleEndpointPermissionRepository.findDuplicate(
             roleEndpointPermission.getNamespaceId(),
             roleEndpointPermission.getRoleId(), roleEndpointPermission.getEndpointId()))

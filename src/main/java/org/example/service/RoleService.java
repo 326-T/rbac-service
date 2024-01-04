@@ -63,7 +63,7 @@ public class RoleService {
   public Mono<Role> update(Role role) {
     Mono<Role> roleMono = roleRepository.findById(role.getId())
         .filter(present -> Objects.equals(present.getNamespaceId(), role.getNamespaceId()))
-        .switchIfEmpty(Mono.error(new NotExistingException("Role is not in the namespace")))
+        .switchIfEmpty(Mono.error(new NotExistingException("Role does not exist in the namespace")))
         .flatMap(present -> {
           present.setName(role.getName());
           present.setUpdatedAt(LocalDateTime.now());
@@ -89,7 +89,7 @@ public class RoleService {
   public Mono<Void> deleteById(Long id, Long namespaceId) {
     return roleRepository.findById(id)
         .filter(present -> Objects.equals(present.getNamespaceId(), namespaceId))
-        .switchIfEmpty(Mono.error(new NotExistingException("Role is not in the namespace")))
+        .switchIfEmpty(Mono.error(new NotExistingException("Role does not exist in the namespace")))
         .map(Role::getId)
         .flatMap(roleRepository::deleteById);
   }

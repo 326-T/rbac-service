@@ -43,12 +43,12 @@ public class UserSystemRolePermissionAPITest {
   private UserSystemRolePermissionRepository userSystemRolePermissionRepository;
 
   private String jwt;
-  private String unAuthorizedJwt;
+  private String readOnlyJwt;
 
   @BeforeAll
   void beforeAll() {
     jwt = base64Service.encode(jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build()));
-    unAuthorizedJwt = base64Service.encode(jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
+    readOnlyJwt = base64Service.encode(jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
   }
 
 
@@ -142,7 +142,7 @@ public class UserSystemRolePermissionAPITest {
                   "systemRoleId": 5
                 }
                 """)
-            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .header(HttpHeaders.AUTHORIZATION, readOnlyJwt)
             .exchange()
             .expectStatus().isForbidden()
             .expectBody(ErrorResponse.class)
@@ -154,7 +154,7 @@ public class UserSystemRolePermissionAPITest {
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
-                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "org.example.error.exception.UnauthorizedException: 認可されていません。",
                         "この操作は許可されていません。")
             );
       }
@@ -214,7 +214,7 @@ public class UserSystemRolePermissionAPITest {
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
-                        "org.example.error.exception.NotExistingException: SystemRole is not in the namespace",
+                        "org.example.error.exception.NotExistingException: SystemRole does not exist in the namespace",
                         "指定されたリソースは存在しません。")
             );
       }
@@ -244,7 +244,7 @@ public class UserSystemRolePermissionAPITest {
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
-                        "org.example.error.exception.NotExistingException: SystemRole is not in the namespace",
+                        "org.example.error.exception.NotExistingException: SystemRole does not exist in the namespace",
                         "指定されたリソースは存在しません。")
             );
       }
@@ -295,7 +295,7 @@ public class UserSystemRolePermissionAPITest {
                 .queryParam("user-id", 3L)
                 .queryParam("system-role-id", 6L)
                 .build())
-            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .header(HttpHeaders.AUTHORIZATION, readOnlyJwt)
             .exchange()
             .expectStatus().isForbidden()
             .expectBody(ErrorResponse.class)
@@ -307,7 +307,7 @@ public class UserSystemRolePermissionAPITest {
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
-                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "org.example.error.exception.UnauthorizedException: 認可されていません。",
                         "この操作は許可されていません。")
             );
       }

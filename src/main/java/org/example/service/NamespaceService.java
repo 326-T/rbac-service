@@ -3,7 +3,7 @@ package org.example.service;
 import java.time.LocalDateTime;
 import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
-import org.example.error.exception.UnAuthorizedException;
+import org.example.error.exception.UnauthorizedException;
 import org.example.persistence.entity.Namespace;
 import org.example.persistence.repository.NamespaceRepository;
 import org.example.util.constant.SystemRolePermission;
@@ -71,7 +71,7 @@ public class NamespaceService {
           if (SystemRolePermission.WRITE.equals(permission)) {
             return Mono.just(permission);
           }
-          return Mono.error(new UnAuthorizedException("認可されていません。"));
+          return Mono.error(new UnauthorizedException("認可されていません。"));
         })
         .then(namespaceMono)
         .flatMap(e -> namespaceRepository.findDuplicate(e.getName()))
@@ -87,7 +87,7 @@ public class NamespaceService {
           if (SystemRolePermission.WRITE.equals(permission)) {
             return Mono.just(permission);
           }
-          return Mono.error(new UnAuthorizedException("認可されていません。"));
+          return Mono.error(new UnauthorizedException("認可されていません。"));
         })
         .thenReturn(id)
         .flatMap(namespaceRepository::deleteById);

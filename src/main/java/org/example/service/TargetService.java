@@ -68,7 +68,7 @@ public class TargetService {
   public Mono<Target> update(Target target) {
     Mono<Target> targetMono = targetRepository.findById(target.getId())
         .filter(present -> Objects.equals(present.getNamespaceId(), target.getNamespaceId()))
-        .switchIfEmpty(Mono.error(new NotExistingException("Target is not in the namespace")))
+        .switchIfEmpty(Mono.error(new NotExistingException("Target does not exist in the namespace")))
         .flatMap(present -> {
           present.setObjectIdRegex(target.getObjectIdRegex());
           present.setUpdatedAt(LocalDateTime.now());
@@ -94,7 +94,7 @@ public class TargetService {
   public Mono<Void> deleteById(Long id, Long namespaceId) {
     return targetRepository.findById(id)
         .filter(present -> Objects.equals(present.getNamespaceId(), namespaceId))
-        .switchIfEmpty(Mono.error(new NotExistingException("Target is not in the namespace")))
+        .switchIfEmpty(Mono.error(new NotExistingException("Target does not exist in the namespace")))
         .map(Target::getId)
         .flatMap(targetRepository::deleteById);
   }

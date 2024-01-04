@@ -59,7 +59,7 @@ public class UserGroupService {
   public Mono<UserGroup> update(UserGroup userGroup) {
     Mono<UserGroup> userGroupMono = groupRepository.findById(userGroup.getId())
         .filter(present -> Objects.equals(present.getNamespaceId(), userGroup.getNamespaceId()))
-        .switchIfEmpty(Mono.error(new NotExistingException("UserGroup is not in the namespace")))
+        .switchIfEmpty(Mono.error(new NotExistingException("UserGroup does not exist in the namespace")))
         .flatMap(present -> {
           present.setName(userGroup.getName());
           present.setUpdatedAt(LocalDateTime.now());
@@ -85,7 +85,7 @@ public class UserGroupService {
   public Mono<Void> deleteById(Long id, Long namespaceId) {
     return groupRepository.findById(id)
         .filter(present -> Objects.equals(present.getNamespaceId(), namespaceId))
-        .switchIfEmpty(Mono.error(new NotExistingException("UserGroup is not in the namespace")))
+        .switchIfEmpty(Mono.error(new NotExistingException("UserGroup does not exist in the namespace")))
         .map(UserGroup::getId)
         .flatMap(groupRepository::deleteById);
   }

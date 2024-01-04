@@ -80,15 +80,17 @@ public class UserSystemRolePermissionAPITest {
             .expectStatus().isOk()
             .expectBody(UserSystemRolePermission.class)
             .consumeWith(response -> assertThat(response.getResponseBody())
-                .extracting(UserSystemRolePermission::getId, UserSystemRolePermission::getUserId,
-                    UserSystemRolePermission::getSystemRoleId, UserSystemRolePermission::getCreatedBy)
-                .containsExactly(10L, 4L, 5L, 2L));
+                .extracting(UserSystemRolePermission::getId, UserSystemRolePermission::getNamespaceId,
+                    UserSystemRolePermission::getUserId, UserSystemRolePermission::getSystemRoleId,
+                    UserSystemRolePermission::getCreatedBy)
+                .containsExactly(10L, 3L, 4L, 5L, 2L));
         userSystemRolePermissionRepository.findDuplicate(4L, 5L)
             .as(StepVerifier::create)
             .assertNext(permission -> assertThat(permission)
-                .extracting(UserSystemRolePermission::getId, UserSystemRolePermission::getUserId,
-                    UserSystemRolePermission::getSystemRoleId, UserSystemRolePermission::getCreatedBy)
-                .containsExactly(10L, 4L, 5L, 2L))
+                .extracting(UserSystemRolePermission::getId, UserSystemRolePermission::getNamespaceId,
+                    UserSystemRolePermission::getUserId, UserSystemRolePermission::getSystemRoleId,
+                    UserSystemRolePermission::getCreatedBy)
+                .containsExactly(10L, 3L, 4L, 5L, 2L))
             .verifyComplete();
       }
     }
@@ -158,6 +160,36 @@ public class UserSystemRolePermissionAPITest {
       }
 
       @Test
+      @DisplayName("ユーザが存在しない場合はエラーになる")
+      void cannotCreateIfUserNotFound() {
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/3/user-system-role-permissions")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "userId": 99,
+                  "systemRoleId": 5
+                }
+                """)
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .exchange()
+            .expectStatus().isNotFound()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        404, null,
+                        "idに該当するリソースが存在しない",
+                        "org.example.error.exception.NotExistingException: User not found",
+                        "指定されたリソースは存在しません。")
+            );
+      }
+
+      @Test
       @DisplayName("システムロールが存在しない場合はエラーになる")
       void cannotCreateIfSystemRoleNotFound() {
         // when, then
@@ -182,7 +214,7 @@ public class UserSystemRolePermissionAPITest {
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
-                        "org.example.error.exception.NotExistingException: SystemRole not found",
+                        "org.example.error.exception.NotExistingException: SystemRole is not in the namespace",
                         "指定されたリソースは存在しません。")
             );
       }
@@ -212,7 +244,7 @@ public class UserSystemRolePermissionAPITest {
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
-                        "org.example.error.exception.NotExistingException: SystemRole not found",
+                        "org.example.error.exception.NotExistingException: SystemRole is not in the namespace",
                         "指定されたリソースは存在しません。")
             );
       }
@@ -277,60 +309,6 @@ public class UserSystemRolePermissionAPITest {
                         "エンドポイントへのアクセス権がない",
                         "org.example.error.exception.UnAuthorizedException: 認可されていません。",
                         "この操作は許可されていません。")
-            );
-      }
-
-      @Test
-      @DisplayName("システムロールが存在しない場合はエラーになる")
-      void cannotCreateIfSystemRoleNotFound() {
-        // when, then
-        webTestClient.delete()
-            .uri(uriBuilder -> uriBuilder
-                .path("/rbac-service/v1/3/user-system-role-permissions")
-                .queryParam("user-id", 3L)
-                .queryParam("system-role-id", 99L)
-                .build())
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isNotFound()
-            .expectBody(ErrorResponse.class)
-            .consumeWith(response ->
-                assertThat(response.getResponseBody())
-                    .extracting(
-                        ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
-                    .containsExactly(
-                        404, null,
-                        "idに該当するリソースが存在しない",
-                        "org.example.error.exception.NotExistingException: SystemRole not found",
-                        "指定されたリソースは存在しません。")
-            );
-      }
-
-      @Test
-      @DisplayName("システムロールが異なるNamespaceIdの場合はエラーになる")
-      void cannotCreateIfSystemRoleIsNotInNamespace() {
-        // when, then
-        webTestClient.delete()
-            .uri(uriBuilder -> uriBuilder
-                .path("/rbac-service/v1/1/user-system-role-permissions")
-                .queryParam("user-id", 3L)
-                .queryParam("system-role-id", 6L)
-                .build())
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .exchange()
-            .expectStatus().isNotFound()
-            .expectBody(ErrorResponse.class)
-            .consumeWith(response ->
-                assertThat(response.getResponseBody())
-                    .extracting(
-                        ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
-                    .containsExactly(
-                        404, null,
-                        "idに該当するリソースが存在しない",
-                        "org.example.error.exception.NotExistingException: SystemRole not found",
-                        "指定されたリソースは存在しません。")
             );
       }
     }

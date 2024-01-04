@@ -18,6 +18,7 @@ public class UserSystemRolePermission {
 
   @Id
   private Long id;
+  private Long namespaceId;
   private Long userId;
   private Long systemRoleId;
   private Long createdBy;

@@ -111,7 +111,8 @@ class UserSystemRolePermissionRepositoryTest {
       @DisplayName("ユーザとシステムロールの紐付けを削除できる")
       void deleteByUniqueKeys() {
         // when
-        Mono<Void> voidMono = userSystemRolePermissionRepository.deleteByUniqueKeys(3L, 5L);
+        Mono<Void> voidMono = userSystemRolePermissionRepository
+            .deleteByUniqueKeys(2L, 3L, 5L);
         // then
         StepVerifier.create(voidMono).verifyComplete();
         userSystemRolePermissionRepository.findDuplicate(3L, 5L)

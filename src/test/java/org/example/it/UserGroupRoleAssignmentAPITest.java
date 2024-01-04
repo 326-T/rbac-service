@@ -65,13 +65,13 @@ public class UserGroupRoleAssignmentAPITest {
       void insertGroupGroupRoleAssignment() {
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/1/group-role-assignments")
+            .uri("/rbac-service/v1/2/group-role-assignments")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
                   "userGroupId": 3,
-                  "roleId": 1
+                  "roleId": 2
                 }
                 """)
             .exchange()
@@ -81,7 +81,7 @@ public class UserGroupRoleAssignmentAPITest {
                 .extracting(UserGroupRoleAssignment::getId, UserGroupRoleAssignment::getNamespaceId,
                     UserGroupRoleAssignment::getUserGroupId, UserGroupRoleAssignment::getRoleId,
                     UserGroupRoleAssignment::getCreatedBy)
-                .containsExactly(4L, 1L, 3L, 1L, 2L));
+                .containsExactly(4L, 2L, 3L, 2L, 2L));
         userGroupRoleAssignmentRepository.findById(4L)
             .as(StepVerifier::create)
             .assertNext(userGroupRoleAssignment ->
@@ -89,7 +89,7 @@ public class UserGroupRoleAssignmentAPITest {
                     .extracting(UserGroupRoleAssignment::getId, UserGroupRoleAssignment::getNamespaceId,
                         UserGroupRoleAssignment::getUserGroupId, UserGroupRoleAssignment::getRoleId,
                         UserGroupRoleAssignment::getCreatedBy)
-                    .containsExactly(4L, 1L, 3L, 1L, 2L))
+                    .containsExactly(4L, 2L, 3L, 2L, 2L))
             .verifyComplete();
       }
     }
@@ -133,13 +133,13 @@ public class UserGroupRoleAssignmentAPITest {
       void notAuthorizedCauseException() {
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/1/group-role-assignments")
+            .uri("/rbac-service/v1/2/group-role-assignments")
             .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
                   "userGroupId": 3,
-                  "roleId": 1
+                  "roleId": 2
                 }
                 """)
             .exchange()
@@ -155,6 +155,66 @@ public class UserGroupRoleAssignmentAPITest {
                         "エンドポイントへのアクセス権がない",
                         "org.example.error.exception.UnAuthorizedException: 認可されていません。",
                         "この操作は許可されていません。")
+            );
+      }
+
+      @Test
+      @DisplayName("ユーザグループが存在しない場合はエラーになる")
+      void userGroupNotFoundCauseException() {
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/2/group-role-assignments")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "userGroupId": 999,
+                  "roleId": 2
+                }
+                """)
+            .exchange()
+            .expectStatus().is4xxClientError()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        404, null,
+                        "idに該当するリソースが存在しない",
+                        "org.example.error.exception.NotExistingException: UserGroup is not in the namespace",
+                        "指定されたリソースは存在しません。")
+            );
+      }
+
+      @Test
+      @DisplayName("ロールが存在しない場合はエラーになる")
+      void roleNotFoundCauseException() {
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/2/group-role-assignments")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "userGroupId": 3,
+                  "roleId": 1
+                }
+                """)
+            .exchange()
+            .expectStatus().is4xxClientError()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        404, null,
+                        "idに該当するリソースが存在しない",
+                        "org.example.error.exception.NotExistingException: Role is not in the namespace",
+                        "指定されたリソースは存在しません。")
             );
       }
     }

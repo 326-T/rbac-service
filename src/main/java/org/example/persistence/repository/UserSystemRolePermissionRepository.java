@@ -13,10 +13,11 @@ public interface UserSystemRolePermissionRepository extends ReactiveCrudReposito
 
   @Query("""
       DELETE FROM rbac_user_system_role_permissions
-      WHERE user_id = :userId
+      WHERE namespace_id = :namespaceId
+        AND user_id = :userId
         AND system_role_id = :systemRoleId;
       """)
-  Mono<Void> deleteByUniqueKeys(Long userId, Long systemRoleId);
+  Mono<Void> deleteByUniqueKeys(Long namespaceId, Long userId, Long systemRoleId);
 
   @Query("""
       SELECT * FROM rbac_user_system_role_permissions

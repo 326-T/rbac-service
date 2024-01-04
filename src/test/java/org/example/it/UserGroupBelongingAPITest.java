@@ -66,13 +66,13 @@ public class UserGroupBelongingAPITest {
       void insertTargetUserGroupBelonging() {
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/1/user-group-belongings")
+            .uri("/rbac-service/v1/2/user-group-belongings")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
                   "userGroupId": 3,
-                  "userId": 1
+                  "userId": 2
                 }
                 """)
             .exchange()
@@ -82,14 +82,14 @@ public class UserGroupBelongingAPITest {
                 .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
                     UserGroupBelonging::getUserGroupId, UserGroupBelonging::getUserId,
                     UserGroupBelonging::getCreatedBy)
-                .containsExactly(4L, 1L, 3L, 1L, 2L));
+                .containsExactly(4L, 2L, 3L, 2L, 2L));
         userGroupBelongingRepository.findById(4L)
             .as(StepVerifier::create)
             .assertNext(userGroupBelonging -> assertThat(userGroupBelonging)
                 .extracting(UserGroupBelonging::getId, UserGroupBelonging::getNamespaceId,
                     UserGroupBelonging::getUserGroupId, UserGroupBelonging::getUserId,
                     UserGroupBelonging::getCreatedBy)
-                .containsExactly(4L, 1L, 3L, 1L, 2L))
+                .containsExactly(4L, 2L, 3L, 2L, 2L))
             .verifyComplete();
       }
     }
@@ -133,12 +133,12 @@ public class UserGroupBelongingAPITest {
       void notAuthorizedCauseException() {
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/1/user-group-belongings")
+            .uri("/rbac-service/v1/2/user-group-belongings")
             .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "userGroupId": 1,
+                  "userGroupId": 3,
                   "userId": 2
                 }
                 """)
@@ -155,6 +155,66 @@ public class UserGroupBelongingAPITest {
                         "エンドポイントへのアクセス権がない",
                         "org.example.error.exception.UnAuthorizedException: 認可されていません。",
                         "この操作は許可されていません。")
+            );
+      }
+
+      @Test
+      @DisplayName("ユーザが存在しない場合はエラーになる")
+      void userNotFoundCauseException() {
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/1/user-group-belongings")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "userGroupId": 1,
+                  "userId": 999
+                }
+                """)
+            .exchange()
+            .expectStatus().is4xxClientError()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        404, null,
+                        "idに該当するリソースが存在しない",
+                        "org.example.error.exception.NotExistingException: User does not exist",
+                        "指定されたリソースは存在しません。")
+            );
+      }
+
+      @Test
+      @DisplayName("グループが存在しない場合はエラーになる")
+      void groupNotFoundCauseException() {
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/1/user-group-belongings")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "userGroupId": 3,
+                  "userId": 2
+                }
+                """)
+            .exchange()
+            .expectStatus().is4xxClientError()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        404, null,
+                        "idに該当するリソースが存在しない",
+                        "org.example.error.exception.NotExistingException: UserGroup is not in the namespace",
+                        "指定されたリソースは存在しません。")
             );
       }
     }

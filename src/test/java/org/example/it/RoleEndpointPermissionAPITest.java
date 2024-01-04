@@ -66,13 +66,13 @@ public class RoleEndpointPermissionAPITest {
       void insertRoleEndpointPermission() {
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/1/role-endpoint-permissions")
+            .uri("/rbac-service/v1/2/role-endpoint-permissions")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
                   "roleId": 3,
-                  "endpointId": 1
+                  "endpointId": 2
                 }
                 """)
             .exchange()
@@ -82,7 +82,7 @@ public class RoleEndpointPermissionAPITest {
                 .extracting(RoleEndpointPermission::getId, RoleEndpointPermission::getNamespaceId,
                     RoleEndpointPermission::getRoleId, RoleEndpointPermission::getEndpointId,
                     RoleEndpointPermission::getCreatedBy)
-                .containsExactly(4L, 1L, 3L, 1L, 2L));
+                .containsExactly(4L, 2L, 3L, 2L, 2L));
         roleEndpointPermissionRepository.findById(4L)
             .as(StepVerifier::create)
             .assertNext(roleEndpointPermission ->
@@ -90,7 +90,7 @@ public class RoleEndpointPermissionAPITest {
                     .extracting(RoleEndpointPermission::getId, RoleEndpointPermission::getNamespaceId,
                         RoleEndpointPermission::getRoleId, RoleEndpointPermission::getEndpointId,
                         RoleEndpointPermission::getCreatedBy)
-                    .containsExactly(4L, 1L, 3L, 1L, 2L))
+                    .containsExactly(4L, 2L, 3L, 2L, 2L))
             .verifyComplete();
       }
     }
@@ -134,13 +134,13 @@ public class RoleEndpointPermissionAPITest {
       void notAuthorizedCauseException() {
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/1/role-endpoint-permissions")
+            .uri("/rbac-service/v1/2/role-endpoint-permissions")
             .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
                   "roleId": 3,
-                  "endpointId": 1
+                  "endpointId": 2
                 }
                 """)
             .exchange()
@@ -156,6 +156,66 @@ public class RoleEndpointPermissionAPITest {
                         "エンドポイントへのアクセス権がない",
                         "org.example.error.exception.UnAuthorizedException: 認可されていません。",
                         "この操作は許可されていません。")
+            );
+      }
+
+      @Test
+      @DisplayName("ロールが存在しない場合はエラーになる")
+      void roleNotFoundCauseException() {
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/2/role-endpoint-permissions")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "roleId": 1,
+                  "endpointId": 2
+                }
+                """)
+            .exchange()
+            .expectStatus().is4xxClientError()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        404, null,
+                        "idに該当するリソースが存在しない",
+                        "org.example.error.exception.NotExistingException: Role is not in the namespace",
+                        "指定されたリソースは存在しません。")
+            );
+      }
+
+      @Test
+      @DisplayName("エンドポイントが存在しない場合はエラーになる")
+      void endpointNotFoundCauseException() {
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/2/role-endpoint-permissions")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "roleId": 2,
+                  "endpointId": 1
+                }
+                """)
+            .exchange()
+            .expectStatus().is4xxClientError()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        404, null,
+                        "idに該当するリソースが存在しない",
+                        "org.example.error.exception.NotExistingException: Endpoint is not in the namespace",
+                        "指定されたリソースは存在しません。")
             );
       }
     }

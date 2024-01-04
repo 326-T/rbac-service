@@ -60,7 +60,7 @@ public class TargetGroupService {
   public Mono<TargetGroup> update(TargetGroup targetGroup) {
     Mono<TargetGroup> targetGroupMono = targetGroupRepository.findById(targetGroup.getId())
         .filter(present -> Objects.equals(present.getNamespaceId(), targetGroup.getNamespaceId()))
-        .switchIfEmpty(Mono.error(new NotExistingException("TargetGroup is not in the namespace")))
+        .switchIfEmpty(Mono.error(new NotExistingException("TargetGroup does not exist in the namespace")))
         .flatMap(present -> {
           present.setName(targetGroup.getName());
           present.setUpdatedAt(LocalDateTime.now());
@@ -86,7 +86,7 @@ public class TargetGroupService {
   public Mono<Void> deleteById(Long id, Long namespaceId) {
     return targetGroupRepository.findById(id)
         .filter(t -> Objects.equals(t.getNamespaceId(), namespaceId))
-        .switchIfEmpty(Mono.error(new NotExistingException("TargetGroup is not in the namespace")))
+        .switchIfEmpty(Mono.error(new NotExistingException("TargetGroup does not exist in the namespace")))
         .map(TargetGroup::getId)
         .flatMap(targetGroupRepository::deleteById);
   }

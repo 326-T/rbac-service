@@ -5,9 +5,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
+import org.example.persistence.entity.User;
+import org.example.persistence.entity.UserGroup;
 import org.example.persistence.entity.UserGroupBelonging;
 import org.example.persistence.repository.UserGroupBelongingRepository;
+import org.example.persistence.repository.UserGroupRepository;
+import org.example.persistence.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,6 +29,10 @@ class UserGroupBelongingServiceTest {
   private UserGroupBelongingService userGroupBelongingService;
   @Mock
   private UserGroupBelongingRepository userGroupBelongingRepository;
+  @Mock
+  private UserRepository userRepository;
+  @Mock
+  private UserGroupRepository userGroupRepository;
 
   @Nested
   class Insert {
@@ -41,6 +50,8 @@ class UserGroupBelongingServiceTest {
         when(userGroupBelongingRepository.save(any(UserGroupBelonging.class)))
             .thenReturn(Mono.just(userGroupBelonging1));
         when(userGroupBelongingRepository.findDuplicate(1L, 1L, 1L)).thenReturn(Mono.empty());
+        when(userRepository.findById(1L)).thenReturn(Mono.just(User.builder().id(1L).build()));
+        when(userGroupRepository.findById(1L)).thenReturn(Mono.just(UserGroup.builder().id(1L).namespaceId(1L).build()));
         // when
         Mono<UserGroupBelonging> groupMono = userGroupBelongingService.insert(userGroupBelonging1);
         // then
@@ -70,10 +81,46 @@ class UserGroupBelongingServiceTest {
             .thenReturn(Mono.just(after));
         when(userGroupBelongingRepository.findDuplicate(1L, 1L, 1L))
             .thenReturn(Mono.just(before));
+        when(userRepository.findById(1L)).thenReturn(Mono.just(User.builder().id(1L).build()));
+        when(userGroupRepository.findById(1L)).thenReturn(Mono.just(UserGroup.builder().id(1L).namespaceId(1L).build()));
         // when
         Mono<UserGroupBelonging> groupMono = userGroupBelongingService.insert(after);
         // then
         StepVerifier.create(groupMono).expectError(RedundantException.class).verify();
+      }
+
+      @Test
+      @DisplayName("ユーザが存在しない場合はエラーになる")
+      void cannotCreateUserRoleBelongingIfUserDoesNotExist() {
+        // given
+        UserGroupBelonging userGroupBelonging = UserGroupBelonging.builder()
+            .namespaceId(1L).userId(1L).userGroupId(1L).createdBy(1L).build();
+        when(userGroupBelongingRepository.save(any(UserGroupBelonging.class)))
+            .thenReturn(Mono.just(userGroupBelonging));
+        when(userGroupBelongingRepository.findDuplicate(1L, 1L, 1L)).thenReturn(Mono.empty());
+        when(userRepository.findById(1L)).thenReturn(Mono.empty());
+        when(userGroupRepository.findById(1L)).thenReturn(Mono.just(UserGroup.builder().id(1L).namespaceId(1L).build()));
+        // when
+        Mono<UserGroupBelonging> groupMono = userGroupBelongingService.insert(userGroupBelonging);
+        // then
+        StepVerifier.create(groupMono).expectError(NotExistingException.class).verify();
+      }
+
+      @Test
+      @DisplayName("ユーザグループが存在しない場合はエラーになる")
+      void cannotCreateUserRoleBelongingIfUserGroupDoesNotExist() {
+        // given
+        UserGroupBelonging userGroupBelonging = UserGroupBelonging.builder()
+            .namespaceId(1L).userId(1L).userGroupId(1L).createdBy(1L).build();
+        when(userGroupBelongingRepository.save(any(UserGroupBelonging.class)))
+            .thenReturn(Mono.just(userGroupBelonging));
+        when(userGroupBelongingRepository.findDuplicate(1L, 1L, 1L)).thenReturn(Mono.empty());
+        when(userRepository.findById(1L)).thenReturn(Mono.just(User.builder().id(1L).build()));
+        when(userGroupRepository.findById(1L)).thenReturn(Mono.empty());
+        // when
+        Mono<UserGroupBelonging> groupMono = userGroupBelongingService.insert(userGroupBelonging);
+        // then
+        StepVerifier.create(groupMono).expectError(NotExistingException.class).verify();
       }
     }
   }

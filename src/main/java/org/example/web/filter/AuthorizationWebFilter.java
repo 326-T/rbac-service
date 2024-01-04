@@ -1,8 +1,8 @@
 package org.example.web.filter;
 
 import lombok.NonNull;
-import org.example.error.exception.UnAuthenticatedException;
-import org.example.error.exception.UnAuthorizedException;
+import org.example.error.exception.UnauthenticatedException;
+import org.example.error.exception.UnauthorizedException;
 import org.example.persistence.entity.User;
 import org.example.service.SystemRoleService;
 import org.example.util.PathUtil;
@@ -51,7 +51,7 @@ public class AuthorizationWebFilter implements WebFilter {
     }
     User user = exchange.getAttribute(ContextKeys.USER_KEY);
     if (user == null) {
-      return Mono.error(new UnAuthenticatedException("ユーザーが認証されていません。"));
+      return Mono.error(new UnauthenticatedException("ユーザーが認証されていません。"));
     }
     String path = exchange.getRequest().getPath().value();
     if (path.startsWith(AccessPath.USERS) || path.startsWith(AccessPath.NAMESPACES) || path.startsWith(AccessPath.METHODS)) {
@@ -60,7 +60,7 @@ public class AuthorizationWebFilter implements WebFilter {
     return systemRoleService.aggregateSystemRolePermission(user.getId(), PathUtil.getNamespaceId(path))
         .flatMap(permissions -> {
           if (SystemRolePermission.NONE.equals(permissions)) {
-            return Mono.error(new UnAuthorizedException("認可されていません。"));
+            return Mono.error(new UnauthorizedException("認可されていません。"));
           }
           if (SystemRolePermission.WRITE.equals(permissions)) {
             return chain.filter(exchange);
@@ -68,7 +68,7 @@ public class AuthorizationWebFilter implements WebFilter {
           if (HttpMethod.GET.equals(method)) {
             return chain.filter(exchange);
           }
-          return Mono.error(new UnAuthorizedException("認可されていません。"));
+          return Mono.error(new UnauthorizedException("認可されていません。"));
         });
   }
 }

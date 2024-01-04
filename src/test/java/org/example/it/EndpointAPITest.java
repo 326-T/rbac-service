@@ -45,12 +45,12 @@ public class EndpointAPITest {
   private EndpointRepository endpointRepository;
 
   private String jwt;
-  private String unAuthorizedJwt;
+  private String readOnlyJwt;
 
   @BeforeAll
   void beforeAll() {
     jwt = base64Service.encode(jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build()));
-    unAuthorizedJwt = base64Service.encode(jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
+    readOnlyJwt = base64Service.encode(jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
   }
 
   @Order(1)
@@ -123,7 +123,7 @@ public class EndpointAPITest {
         // when, then
         webTestClient.get()
             .uri("/rbac-service/v1/2/endpoints")
-            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .header(HttpHeaders.AUTHORIZATION, readOnlyJwt)
             .exchange()
             .expectStatus().isForbidden()
             .expectBody(ErrorResponse.class)
@@ -135,7 +135,7 @@ public class EndpointAPITest {
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
-                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "org.example.error.exception.UnauthorizedException: 認可されていません。",
                         "この操作は許可されていません。")
             );
       }
@@ -199,7 +199,7 @@ public class EndpointAPITest {
       void notExistingEndpointCauseException() {
         // when, then
         webTestClient.put()
-            .uri("/rbac-service/v1/1/endpoints/999")
+            .uri("/rbac-service/v1/2/endpoints/999")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
@@ -221,7 +221,7 @@ public class EndpointAPITest {
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
-                        "org.example.error.exception.NotExistingException: Endpoint is not in the namespace",
+                        "org.example.error.exception.NotExistingException: Endpoint does not exist in the namespace",
                         "指定されたリソースは存在しません。")
             );
       }
@@ -231,7 +231,7 @@ public class EndpointAPITest {
       void cannotUpdateWithDifferentNamespaceId() {
         // when, then
         webTestClient.put()
-            .uri("/rbac-service/v1/3/endpoints/2")
+            .uri("/rbac-service/v1/2/endpoints/1")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
@@ -253,7 +253,7 @@ public class EndpointAPITest {
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
-                        "org.example.error.exception.NotExistingException: Endpoint is not in the namespace",
+                        "org.example.error.exception.NotExistingException: Endpoint does not exist in the namespace",
                         "指定されたリソースは存在しません。")
             );
       }
@@ -295,8 +295,8 @@ public class EndpointAPITest {
       void notAuthorizedCauseException() {
         // when, then
         webTestClient.put()
-            .uri("/rbac-service/v1/1/endpoints/2")
-            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .uri("/rbac-service/v1/2/endpoints/2")
+            .header(HttpHeaders.AUTHORIZATION, readOnlyJwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
@@ -317,8 +317,72 @@ public class EndpointAPITest {
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
-                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "org.example.error.exception.UnauthorizedException: 認可されていません。",
                         "この操作は許可されていません。")
+            );
+      }
+
+      @Test
+      @DisplayName("存在しないパスの場合はエラーになる")
+      void notExistingPathCauseException() {
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/2/endpoints/2")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "pathId": 1,
+                  "method": "GET",
+                  "targetGroupId": 2
+                }
+                """
+            )
+            .exchange()
+            .expectStatus().isNotFound()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        404, null,
+                        "idに該当するリソースが存在しない",
+                        "org.example.error.exception.NotExistingException: Path does not exist in the namespace",
+                        "指定されたリソースは存在しません。")
+            );
+      }
+
+      @Test
+      @DisplayName("存在しないターゲットグループの場合はエラーになる")
+      void notExistingTargetGroupCauseException() {
+        // when, then
+        webTestClient.put()
+            .uri("/rbac-service/v1/2/endpoints/2")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "pathId": 2,
+                  "method": "GET",
+                  "targetGroupId": 1
+                }
+                """
+            )
+            .exchange()
+            .expectStatus().isNotFound()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        404, null,
+                        "idに該当するリソースが存在しない",
+                        "org.example.error.exception.NotExistingException: TargetGroup does not exist in the namespace",
+                        "指定されたリソースは存在しません。")
             );
       }
     }
@@ -340,12 +404,12 @@ public class EndpointAPITest {
       void insertTargetEndpoint() {
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/1/endpoints")
+            .uri("/rbac-service/v1/2/endpoints")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "pathId": 1,
+                  "pathId": 2,
                   "method": "DELETE",
                   "targetGroupId": 2
                 }
@@ -359,7 +423,7 @@ public class EndpointAPITest {
                   .extracting(Endpoint::getId, Endpoint::getNamespaceId,
                       Endpoint::getPathId, Endpoint::getMethod,
                       Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                  .containsExactly(4L, 1L, 1L, "DELETE", 2L, 2L);
+                  .containsExactly(4L, 2L, 2L, "DELETE", 2L, 2L);
             });
         endpointRepository.findById(4L).as(StepVerifier::create)
             .assertNext(
@@ -367,7 +431,7 @@ public class EndpointAPITest {
                     .extracting(Endpoint::getId, Endpoint::getNamespaceId,
                         Endpoint::getPathId, Endpoint::getMethod,
                         Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                    .containsExactly(4L, 1L, 1L, "DELETE", 2L, 2L))
+                    .containsExactly(4L, 2L, 2L, "DELETE", 2L, 2L))
             .verifyComplete();
       }
     }
@@ -413,12 +477,12 @@ public class EndpointAPITest {
       void notAuthorizedCauseException() {
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/1/endpoints")
-            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .uri("/rbac-service/v1/2/endpoints")
+            .header(HttpHeaders.AUTHORIZATION, readOnlyJwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
-                  "pathId": 1,
+                  "pathId": 2,
                   "method": "DELETE",
                   "targetGroupId": 2
                 }
@@ -435,8 +499,72 @@ public class EndpointAPITest {
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
-                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "org.example.error.exception.UnauthorizedException: 認可されていません。",
                         "この操作は許可されていません。")
+            );
+      }
+
+      @Test
+      @DisplayName("存在しないパスの場合はエラーになる")
+      void notExistingPathCauseException() {
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/1/endpoints")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "pathId": 2,
+                  "method": "DELETE",
+                  "targetGroupId": 1
+                }
+                """
+            )
+            .exchange()
+            .expectStatus().isNotFound()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        404, null,
+                        "idに該当するリソースが存在しない",
+                        "org.example.error.exception.NotExistingException: Path does not exist in the namespace",
+                        "指定されたリソースは存在しません。")
+            );
+      }
+
+      @Test
+      @DisplayName("存在しないターゲットグループの場合はエラーになる")
+      void notExistingTargetGroupCauseException() {
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/1/endpoints")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "pathId": 1,
+                  "method": "DELETE",
+                  "targetGroupId": 2
+                }
+                """
+            )
+            .exchange()
+            .expectStatus().isNotFound()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        404, null,
+                        "idに該当するリソースが存在しない",
+                        "org.example.error.exception.NotExistingException: TargetGroup does not exist in the namespace",
+                        "指定されたリソースは存在しません。")
             );
       }
     }
@@ -477,7 +605,7 @@ public class EndpointAPITest {
         // when, then
         webTestClient.delete()
             .uri("/rbac-service/v1/1/endpoints/3")
-            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .header(HttpHeaders.AUTHORIZATION, readOnlyJwt)
             .exchange()
             .expectStatus().isForbidden()
             .expectBody(ErrorResponse.class)
@@ -489,7 +617,7 @@ public class EndpointAPITest {
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
-                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "org.example.error.exception.UnauthorizedException: 認可されていません。",
                         "この操作は許可されていません。")
             );
       }
@@ -512,7 +640,7 @@ public class EndpointAPITest {
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
-                        "org.example.error.exception.NotExistingException: Endpoint is not in the namespace",
+                        "org.example.error.exception.NotExistingException: Endpoint does not exist in the namespace",
                         "指定されたリソースは存在しません。")
             );
       }
@@ -535,7 +663,7 @@ public class EndpointAPITest {
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
-                        "org.example.error.exception.NotExistingException: Endpoint is not in the namespace",
+                        "org.example.error.exception.NotExistingException: Endpoint does not exist in the namespace",
                         "指定されたリソースは存在しません。")
             );
       }

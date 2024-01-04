@@ -43,12 +43,12 @@ public class TargetGroupBelongingAPITest {
   private TargetGroupBelongingRepository targetGroupBelongingRepository;
 
   private String jwt;
-  private String unAuthorizedJwt;
+  private String readOnlyJwt;
 
   @BeforeAll
   void beforeAll() {
     jwt = base64Service.encode(jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build()));
-    unAuthorizedJwt = base64Service.encode(jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
+    readOnlyJwt = base64Service.encode(jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
   }
 
   @Order(2)
@@ -66,13 +66,13 @@ public class TargetGroupBelongingAPITest {
       void insertTargetTargetClusterBelonging() {
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/1/target-group-belongings")
+            .uri("/rbac-service/v1/2/target-group-belongings")
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
                   "targetId": 3,
-                  "targetGroupId": 1
+                  "targetGroupId": 2
                 }
                 """)
             .exchange()
@@ -82,7 +82,7 @@ public class TargetGroupBelongingAPITest {
                 .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
                     TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
                     TargetGroupBelonging::getCreatedBy)
-                .containsExactly(4L, 1L, 3L, 1L, 2L));
+                .containsExactly(4L, 2L, 3L, 2L, 2L));
         targetGroupBelongingRepository.findById(4L)
             .as(StepVerifier::create)
             .assertNext(targetGroupBelonging ->
@@ -90,7 +90,7 @@ public class TargetGroupBelongingAPITest {
                     .extracting(TargetGroupBelonging::getId, TargetGroupBelonging::getNamespaceId,
                         TargetGroupBelonging::getTargetId, TargetGroupBelonging::getTargetGroupId,
                         TargetGroupBelonging::getCreatedBy)
-                    .containsExactly(4L, 1L, 3L, 1L, 2L))
+                    .containsExactly(4L, 2L, 3L, 2L, 2L))
             .verifyComplete();
       }
     }
@@ -134,13 +134,13 @@ public class TargetGroupBelongingAPITest {
       void notAuthorizedCauseException() {
         // when, then
         webTestClient.post()
-            .uri("/rbac-service/v1/1/target-group-belongings")
-            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .uri("/rbac-service/v1/2/target-group-belongings")
+            .header(HttpHeaders.AUTHORIZATION, readOnlyJwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
                   "targetId": 3,
-                  "targetGroupId": 1
+                  "targetGroupId": 2
                 }
                 """)
             .exchange()
@@ -154,8 +154,68 @@ public class TargetGroupBelongingAPITest {
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
-                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "org.example.error.exception.UnauthorizedException: 認可されていません。",
                         "この操作は許可されていません。")
+            );
+      }
+
+      @Test
+      @DisplayName("同一のnamespace内にターゲットが存在しない場合はエラーになる")
+      void notFoundTargetCauseException() {
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/2/target-group-belongings")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "targetId": 1,
+                  "targetGroupId": 2
+                }
+                """)
+            .exchange()
+            .expectStatus().isNotFound()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        404, null,
+                        "idに該当するリソースが存在しない",
+                        "org.example.error.exception.NotExistingException: Target does not exist in the namespace",
+                        "指定されたリソースは存在しません。")
+            );
+      }
+
+      @Test
+      @DisplayName("同一のnamespace内にターゲットグループが存在しない場合はエラーになる")
+      void notFoundTargetGroupCauseException() {
+        // when, then
+        webTestClient.post()
+            .uri("/rbac-service/v1/2/target-group-belongings")
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("""
+                {
+                  "targetId": 3,
+                  "targetGroupId": 1
+                }
+                """)
+            .exchange()
+            .expectStatus().isNotFound()
+            .expectBody(ErrorResponse.class)
+            .consumeWith(response ->
+                assertThat(response.getResponseBody())
+                    .extracting(
+                        ErrorResponse::getStatus, ErrorResponse::getCode,
+                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                    .containsExactly(
+                        404, null,
+                        "idに該当するリソースが存在しない",
+                        "org.example.error.exception.NotExistingException: TargetGroup does not exist in the namespace",
+                        "指定されたリソースは存在しません。")
             );
       }
     }
@@ -197,7 +257,7 @@ public class TargetGroupBelongingAPITest {
         // when, then
         webTestClient.delete()
             .uri("/rbac-service/v1/2/target-group-belongings?target-id=3&target-group-id=3")
-            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .header(HttpHeaders.AUTHORIZATION, readOnlyJwt)
             .exchange()
             .expectStatus().isForbidden()
             .expectBody(ErrorResponse.class)
@@ -209,7 +269,7 @@ public class TargetGroupBelongingAPITest {
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
-                        "org.example.error.exception.UnAuthorizedException: 認可されていません。",
+                        "org.example.error.exception.UnauthorizedException: 認可されていません。",
                         "この操作は許可されていません。")
             );
       }

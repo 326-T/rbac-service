@@ -58,7 +58,7 @@ public class PathService {
   public Mono<Path> update(Path path) {
     Mono<Path> pathMono = pathRepository.findById(path.getId())
         .filter(present -> Objects.equals(present.getNamespaceId(), path.getNamespaceId()))
-        .switchIfEmpty(Mono.error(new NotExistingException("Path is not in the namespace")))
+        .switchIfEmpty(Mono.error(new NotExistingException("Path does not exist in the namespace")))
         .flatMap(present -> {
           present.setRegex(path.getRegex());
           present.setUpdatedAt(LocalDateTime.now());
@@ -73,7 +73,7 @@ public class PathService {
   public Mono<Void> deleteById(Long id, Long namespaceId) {
     return pathRepository.findById(id)
         .filter(present -> Objects.equals(present.getNamespaceId(), namespaceId))
-        .switchIfEmpty(Mono.error(new NotExistingException("Path is not in the namespace")))
+        .switchIfEmpty(Mono.error(new NotExistingException("Path does not exist in the namespace")))
         .map(Path::getId)
         .flatMap(pathRepository::deleteById);
   }

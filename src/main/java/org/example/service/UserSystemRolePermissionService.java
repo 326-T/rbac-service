@@ -1,9 +1,12 @@
 package org.example.service;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.UserSystemRolePermission;
+import org.example.persistence.repository.SystemRoleRepository;
+import org.example.persistence.repository.UserRepository;
 import org.example.persistence.repository.UserSystemRolePermissionRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -12,11 +15,14 @@ import reactor.core.publisher.Mono;
 public class UserSystemRolePermissionService {
 
   private final UserSystemRolePermissionRepository userSystemRolePermissionRepository;
-  private final SystemRoleService systemRoleService;
+  private final UserRepository userRepository;
+  private final SystemRoleRepository systemRoleRepository;
 
-  public UserSystemRolePermissionService(UserSystemRolePermissionRepository userSystemRolePermissionRepository, SystemRoleService systemRoleService) {
+  public UserSystemRolePermissionService(UserSystemRolePermissionRepository userSystemRolePermissionRepository,
+      UserRepository userRepository, SystemRoleRepository systemRoleRepository) {
     this.userSystemRolePermissionRepository = userSystemRolePermissionRepository;
-    this.systemRoleService = systemRoleService;
+    this.userRepository = userRepository;
+    this.systemRoleRepository = systemRoleRepository;
   }
 
   /**
@@ -31,12 +37,14 @@ public class UserSystemRolePermissionService {
    *
    * @throws RedundantException 重複した場合
    */
-  public Mono<UserSystemRolePermission> insert(UserSystemRolePermission userSystemRolePermission, Long namespaceId) {
+  public Mono<UserSystemRolePermission> insert(UserSystemRolePermission userSystemRolePermission) {
     userSystemRolePermission.setCreatedAt(LocalDateTime.now());
     userSystemRolePermission.setUpdatedAt(LocalDateTime.now());
-    return systemRoleService.findById(userSystemRolePermission.getSystemRoleId())
-        .filter(systemRole -> systemRole.getNamespaceId().equals(namespaceId))
-        .switchIfEmpty(Mono.error(new NotExistingException("SystemRole not found")))
+    return userRepository.findById(userSystemRolePermission.getUserId())
+        .switchIfEmpty(Mono.error(new NotExistingException("User not found")))
+        .then(systemRoleRepository.findById(userSystemRolePermission.getSystemRoleId()))
+        .filter(systemRole -> Objects.equals(systemRole.getNamespaceId(), userSystemRolePermission.getNamespaceId()))
+        .switchIfEmpty(Mono.error(new NotExistingException("SystemRole does not exist in the namespace")))
         .then(userSystemRolePermissionRepository.findDuplicate(
             userSystemRolePermission.getUserId(),
             userSystemRolePermission.getSystemRoleId()))
@@ -57,9 +65,6 @@ public class UserSystemRolePermissionService {
    * @return Void
    */
   public Mono<Void> deleteByUniqueKeys(Long userId, Long systemRoleId, Long namespaceId) {
-    return systemRoleService.findById(systemRoleId)
-        .filter(systemRole -> systemRole.getNamespaceId().equals(namespaceId))
-        .switchIfEmpty(Mono.error(new NotExistingException("SystemRole not found")))
-        .then(userSystemRolePermissionRepository.deleteByUniqueKeys(userId, systemRoleId));
+    return userSystemRolePermissionRepository.deleteByUniqueKeys(namespaceId, userId, systemRoleId);
   }
 }

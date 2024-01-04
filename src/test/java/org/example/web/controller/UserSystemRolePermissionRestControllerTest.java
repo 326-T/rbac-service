@@ -2,7 +2,6 @@ package org.example.web.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import org.example.persistence.entity.User;
@@ -55,7 +54,7 @@ class UserSystemRolePermissionRestControllerTest {
         // given
         UserSystemRolePermission userSystemRolePermission = UserSystemRolePermission.builder()
             .id(1L).userId(2L).systemRoleId(3L).createdBy(4L).build();
-        when(userSystemRolePermissionService.insert(any(UserSystemRolePermission.class), eq(1L)))
+        when(userSystemRolePermissionService.insert(any(UserSystemRolePermission.class)))
             .thenReturn(Mono.just(userSystemRolePermission));
         when(reactiveContextService.extractCurrentUser(any(ServerWebExchange.class))).thenReturn(User.builder().id(3L).build());
         // when, then

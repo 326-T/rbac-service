@@ -7,7 +7,11 @@ import static org.mockito.Mockito.when;
 import org.example.error.exception.NotExistingException;
 import org.example.error.exception.RedundantException;
 import org.example.persistence.entity.Endpoint;
+import org.example.persistence.entity.Path;
+import org.example.persistence.entity.TargetGroup;
 import org.example.persistence.repository.EndpointRepository;
+import org.example.persistence.repository.PathRepository;
+import org.example.persistence.repository.TargetGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,6 +29,10 @@ class EndpointServiceTest {
   private EndpointService endpointService;
   @Mock
   private EndpointRepository endpointRepository;
+  @Mock
+  private PathRepository pathRepository;
+  @Mock
+  private TargetGroupRepository targetGroupRepository;
 
   @Nested
   class FindByNamespaceId {
@@ -132,6 +140,8 @@ class EndpointServiceTest {
             .namespaceId(1L).pathId(1L).method("GET").targetGroupId(1L).createdBy(1L).build();
         when(endpointRepository.save(any(Endpoint.class))).thenReturn(Mono.just(endpoint1));
         when(endpointRepository.findDuplicate(1L, 1L, 1L, "GET")).thenReturn(Mono.empty());
+        when(pathRepository.findById(1L)).thenReturn(Mono.just(Path.builder().id(1L).namespaceId(1L).build()));
+        when(targetGroupRepository.findById(1L)).thenReturn(Mono.just(TargetGroup.builder().id(1L).namespaceId(1L).build()));
         // when
         Mono<Endpoint> clusterMono = endpointService.insert(endpoint1);
         // then
@@ -159,10 +169,44 @@ class EndpointServiceTest {
             .namespaceId(1L).pathId(1L).method("GET").targetGroupId(1L).createdBy(1L).build();
         when(endpointRepository.save(any(Endpoint.class))).thenReturn(Mono.just(after));
         when(endpointRepository.findDuplicate(1L, 1L, 1L, "GET")).thenReturn(Mono.just(before));
+        when(pathRepository.findById(1L)).thenReturn(Mono.just(Path.builder().id(1L).namespaceId(1L).build()));
+        when(targetGroupRepository.findById(1L)).thenReturn(Mono.just(TargetGroup.builder().id(1L).namespaceId(1L).build()));
         // when
         Mono<Endpoint> clusterMono = endpointService.insert(after);
         // then
         StepVerifier.create(clusterMono).expectError(RedundantException.class).verify();
+      }
+
+      @Test
+      @DisplayName("パスが存在しない場合はエラーになる")
+      void cannotCreateEndpointIfPathDoesNotExist() {
+        // given
+        Endpoint endpoint1 = Endpoint.builder()
+            .namespaceId(1L).pathId(1L).method("GET").targetGroupId(1L).createdBy(1L).build();
+        when(endpointRepository.save(any(Endpoint.class))).thenReturn(Mono.just(endpoint1));
+        when(endpointRepository.findDuplicate(1L, 1L, 1L, "GET")).thenReturn(Mono.empty());
+        when(pathRepository.findById(1L)).thenReturn(Mono.empty());
+        when(targetGroupRepository.findById(1L)).thenReturn(Mono.just(TargetGroup.builder().id(1L).namespaceId(1L).build()));
+        // when
+        Mono<Endpoint> clusterMono = endpointService.insert(endpoint1);
+        // then
+        StepVerifier.create(clusterMono).expectError(NotExistingException.class).verify();
+      }
+
+      @Test
+      @DisplayName("ターゲットグループが存在しない場合はエラーになる")
+      void cannotCreateEndpointIfTargetGroupDoesNotExist() {
+        // given
+        Endpoint endpoint1 = Endpoint.builder()
+            .namespaceId(1L).pathId(1L).method("GET").targetGroupId(1L).createdBy(1L).build();
+        when(endpointRepository.save(any(Endpoint.class))).thenReturn(Mono.just(endpoint1));
+        when(endpointRepository.findDuplicate(1L, 1L, 1L, "GET")).thenReturn(Mono.empty());
+        when(pathRepository.findById(1L)).thenReturn(Mono.just(Path.builder().id(1L).namespaceId(1L).build()));
+        when(targetGroupRepository.findById(1L)).thenReturn(Mono.empty());
+        // when
+        Mono<Endpoint> clusterMono = endpointService.insert(endpoint1);
+        // then
+        StepVerifier.create(clusterMono).expectError(NotExistingException.class).verify();
       }
     }
   }
@@ -187,6 +231,8 @@ class EndpointServiceTest {
         when(endpointRepository.findById(2L)).thenReturn(Mono.just(before));
         when(endpointRepository.findDuplicate(2L, 3L, 3L, "GET")).thenReturn(Mono.empty());
         when(endpointRepository.save(any(Endpoint.class))).thenReturn(Mono.just(after));
+        when(pathRepository.findById(3L)).thenReturn(Mono.just(Path.builder().id(3L).namespaceId(2L).build()));
+        when(targetGroupRepository.findById(3L)).thenReturn(Mono.just(TargetGroup.builder().id(3L).namespaceId(2L).build()));
         // when
         Mono<Endpoint> clusterMono = endpointService.update(after);
         // then
@@ -214,6 +260,8 @@ class EndpointServiceTest {
         when(endpointRepository.findById(2L)).thenReturn(Mono.empty());
         when(endpointRepository.findDuplicate(2L, 3L, 3L, "GET")).thenReturn(Mono.empty());
         when(endpointRepository.save(any(Endpoint.class))).thenReturn(Mono.just(after));
+        when(pathRepository.findById(3L)).thenReturn(Mono.just(Path.builder().id(3L).namespaceId(2L).build()));
+        when(targetGroupRepository.findById(3L)).thenReturn(Mono.just(TargetGroup.builder().id(3L).namespaceId(2L).build()));
         // when
         Mono<Endpoint> clusterMono = endpointService.update(after);
         // then
@@ -234,6 +282,8 @@ class EndpointServiceTest {
       when(endpointRepository.findById(2L)).thenReturn(Mono.just(before));
       when(endpointRepository.findDuplicate(2L, 3L, 3L, "GET")).thenReturn(Mono.empty());
       when(endpointRepository.save(any(Endpoint.class))).thenReturn(Mono.just(after));
+      when(pathRepository.findById(3L)).thenReturn(Mono.just(Path.builder().id(3L).namespaceId(2L).build()));
+      when(targetGroupRepository.findById(3L)).thenReturn(Mono.just(TargetGroup.builder().id(3L).namespaceId(2L).build()));
       // when
       Mono<Endpoint> clusterMono = endpointService.update(after);
       // then
@@ -256,10 +306,54 @@ class EndpointServiceTest {
       when(endpointRepository.findById(2L)).thenReturn(Mono.just(before));
       when(endpointRepository.findDuplicate(2L, 3L, 3L, "PUT")).thenReturn(Mono.just(duplicate));
       when(endpointRepository.save(any(Endpoint.class))).thenReturn(Mono.just(after));
+      when(pathRepository.findById(3L)).thenReturn(Mono.just(Path.builder().id(3L).namespaceId(2L).build()));
+      when(targetGroupRepository.findById(3L)).thenReturn(Mono.just(TargetGroup.builder().id(3L).namespaceId(2L).build()));
       // when
       Mono<Endpoint> clusterMono = endpointService.update(after);
       // then
       StepVerifier.create(clusterMono).expectError(RedundantException.class).verify();
+    }
+
+    @Test
+    @DisplayName("パスが存在しない場合はエラーになる")
+    void cannotUpdateEndpointIfPathDoesNotExist() {
+      // given
+      Endpoint before = Endpoint.builder()
+          .id(2L).namespaceId(2L).pathId(2L).method("POST")
+          .targetGroupId(2L).createdBy(2L).build();
+      Endpoint after = Endpoint.builder()
+          .id(2L).namespaceId(2L).pathId(3L).method("PUT")
+          .targetGroupId(3L).createdBy(3L).build();
+      when(endpointRepository.findById(2L)).thenReturn(Mono.just(before));
+      when(endpointRepository.findDuplicate(2L, 3L, 3L, "PUT")).thenReturn(Mono.empty());
+      when(endpointRepository.save(any(Endpoint.class))).thenReturn(Mono.just(after));
+      when(pathRepository.findById(3L)).thenReturn(Mono.empty());
+      when(targetGroupRepository.findById(3L)).thenReturn(Mono.just(TargetGroup.builder().id(3L).namespaceId(2L).build()));
+      // when
+      Mono<Endpoint> clusterMono = endpointService.update(after);
+      // then
+      StepVerifier.create(clusterMono).expectError(NotExistingException.class).verify();
+    }
+
+    @Test
+    @DisplayName("ターゲットグループが存在しない場合はエラーになる")
+    void cannotUpdateEndpointIfTargetGroupDoesNotExist() {
+      // given
+      Endpoint before = Endpoint.builder()
+          .id(2L).namespaceId(2L).pathId(2L).method("POST")
+          .targetGroupId(2L).createdBy(2L).build();
+      Endpoint after = Endpoint.builder()
+          .id(2L).namespaceId(2L).pathId(3L).method("PUT")
+          .targetGroupId(3L).createdBy(3L).build();
+      when(endpointRepository.findById(2L)).thenReturn(Mono.just(before));
+      when(endpointRepository.findDuplicate(2L, 3L, 3L, "PUT")).thenReturn(Mono.empty());
+      when(endpointRepository.save(any(Endpoint.class))).thenReturn(Mono.just(after));
+      when(pathRepository.findById(3L)).thenReturn(Mono.just(Path.builder().id(3L).namespaceId(2L).build()));
+      when(targetGroupRepository.findById(3L)).thenReturn(Mono.empty());
+      // when
+      Mono<Endpoint> clusterMono = endpointService.update(after);
+      // then
+      StepVerifier.create(clusterMono).expectError(NotExistingException.class).verify();
     }
   }
 

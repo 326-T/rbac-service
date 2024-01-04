@@ -37,8 +37,9 @@ public class UserSystemRolePermissionRestController {
       @PathVariable("namespace-id") Long namespaceId,
       @Valid @RequestBody UserSystemRolePermissionInsertRequest request) {
     UserSystemRolePermission userSystemRolePermission = request.exportEntity();
+    userSystemRolePermission.setNamespaceId(namespaceId);
     userSystemRolePermission.setCreatedBy(reactiveContextService.extractCurrentUser(exchange).getId());
-    return userSystemRolePermissionService.insert(userSystemRolePermission, namespaceId);
+    return userSystemRolePermissionService.insert(userSystemRolePermission);
   }
 
   @DeleteMapping

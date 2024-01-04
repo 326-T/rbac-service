@@ -27,17 +27,17 @@ class NamespaceRepositoryTest {
 
   @Order(1)
   @Nested
-  class FindAll {
+  class FindByUserId {
 
     @Nested
     @DisplayName("正常系")
     class Regular {
 
       @Test
-      @DisplayName("ネームスペースを全件取得できる")
+      @DisplayName("参照権限以上の権限を持つユーザーのネームスペースを全件取得できる")
       void findAllTheIndexes() {
         // when
-        Flux<Namespace> namespaceFlux = namespaceRepository.findAll();
+        Flux<Namespace> namespaceFlux = namespaceRepository.findByUserId(2L);
         // then
         StepVerifier.create(namespaceFlux)
             .assertNext(
@@ -53,6 +53,15 @@ class NamespaceRepositoryTest {
                     .extracting(Namespace::getId, Namespace::getName, Namespace::getCreatedBy)
                     .containsExactly(3L, "production", 3L))
             .verifyComplete();
+      }
+
+      @Test
+      @DisplayName("権限を持っていなければ何も表示されない")
+      void findAllTheIndexesWithNoPermission() {
+        // when
+        Flux<Namespace> namespaceFlux = namespaceRepository.findByUserId(4L);
+        // then
+        StepVerifier.create(namespaceFlux).verifyComplete();
       }
     }
   }

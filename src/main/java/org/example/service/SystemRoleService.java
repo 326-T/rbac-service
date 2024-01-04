@@ -63,6 +63,7 @@ public class SystemRoleService {
             .flatMap(systemRoleRepository::save).flatMapMany(savedSystemRole ->
                 Flux.just(
                     UserSystemRolePermission.builder()
+                        .namespaceId(namespace.getId())
                         .systemRoleId(savedSystemRole.getId())
                         .userId(userId)
                         .createdBy(userId)
@@ -70,6 +71,7 @@ public class SystemRoleService {
                         .updatedAt(LocalDateTime.now())
                         .build(),
                     UserSystemRolePermission.builder()
+                        .namespaceId(namespace.getId())
                         .systemRoleId(savedSystemRole.getId())
                         .userId(1L)
                         .createdBy(1L)

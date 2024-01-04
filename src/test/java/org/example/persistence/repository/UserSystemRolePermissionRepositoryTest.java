@@ -40,6 +40,7 @@ class UserSystemRolePermissionRepositoryTest {
         // given
         UserSystemRolePermission userSystemRolePermission = UserSystemRolePermission.builder()
             .id(1L)
+            .namespaceId(2L)
             .systemRoleId(2L)
             .userId(4L)
             .createdBy(1L)
@@ -52,17 +53,19 @@ class UserSystemRolePermissionRepositoryTest {
         StepVerifier.create(userSystemRolePermissionMono)
             .assertNext(actual ->
                 assertThat(actual)
-                    .extracting(UserSystemRolePermission::getId, UserSystemRolePermission::getUserId,
-                        UserSystemRolePermission::getSystemRoleId, UserSystemRolePermission::getCreatedBy)
-                    .containsExactly(1L, 4L, 2L, 1L))
+                    .extracting(UserSystemRolePermission::getId, UserSystemRolePermission::getNamespaceId,
+                        UserSystemRolePermission::getUserId, UserSystemRolePermission::getSystemRoleId,
+                        UserSystemRolePermission::getCreatedBy)
+                    .containsExactly(1L, 2L, 4L, 2L, 1L))
             .verifyComplete();
         userSystemRolePermissionRepository.findDuplicate(4L, 2L)
             .as(StepVerifier::create)
             .assertNext(actual ->
                 assertThat(actual)
-                    .extracting(UserSystemRolePermission::getId, UserSystemRolePermission::getUserId,
-                        UserSystemRolePermission::getSystemRoleId, UserSystemRolePermission::getCreatedBy)
-                    .containsExactly(1L, 4L, 2L, 1L))
+                    .extracting(UserSystemRolePermission::getId, UserSystemRolePermission::getNamespaceId,
+                        UserSystemRolePermission::getUserId, UserSystemRolePermission::getSystemRoleId,
+                        UserSystemRolePermission::getCreatedBy)
+                    .containsExactly(1L, 2L, 4L, 2L, 1L))
             .verifyComplete();
       }
 
@@ -71,6 +74,7 @@ class UserSystemRolePermissionRepositoryTest {
       void insert() {
         // given
         UserSystemRolePermission userSystemRolePermission = UserSystemRolePermission.builder()
+            .namespaceId(1L)
             .systemRoleId(1L)
             .userId(4L)
             .createdBy(1L)
@@ -81,17 +85,19 @@ class UserSystemRolePermissionRepositoryTest {
         StepVerifier.create(userSystemRolePermissionMono)
             .assertNext(actual ->
                 assertThat(actual)
-                    .extracting(UserSystemRolePermission::getId, UserSystemRolePermission::getUserId,
-                        UserSystemRolePermission::getSystemRoleId, UserSystemRolePermission::getCreatedBy)
-                    .containsExactly(10L, 4L, 1L, 1L))
+                    .extracting(UserSystemRolePermission::getId, UserSystemRolePermission::getNamespaceId,
+                        UserSystemRolePermission::getUserId, UserSystemRolePermission::getSystemRoleId,
+                        UserSystemRolePermission::getCreatedBy)
+                    .containsExactly(10L, 1L, 4L, 1L, 1L))
             .verifyComplete();
         userSystemRolePermissionRepository.findDuplicate(4L, 1L)
             .as(StepVerifier::create)
             .assertNext(actual ->
                 assertThat(actual)
-                    .extracting(UserSystemRolePermission::getId, UserSystemRolePermission::getUserId,
-                        UserSystemRolePermission::getSystemRoleId, UserSystemRolePermission::getCreatedBy)
-                    .containsExactly(10L, 4L, 1L, 1L))
+                    .extracting(UserSystemRolePermission::getId, UserSystemRolePermission::getNamespaceId,
+                        UserSystemRolePermission::getUserId, UserSystemRolePermission::getSystemRoleId,
+                        UserSystemRolePermission::getCreatedBy)
+                    .containsExactly(10L, 1L, 4L, 1L, 1L))
             .verifyComplete();
       }
     }
@@ -111,7 +117,8 @@ class UserSystemRolePermissionRepositoryTest {
       @DisplayName("ユーザとシステムロールの紐付けを削除できる")
       void deleteByUniqueKeys() {
         // when
-        Mono<Void> voidMono = userSystemRolePermissionRepository.deleteByUniqueKeys(3L, 5L);
+        Mono<Void> voidMono = userSystemRolePermissionRepository
+            .deleteByUniqueKeys(3L, 3L, 5L);
         // then
         StepVerifier.create(voidMono).verifyComplete();
         userSystemRolePermissionRepository.findDuplicate(3L, 5L)
@@ -138,9 +145,10 @@ class UserSystemRolePermissionRepositoryTest {
         StepVerifier.create(userSystemRolePermissionMono)
             .assertNext(actual ->
                 assertThat(actual)
-                    .extracting(UserSystemRolePermission::getId, UserSystemRolePermission::getUserId,
-                        UserSystemRolePermission::getSystemRoleId, UserSystemRolePermission::getCreatedBy)
-                    .containsExactly(9L, 3L, 5L, 1L))
+                    .extracting(UserSystemRolePermission::getId, UserSystemRolePermission::getNamespaceId,
+                        UserSystemRolePermission::getUserId, UserSystemRolePermission::getSystemRoleId,
+                        UserSystemRolePermission::getCreatedBy)
+                    .containsExactly(9L, 3L, 3L, 5L, 1L))
             .verifyComplete();
       }
     }

@@ -31,7 +31,7 @@ class NamespaceServiceTest {
   private SystemRoleService systemRoleService;
 
   @Nested
-  class FindAll {
+  class FindByUserId {
 
     @Nested
     @DisplayName("正常系")
@@ -47,9 +47,10 @@ class NamespaceServiceTest {
             .id(2L).name("namespace2").createdBy(2L).build();
         Namespace namespace3 = Namespace.builder()
             .id(3L).name("namespace3").createdBy(3L).build();
-        when(namespaceRepository.findAll()).thenReturn(Flux.just(namespace1, namespace2, namespace3));
+        when(namespaceRepository.findByUserId(1L))
+            .thenReturn(Flux.just(namespace1, namespace2, namespace3));
         // when
-        Flux<Namespace> namespaceFlux = namespaceService.findAll();
+        Flux<Namespace> namespaceFlux = namespaceService.findByUserId(1L);
         // then
         StepVerifier.create(namespaceFlux)
             .assertNext(namespace -> assertThat(namespace)

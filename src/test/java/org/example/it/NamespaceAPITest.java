@@ -51,12 +51,14 @@ public class NamespaceAPITest {
   private UserRepository userRepository;
 
   private String jwt;
+  private String readOnlyJwt;
   private String unAuthorizedJwt;
 
   @BeforeAll
   void beforeAll() {
     jwt = base64Service.encode(jwtService.encode(User.builder().id(2L).name("user1").email("xxx@example.org").build()));
-    unAuthorizedJwt = base64Service.encode(jwtService.encode(User.builder().id(3L).name("user2").email("yyy@example.org").build()));
+    readOnlyJwt = base64Service.encode(jwtService.encode(User.builder().id(3L).name("user2").email("yyy@example.org").build()));
+    unAuthorizedJwt = base64Service.encode(jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
   }
 
   @Order(1)
@@ -86,6 +88,19 @@ public class NamespaceAPITest {
                       tuple(2L, "staging", 2L),
                       tuple(3L, "production", 3L));
             });
+      }
+
+      @Test
+      @DisplayName("権限がなければ何も表示されない")
+      void findAllTheIndexesWithNoPermission() {
+        // when, then
+        webTestClient.get()
+            .uri("/rbac-service/v1/namespaces")
+            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBodyList(Namespace.class)
+            .consumeWith(response -> assertThat(response.getResponseBody()).isEmpty());
       }
     }
   }
@@ -201,7 +216,7 @@ public class NamespaceAPITest {
         // when, then
         webTestClient.put()
             .uri("/rbac-service/v1/namespaces/2")
-            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .header(HttpHeaders.AUTHORIZATION, readOnlyJwt)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue("""
                 {
@@ -367,7 +382,7 @@ public class NamespaceAPITest {
         // when, then
         webTestClient.delete()
             .uri("/rbac-service/v1/namespaces/3")
-            .header(HttpHeaders.AUTHORIZATION, unAuthorizedJwt)
+            .header(HttpHeaders.AUTHORIZATION, readOnlyJwt)
             .exchange()
             .expectStatus().isForbidden()
             .expectBody(ErrorResponse.class)

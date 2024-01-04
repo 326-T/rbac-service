@@ -22,9 +22,8 @@ public class NamespaceService {
     this.systemRoleService = systemRoleService;
   }
 
-
-  public Flux<Namespace> findAll() {
-    return namespaceRepository.findAll();
+  public Flux<Namespace> findByUserId(Long userId) {
+    return namespaceRepository.findByUserId(userId);
   }
 
   /**

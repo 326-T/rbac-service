@@ -64,7 +64,10 @@ class NamespaceRestControllerTest {
             .id(2L).name("backend").createdBy(2L).build();
         Namespace namespace3 = Namespace.builder()
             .id(3L).name("database").createdBy(3L).build();
-        when(namespaceService.findAll()).thenReturn(Flux.just(namespace1, namespace2, namespace3));
+        when(namespaceService.findByUserId(1L))
+            .thenReturn(Flux.just(namespace1, namespace2, namespace3));
+        when(reactiveContextService.extractCurrentUser(any(ServerWebExchange.class)))
+            .thenReturn(User.builder().id(1L).build());
         // when, then
         webTestClient.get()
             .uri("/rbac-service/v1/namespaces")

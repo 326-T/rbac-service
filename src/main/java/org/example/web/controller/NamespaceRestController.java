@@ -38,8 +38,8 @@ public class NamespaceRestController {
   }
 
   @GetMapping
-  public Flux<Namespace> index() {
-    return namespaceService.findAll();
+  public Flux<Namespace> index(ServerWebExchange exchange) {
+    return namespaceService.findByUserId(reactiveContextService.extractCurrentUser(exchange).getId());
   }
 
   @PostMapping

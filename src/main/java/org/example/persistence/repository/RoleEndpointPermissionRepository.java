@@ -12,20 +12,16 @@ public interface RoleEndpointPermissionRepository extends
 
   Mono<RoleEndpointPermission> save(RoleEndpointPermission roleEndpointPermission);
 
-  @Query("""
-      DELETE FROM rbac_role_endpoint_permissions
-      WHERE namespace_id = :namespaceId
-        AND role_id = :roleId
-        AND endpoint_id = :endpointId;
-      """)
+  @Query("DELETE FROM rbac_role_endpoint_permissions "
+      + "WHERE namespace_id = :namespaceId "
+      + "AND role_id = :roleId "
+      + "AND endpoint_id = :endpointId;")
   Mono<Void> deleteByUniqueKeys(Long namespaceId, Long roleId, Long endpointId);
 
-  @Query("""
-      SELECT *
-      FROM rbac_role_endpoint_permissions
-      WHERE namespace_id = :namespaceId
-        AND role_id = :roleId
-        AND endpoint_id = :endpointId;
-      """)
+  @Query("SELECT * "
+      + "FROM rbac_role_endpoint_permissions "
+      + "WHERE namespace_id = :namespaceId "
+      + "AND role_id = :roleId "
+      + "AND endpoint_id = :endpointId;")
   Mono<RoleEndpointPermission> findDuplicate(Long namespaceId, Long roleId, Long endpointId);
 }

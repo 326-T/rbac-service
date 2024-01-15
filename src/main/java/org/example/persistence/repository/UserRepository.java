@@ -14,26 +14,21 @@ public interface UserRepository extends ReactiveCrudRepository<User, Long> {
 
   Mono<User> findById(Long id);
 
-  @Query("""
-      SELECT * FROM rbac_users AS u
-      INNER JOIN rbac_user_group_belongings AS ugb ON u.id = ugb.user_id
-      WHERE ugb.user_group_id = :userGroupId
-      ORDER BY u.id;
-      """)
+  @Query("SELECT * FROM rbac_users AS u "
+      + "INNER JOIN rbac_user_group_belongings AS ugb ON u.id = ugb.user_id "
+      + "WHERE ugb.user_group_id = :userGroupId "
+      + "ORDER BY u.id;")
   Flux<User> findByUserGroupId(Long userGroupId);
 
-  @Query("""
-      SELECT * FROM rbac_users AS u
-      INNER JOIN rbac_user_system_role_permissions AS srp ON u.id = srp.user_id
-      WHERE srp.system_role_id = :systemRoleId
-      ORDER BY u.id;
-      """)
+  @Query("SELECT * FROM rbac_users AS u "
+      + "INNER JOIN rbac_user_system_role_permissions AS srp ON u.id = srp.user_id "
+      + "WHERE srp.system_role_id = :systemRoleId "
+      + "ORDER BY u.id;")
   Flux<User> findBySystemRoleId(Long systemRoleId);
 
   Mono<User> save(User user);
 
   Mono<Void> deleteById(Long id);
 
-  @Query("SELECT * FROM rbac_users WHERE email = :email")
   Mono<User> findByEmail(String email);
 }

@@ -10,21 +10,15 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface PathRepository extends ReactiveCrudRepository<Path, Long> {
 
-  @Query("""
-      SELECT * FROM rbac_paths
-      WHERE namespace_id = :namespaceId;
-      """)
   Flux<Path> findByNamespaceId(Long namespaceId);
 
   Mono<Path> save(Path path);
 
   Mono<Void> deleteById(Long id);
 
-  @Query("""
-      SELECT *
-      FROM rbac_paths
-      WHERE namespace_id = :namespaceId
-        AND regex = :regex;
-      """)
+  @Query("SELECT * "
+      + "FROM rbac_paths "
+      + "WHERE namespace_id = :namespaceId "
+      + "AND regex = :regex;")
   Mono<Path> findDuplicate(Long namespaceId, String regex);
 }

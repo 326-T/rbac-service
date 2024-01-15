@@ -1,0 +1,25 @@
+server:
+  port: 8080
+
+spring:
+  r2dbc:
+    url: r2dbc:h2:mem:///test_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL;TRACE_LEVEL_FILE=4
+    username: test_db
+    password: test_db
+  h2:
+    console:
+      enabled: true
+  flyway:
+    url: jdbc:h2:mem:test_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL;TRACE_LEVEL_FILE=4
+    user: test_db
+    password: test_db
+    clean-on-validation-error: true
+    baseline-on-migrate: true
+    clean-disabled: false
+  spring:
+    h2:
+      console:
+        enabled: true
+jwt:
+  secret-key: secret
+  ttl: 86400000

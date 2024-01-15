@@ -10,29 +10,21 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface RoleRepository extends ReactiveCrudRepository<Role, Long> {
 
-  @Query("""
-      SELECT * FROM rbac_roles
-      WHERE namespace_id = :namespaceId;
-      """)
   Flux<Role> findByNamespaceId(Long namespaceId);
 
-  @Query("""
-      SELECT * FROM rbac_roles AS r
-      INNER JOIN rbac_user_group_role_assignments AS ugr ON r.id = ugr.role_id
-      WHERE r.namespace_id = :namespaceId
-        AND ugr.user_group_id = :userGroupId;
-      """)
+  @Query("SELECT * FROM rbac_roles AS r "
+      + "INNER JOIN rbac_user_group_role_assignments AS ugr ON r.id = ugr.role_id "
+      + "WHERE r.namespace_id = :namespaceId "
+      + "AND ugr.user_group_id = :userGroupId;")
   Flux<Role> findByNamespaceIdAndUserGroupId(Long namespaceId, Long userGroupId);
 
   Mono<Role> save(Role role);
 
   Mono<Void> deleteById(Long id);
 
-  @Query("""
-      SELECT *
-      FROM rbac_roles
-      WHERE namespace_id = :namespaceId
-        AND name = :name;
-      """)
+  @Query("SELECT * "
+      + "FROM rbac_roles "
+      + "WHERE namespace_id = :namespaceId "
+      + "AND name = :name;")
   Mono<Role> findDuplicate(Long namespaceId, String name);
 }

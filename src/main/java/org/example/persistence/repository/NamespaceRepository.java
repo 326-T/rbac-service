@@ -17,12 +17,10 @@ public interface NamespaceRepository extends ReactiveCrudRepository<Namespace, L
    *
    * @return 参照権限以上の権限を持つNamespace
    */
-  @Query("""
-      SELECT * FROM rbac_namespaces AS n
-      INNER JOIN rbac_user_system_role_permissions AS srp
-      ON n.id = srp.namespace_id
-      WHERE srp.user_id = :userId;
-      """)
+  @Query("SELECT * FROM rbac_namespaces AS n "
+      + "INNER JOIN rbac_user_system_role_permissions AS srp "
+      + "ON n.id = srp.namespace_id "
+      + "WHERE srp.user_id = :userId;")
   Flux<Namespace> findByUserId(Long userId);
 
   Mono<Namespace> save(Namespace namespace);

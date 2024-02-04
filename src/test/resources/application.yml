@@ -16,10 +16,7 @@ spring:
     clean-on-validation-error: true
     baseline-on-migrate: true
     clean-disabled: false
-  spring:
-    h2:
-      console:
-        enabled: true
+
 jwt:
   secret-key: secret
   ttl: 86400000

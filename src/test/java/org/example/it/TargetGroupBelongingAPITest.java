@@ -31,7 +31,7 @@ import reactor.test.StepVerifier;
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureWebClient
-public class TargetGroupBelongingAPITest {
+class TargetGroupBelongingAPITest {
 
   @Autowired
   private WebTestClient webTestClient;
@@ -47,8 +47,10 @@ public class TargetGroupBelongingAPITest {
 
   @BeforeAll
   void beforeAll() {
-    jwt = base64Service.encode(jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build()));
-    readOnlyJwt = base64Service.encode(jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
+    jwt = base64Service.encode(
+        jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build()));
+    readOnlyJwt = base64Service.encode(
+        jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
   }
 
   @Order(2)
@@ -120,7 +122,8 @@ public class TargetGroupBelongingAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         409, null,
                         "Unique制約に違反している",
@@ -150,7 +153,8 @@ public class TargetGroupBelongingAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
@@ -180,7 +184,8 @@ public class TargetGroupBelongingAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
@@ -210,7 +215,8 @@ public class TargetGroupBelongingAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
@@ -265,7 +271,8 @@ public class TargetGroupBelongingAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",

@@ -32,7 +32,7 @@ import reactor.test.StepVerifier;
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureWebClient
-public class TargetAPITest {
+class TargetAPITest {
 
   @Autowired
   private WebTestClient webTestClient;
@@ -48,8 +48,10 @@ public class TargetAPITest {
 
   @BeforeAll
   void beforeAll() {
-    jwt = base64Service.encode(jwtService.encode(User.builder().id(2L).name("user1").email("xxx@example.org").build()));
-    readOnlyJwt = base64Service.encode(jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
+    jwt = base64Service.encode(
+        jwtService.encode(User.builder().id(2L).name("user1").email("xxx@example.org").build()));
+    readOnlyJwt = base64Service.encode(
+        jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
   }
 
   @Order(1)
@@ -95,7 +97,8 @@ public class TargetAPITest {
             .consumeWith(response -> {
               assertThat(response.getResponseBody()).hasSize(1);
               assertThat(response.getResponseBody())
-                  .extracting(Target::getId, Target::getNamespaceId, Target::getObjectIdRegex, Target::getCreatedBy)
+                  .extracting(Target::getId, Target::getNamespaceId, Target::getObjectIdRegex,
+                      Target::getCreatedBy)
                   .containsExactly(
                       tuple(3L, 2L, "object-id-3", 3L));
             });
@@ -120,7 +123,8 @@ public class TargetAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
@@ -166,7 +170,8 @@ public class TargetAPITest {
             );
         targetRepository.findById(2L)
             .as(StepVerifier::create).assertNext(target -> assertThat(target)
-                .extracting(Target::getId, Target::getNamespaceId, Target::getObjectIdRegex, Target::getCreatedBy)
+                .extracting(Target::getId, Target::getNamespaceId, Target::getObjectIdRegex,
+                    Target::getCreatedBy)
                 .containsExactly(2L, 2L, "OBJECT-ID-2", 2L));
       }
     }
@@ -196,7 +201,8 @@ public class TargetAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
@@ -226,7 +232,8 @@ public class TargetAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
@@ -256,7 +263,8 @@ public class TargetAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         409, null,
                         "Unique制約に違反している",
@@ -286,7 +294,8 @@ public class TargetAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
@@ -332,7 +341,8 @@ public class TargetAPITest {
             );
         targetRepository.findById(4L)
             .as(StepVerifier::create).assertNext(target -> assertThat(target)
-                .extracting(Target::getId, Target::getNamespaceId, Target::getObjectIdRegex, Target::getCreatedBy)
+                .extracting(Target::getId, Target::getNamespaceId, Target::getObjectIdRegex,
+                    Target::getCreatedBy)
                 .containsExactly(4L, 3L, "object-id-4", 2L));
       }
     }
@@ -362,7 +372,8 @@ public class TargetAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         409, null,
                         "Unique制約に違反している",
@@ -392,7 +403,8 @@ public class TargetAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
@@ -447,7 +459,8 @@ public class TargetAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
@@ -470,7 +483,8 @@ public class TargetAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
@@ -493,7 +507,8 @@ public class TargetAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",

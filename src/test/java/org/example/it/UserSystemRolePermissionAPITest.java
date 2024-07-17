@@ -31,7 +31,7 @@ import reactor.test.StepVerifier;
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureWebClient
-public class UserSystemRolePermissionAPITest {
+class UserSystemRolePermissionAPITest {
 
   @Autowired
   private WebTestClient webTestClient;
@@ -47,8 +47,10 @@ public class UserSystemRolePermissionAPITest {
 
   @BeforeAll
   void beforeAll() {
-    jwt = base64Service.encode(jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build()));
-    readOnlyJwt = base64Service.encode(jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
+    jwt = base64Service.encode(
+        jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build()));
+    readOnlyJwt = base64Service.encode(
+        jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
   }
 
 
@@ -80,14 +82,16 @@ public class UserSystemRolePermissionAPITest {
             .expectStatus().isOk()
             .expectBody(UserSystemRolePermission.class)
             .consumeWith(response -> assertThat(response.getResponseBody())
-                .extracting(UserSystemRolePermission::getId, UserSystemRolePermission::getNamespaceId,
+                .extracting(UserSystemRolePermission::getId,
+                    UserSystemRolePermission::getNamespaceId,
                     UserSystemRolePermission::getUserId, UserSystemRolePermission::getSystemRoleId,
                     UserSystemRolePermission::getCreatedBy)
                 .containsExactly(10L, 3L, 4L, 5L, 2L));
         userSystemRolePermissionRepository.findDuplicate(4L, 5L)
             .as(StepVerifier::create)
             .assertNext(permission -> assertThat(permission)
-                .extracting(UserSystemRolePermission::getId, UserSystemRolePermission::getNamespaceId,
+                .extracting(UserSystemRolePermission::getId,
+                    UserSystemRolePermission::getNamespaceId,
                     UserSystemRolePermission::getUserId, UserSystemRolePermission::getSystemRoleId,
                     UserSystemRolePermission::getCreatedBy)
                 .containsExactly(10L, 3L, 4L, 5L, 2L))
@@ -120,7 +124,8 @@ public class UserSystemRolePermissionAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         409, null,
                         "Unique制約に違反している",
@@ -150,7 +155,8 @@ public class UserSystemRolePermissionAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
@@ -180,7 +186,8 @@ public class UserSystemRolePermissionAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
@@ -210,7 +217,8 @@ public class UserSystemRolePermissionAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
@@ -240,7 +248,8 @@ public class UserSystemRolePermissionAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
@@ -303,7 +312,8 @@ public class UserSystemRolePermissionAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",

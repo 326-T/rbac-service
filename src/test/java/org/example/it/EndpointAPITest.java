@@ -33,7 +33,7 @@ import reactor.test.StepVerifier;
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureWebClient
-public class EndpointAPITest {
+class EndpointAPITest {
 
   @Autowired
   private WebTestClient webTestClient;
@@ -49,8 +49,10 @@ public class EndpointAPITest {
 
   @BeforeAll
   void beforeAll() {
-    jwt = base64Service.encode(jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build()));
-    readOnlyJwt = base64Service.encode(jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
+    jwt = base64Service.encode(
+        jwtService.encode(User.builder().id(1L).name("user1").email("xxx@example.org").build()));
+    readOnlyJwt = base64Service.encode(
+        jwtService.encode(User.builder().id(4L).name("user3").email("zzz@example.org").build()));
   }
 
   @Order(1)
@@ -81,8 +83,10 @@ public class EndpointAPITest {
                       EndpointDetail::getMethod,
                       EndpointDetail::getCreatedBy)
                   .containsExactly(
-                      Tuple.tuple(2L, 2L, 2L, "/billing-service/v1/", 2L, "target-group-2", "POST", 2L),
-                      Tuple.tuple(3L, 2L, 3L, "/inventory-service/v2/", 3L, "target-group-3", "PUT", 3L)
+                      Tuple.tuple(2L, 2L, 2L, "/billing-service/v1/", 2L, "target-group-2", "POST",
+                          2L),
+                      Tuple.tuple(3L, 2L, 3L, "/inventory-service/v2/", 3L, "target-group-3", "PUT",
+                          3L)
                   );
             });
       }
@@ -107,7 +111,8 @@ public class EndpointAPITest {
                       EndpointDetail::getMethod,
                       EndpointDetail::getCreatedBy)
                   .containsExactly(
-                      Tuple.tuple(2L, 2L, 2L, "/billing-service/v1/", 2L, "target-group-2", "POST", 2L)
+                      Tuple.tuple(2L, 2L, 2L, "/billing-service/v1/", 2L, "target-group-2", "POST",
+                          2L)
                   );
             });
       }
@@ -131,7 +136,8 @@ public class EndpointAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
@@ -217,7 +223,8 @@ public class EndpointAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
@@ -249,7 +256,8 @@ public class EndpointAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
@@ -281,7 +289,8 @@ public class EndpointAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         409, null,
                         "Unique制約に違反している",
@@ -313,7 +322,8 @@ public class EndpointAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
@@ -345,7 +355,8 @@ public class EndpointAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
@@ -377,7 +388,8 @@ public class EndpointAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
@@ -463,7 +475,8 @@ public class EndpointAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         409, null,
                         "Unique制約に違反している",
@@ -495,7 +508,8 @@ public class EndpointAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
@@ -527,7 +541,8 @@ public class EndpointAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
@@ -559,7 +574,8 @@ public class EndpointAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
@@ -613,7 +629,8 @@ public class EndpointAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         403, null,
                         "エンドポイントへのアクセス権がない",
@@ -636,7 +653,8 @@ public class EndpointAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",
@@ -659,7 +677,8 @@ public class EndpointAPITest {
                 assertThat(response.getResponseBody())
                     .extracting(
                         ErrorResponse::getStatus, ErrorResponse::getCode,
-                        ErrorResponse::getSummary, ErrorResponse::getDetail, ErrorResponse::getMessage)
+                        ErrorResponse::getSummary, ErrorResponse::getDetail,
+                        ErrorResponse::getMessage)
                     .containsExactly(
                         404, null,
                         "idに該当するリソースが存在しない",

@@ -18,9 +18,11 @@ public interface TargetGroupRepository extends ReactiveCrudRepository<TargetGrou
 
   Mono<Void> deleteById(Long id);
 
-  @Query("SELECT * "
-      + "FROM rbac_target_groups "
-      + "WHERE namespace_id = :namespaceId "
-      + "AND name = :name;")
+  @Query("""
+      SELECT *
+      FROM rbac_target_groups
+      WHERE namespace_id = :namespaceId
+      AND name = :name;
+      """)
   Mono<TargetGroup> findDuplicate(Long namespaceId, String name);
 }

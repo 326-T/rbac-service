@@ -1,5 +1,9 @@
-INSERT INTO rbac_target_group_belongings (namespace_id, target_id, target_group_id, created_by)
+INSERT INTO rbac_target_group_belongings (
+  namespace_id,
+  target_id, target_group_id,
+  created_by, updated_by
+)
 VALUES
-    (1, 1, 1, 1),
-    (2, 2, 2, 2),
-    (2, 3, 3, 3);
+    (1, 1, 1, 1, 1),
+    (2, 2, 2, 2, 2),
+    (2, 3, 3, 3, 3);

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import org.example.listener.FlywayTestExecutionListener;
+import org.example.persistence.entity.BaseAuditEntity;
 import org.example.persistence.entity.Endpoint;
 import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayName;
@@ -43,21 +44,21 @@ class EndpointRepositoryTest {
             .assertNext(
                 endpoint -> assertThat(endpoint)
                     .extracting(Endpoint::getId, Endpoint::getNamespaceId,
-                        Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, "GET", 1L, 1L))
+                        Endpoint::getPathId, Endpoint::getMethod, Endpoint::getTargetGroupId,
+                        Endpoint::getCreatedBy, BaseAuditEntity::getUpdatedBy)
+                    .containsExactly(1L, 1L, 1L, "GET", 1L, 1L, 1L))
             .assertNext(
                 endpoint -> assertThat(endpoint)
                     .extracting(Endpoint::getId, Endpoint::getNamespaceId,
-                        Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                    .containsExactly(2L, 2L, 2L, "POST", 2L, 2L))
+                        Endpoint::getPathId, Endpoint::getMethod, Endpoint::getTargetGroupId,
+                        Endpoint::getCreatedBy, BaseAuditEntity::getUpdatedBy)
+                    .containsExactly(2L, 2L, 2L, "POST", 2L, 2L, 2L))
             .assertNext(
                 endpoint -> assertThat(endpoint)
                     .extracting(Endpoint::getId, Endpoint::getNamespaceId,
-                        Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                    .containsExactly(3L, 2L, 3L, "PUT", 3L, 3L))
+                        Endpoint::getPathId, Endpoint::getMethod, Endpoint::getTargetGroupId,
+                        Endpoint::getCreatedBy, BaseAuditEntity::getUpdatedBy)
+                    .containsExactly(3L, 2L, 3L, "PUT", 3L, 3L, 3L))
             .verifyComplete();
       }
     }
@@ -82,9 +83,9 @@ class EndpointRepositoryTest {
             .assertNext(
                 endpoint -> assertThat(endpoint)
                     .extracting(Endpoint::getId, Endpoint::getNamespaceId,
-                        Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, "GET", 1L, 1L))
+                        Endpoint::getPathId, Endpoint::getMethod, Endpoint::getTargetGroupId,
+                        Endpoint::getCreatedBy, BaseAuditEntity::getUpdatedBy)
+                    .containsExactly(1L, 1L, 1L, "GET", 1L, 1L, 1L))
             .verifyComplete();
       }
     }
@@ -108,9 +109,9 @@ class EndpointRepositoryTest {
             .assertNext(
                 endpoint -> assertThat(endpoint)
                     .extracting(Endpoint::getId, Endpoint::getNamespaceId,
-                        Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, "GET", 1L, 1L))
+                        Endpoint::getPathId, Endpoint::getMethod, Endpoint::getTargetGroupId,
+                        Endpoint::getCreatedBy, BaseAuditEntity::getUpdatedBy)
+                    .containsExactly(1L, 1L, 1L, "GET", 1L, 1L, 1L))
             .verifyComplete();
       }
     }
@@ -134,9 +135,9 @@ class EndpointRepositoryTest {
             .assertNext(
                 endpoint -> assertThat(endpoint)
                     .extracting(Endpoint::getId, Endpoint::getNamespaceId,
-                        Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                    .containsExactly(2L, 2L, 2L, "POST", 2L, 2L))
+                        Endpoint::getPathId, Endpoint::getMethod, Endpoint::getTargetGroupId,
+                        Endpoint::getCreatedBy, BaseAuditEntity::getUpdatedBy)
+                    .containsExactly(2L, 2L, 2L, "POST", 2L, 2L, 2L))
             .verifyComplete();
       }
     }
@@ -162,6 +163,7 @@ class EndpointRepositoryTest {
             .method("GET")
             .targetGroupId(2L)
             .createdBy(1L)
+            .updatedBy(1L)
             .createdAt(LocalDateTime.now())
             .updatedAt(LocalDateTime.now())
             .build();
@@ -173,17 +175,17 @@ class EndpointRepositoryTest {
             .assertNext(
                 endpoint1 -> assertThat(endpoint1)
                     .extracting(Endpoint::getId, Endpoint::getNamespaceId,
-                        Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                    .containsExactly(2L, 3L, 3L, "GET", 2L, 1L))
+                        Endpoint::getPathId, Endpoint::getMethod, Endpoint::getTargetGroupId,
+                        Endpoint::getCreatedBy, BaseAuditEntity::getUpdatedBy)
+                    .containsExactly(2L, 3L, 3L, "GET", 2L, 1L, 1L))
             .verifyComplete();
         endpointRepository.findById(2L).as(StepVerifier::create)
             .assertNext(
                 endpoint1 -> assertThat(endpoint1)
                     .extracting(Endpoint::getId, Endpoint::getNamespaceId,
-                        Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                    .containsExactly(2L, 3L, 3L, "GET", 2L, 1L))
+                        Endpoint::getPathId, Endpoint::getMethod, Endpoint::getTargetGroupId,
+                        Endpoint::getCreatedBy, BaseAuditEntity::getUpdatedBy)
+                    .containsExactly(2L, 3L, 3L, "GET", 2L, 1L, 1L))
             .verifyComplete();
       }
 
@@ -197,6 +199,7 @@ class EndpointRepositoryTest {
             .method("DELETE")
             .targetGroupId(2L)
             .createdBy(3L)
+            .updatedBy(3L)
             .build();
         // when
         Mono<Endpoint> endpointMono = endpointRepository.save(
@@ -206,17 +209,17 @@ class EndpointRepositoryTest {
             .assertNext(
                 endpoint1 -> assertThat(endpoint1)
                     .extracting(Endpoint::getId, Endpoint::getNamespaceId,
-                        Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                    .containsExactly(4L, 1L, 1L, "DELETE", 2L, 3L))
+                        Endpoint::getPathId, Endpoint::getMethod, Endpoint::getTargetGroupId,
+                        Endpoint::getCreatedBy, BaseAuditEntity::getUpdatedBy)
+                    .containsExactly(4L, 1L, 1L, "DELETE", 2L, 3L, 3L))
             .verifyComplete();
         endpointRepository.findById(4L).as(StepVerifier::create)
             .assertNext(
                 endpoint1 -> assertThat(endpoint1)
                     .extracting(Endpoint::getId, Endpoint::getNamespaceId,
-                        Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                    .containsExactly(4L, 1L, 1L, "DELETE", 2L, 3L))
+                        Endpoint::getPathId, Endpoint::getMethod, Endpoint::getTargetGroupId,
+                        Endpoint::getCreatedBy, BaseAuditEntity::getUpdatedBy)
+                    .containsExactly(4L, 1L, 1L, "DELETE", 2L, 3L, 3L))
             .verifyComplete();
       }
     }
@@ -262,9 +265,9 @@ class EndpointRepositoryTest {
             .assertNext(
                 endpoint -> assertThat(endpoint)
                     .extracting(Endpoint::getId, Endpoint::getNamespaceId,
-                        Endpoint::getPathId, Endpoint::getMethod,
-                        Endpoint::getTargetGroupId, Endpoint::getCreatedBy)
-                    .containsExactly(1L, 1L, 1L, "GET", 1L, 1L))
+                        Endpoint::getPathId, Endpoint::getMethod, Endpoint::getTargetGroupId,
+                        Endpoint::getCreatedBy, BaseAuditEntity::getUpdatedBy)
+                    .containsExactly(1L, 1L, 1L, "GET", 1L, 1L, 1L))
             .verifyComplete();
       }
     }

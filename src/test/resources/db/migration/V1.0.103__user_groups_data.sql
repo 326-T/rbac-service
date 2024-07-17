@@ -1,5 +1,5 @@
-INSERT INTO rbac_user_groups (name, namespace_id, created_by)
+INSERT INTO rbac_user_groups (name, namespace_id, created_by, updated_by)
 VALUES
-    ('group1', 1, 1),
-    ('group2', 2, 2),
-    ('group3', 2, 3);
+    ('group1', 1, 1, 1),
+    ('group2', 2, 2, 2),
+    ('group3', 2, 3, 3);

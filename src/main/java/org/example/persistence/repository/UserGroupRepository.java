@@ -18,9 +18,11 @@ public interface UserGroupRepository extends ReactiveCrudRepository<UserGroup, L
 
   Mono<Void> deleteById(Long id);
 
-  @Query("SELECT * "
-      + "FROM rbac_user_groups "
-      + "WHERE namespace_id = :namespaceId "
-      + "AND name = :name;")
+  @Query("""
+      SELECT *
+      FROM rbac_user_groups
+      WHERE namespace_id = :namespaceId
+      AND name = :name;
+      """)
   Mono<UserGroup> findDuplicate(Long namespaceId, String name);
 }

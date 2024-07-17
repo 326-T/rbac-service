@@ -1,5 +1,5 @@
-INSERT INTO rbac_user_group_belongings (namespace_id, user_id, user_group_id, created_by)
+INSERT INTO rbac_user_group_belongings (namespace_id, user_id, user_group_id, created_by, updated_by)
 VALUES
-    (1, 2, 1, 1),
-    (2, 3, 2, 2),
-    (2, 4, 3, 3);
+    (1, 2, 1, 1, 1),
+    (2, 3, 2, 2, 2),
+    (2, 4, 3, 3, 3);

@@ -4,6 +4,8 @@ CREATE TABLE rbac_users
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     password_digest VARCHAR(255) NOT NULL,
+    created_by INTEGER DEFAULT 1,
+    updated_by INTEGER DEFAULT 1,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT users_email_unique UNIQUE (email)
